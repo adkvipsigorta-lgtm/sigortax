@@ -1476,16 +1476,16 @@ onMounted(async () => {
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">
-            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
+            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[38px]">
               <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="filterPrevMonth" />
               <span class="text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ filterMonthLabel }}</span>
               <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="filterNextMonth" />
             </div>
-            <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
+            <div v-if="isAdmin" class="relative fl-select  w-[200px]">
               <USelect v-model="filterAssignedTo" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...users.map(u => ({ label: u.name, value: u.id }))]" value-key="value" placeholder=" " class="w-full" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
             </div>
-            <div class="relative w-[220px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative w-[220px] fl-input">
               <UInput v-model="searchQuery" placeholder=" " class="w-full peer/fl-tsearch" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tsearch:top-0 peer-focus-within/fl-tsearch:-translate-y-1/2 peer-focus-within/fl-tsearch:text-xs peer-focus-within/fl-tsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri ara</label>
             </div>
@@ -2659,10 +2659,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 table td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Standart badge stili — tüm tablo badge'leri aynı boyutta */

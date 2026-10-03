@@ -89,16 +89,16 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
     <!-- Filtreler -->
     <UCard>
       <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-4">
-        <div class="flex-1 min-w-[200px] relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="flex-1 min-w-[200px] relative fl-select ">
           <USelectMenu v-model="hasType" :items="insuranceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
           <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', hasType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sahip Olduğu Tür</label>
         </div>
 
-        <div class="hidden sm:flex items-center h-[50px]">
+        <div class="hidden sm:flex items-center h-[38px]">
           <UIcon name="i-lucide-arrow-right" class="size-5 text-muted" />
         </div>
 
-        <div class="flex-1 min-w-[200px] relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="flex-1 min-w-[200px] relative fl-select ">
           <USelectMenu v-model="notType" :items="insuranceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
           <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', notType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sahip Olmadığı Tür</label>
         </div>
@@ -117,7 +117,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
             Sonuçlar
             <span class="text-xs font-normal text-muted ml-2">({{ crossSell.total.value }} müşteri)</span>
           </h3>
-          <div class="relative w-full sm:w-[280px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative w-full sm:w-[280px] fl-input">
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-cxsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cxsearch:top-0 peer-focus-within/fl-cxsearch:-translate-y-1/2 peer-focus-within/fl-cxsearch:text-xs peer-focus-within/fl-cxsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:text-[var(--ui-text-highlighted)]">Müşteri, poliçe no, plaka ara</label>
           </div>
@@ -188,12 +188,12 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
             <p><span class="text-muted">Hedef Tür:</span> <UBadge variant="solid" color="success" size="sm">{{ notTypeName }}</UBadge></p>
           </div>
 
-          <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <div class="relative fl-select ">
             <USelectMenu v-model="assignForm.assignedTo" :items="userOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', assignForm.assignedTo ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Atanacak Kişi</label>
           </div>
 
-          <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <div class="relative fl-select ">
             <USelect v-model="assignForm.priority" :items="priorityOptions" value-key="value" placeholder=" " class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', assignForm.priority ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Öncelik</label>
           </div>
@@ -210,10 +210,6 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 :deep(.capraz-satis-table th:nth-child(1)) { width: 180px; min-width: 180px; max-width: 180px; }
 :deep(.capraz-satis-table th:nth-child(2)) { width: 140px; min-width: 140px; max-width: 140px; }
 :deep(.capraz-satis-table th:nth-child(3)) { width: 110px; min-width: 110px; max-width: 110px; }

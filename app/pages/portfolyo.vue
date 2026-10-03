@@ -903,7 +903,7 @@ function linearRegression(x: number[], y: number[]) {
               <p class="text-xs text-muted">Yıllık prim üretimi, komisyon geliri ve poliçe adet karşılaştırması</p>
             </div>
             <div class="flex flex-wrap items-center gap-1.5">
-              <div class="flex rounded-md border border-default overflow-hidden text-xs font-semibold h-[30px]">
+              <div class="flex rounded-md border border-default overflow-hidden text-xs font-semibold h-[38px]">
                 <button
                   @click="premiumMode = 'gross'"
                   class="px-3 transition-colors"
@@ -919,14 +919,14 @@ function linearRegression(x: number[], y: number[]) {
                 v-model="viewMode"
                 :items="viewOptions"
                 size="xs"
-                :ui="{ base: 'h-[30px]' }"
+                :ui="{ base: 'h-[38px]' }"
                 class="w-[180px]"
               />
               <USelect
                 v-model="currentYear"
                 :items="yearOptions.map(y => ({ label: String(y), value: y }))"
                 size="xs"
-                :ui="{ base: 'h-[30px]' }"
+                :ui="{ base: 'h-[38px]' }"
                 class="w-[180px]"
               />
             </div>
@@ -1223,7 +1223,7 @@ function linearRegression(x: number[], y: number[]) {
                 v-model="selectedForecastMonth"
                 :items="forecastMonthOptions"
                 size="xs"
-                :ui="{ base: 'h-[30px]' }"
+                :ui="{ base: 'h-[38px]' }"
                 class="w-[180px]"
               />
               <span class="text-[10px] px-2 py-0.5 rounded-full"

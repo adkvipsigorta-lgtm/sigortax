@@ -1104,7 +1104,7 @@ async function saveLead() {
           <PhoneInput v-model="quickForm.phone" label="Telefon No" :required="true" />
 
           <!-- Ürün (opsiyonel) -->
-          <div class="relative select-fl [&_.truncate]:!font-semibold">
+          <div class="relative fl-select [&_.truncate]:!font-semibold">
             <USelectMenu v-model="quickForm.productId" :items="productOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', quickForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
           </div>
@@ -1148,18 +1148,18 @@ async function saveLead() {
         </div>
         <div class="flex flex-col gap-4 [&_input]:!font-semibold">
           <!-- TC Kimlik No -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput :model-value="editForm.tcNo" placeholder=" " class="w-full peer/fl-etc" @update:model-value="(v: string) => editForm.tcNo = v.replace(/\D/g, '').slice(0, 11)" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-etc:top-0 peer-focus-within/fl-etc:-translate-y-1/2 peer-focus-within/fl-etc:text-xs peer-focus-within/fl-etc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-etc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-etc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-etc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-etc:text-[var(--ui-text-highlighted)]">TC Kimlik No <span class="text-[var(--ui-error)]">*</span></label>
           </div>
 
           <!-- Ad Soyad + Doğum Tarihi -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model="editForm.fullName" placeholder=" " class="w-full peer/fl-ename" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ename:top-0 peer-focus-within/fl-ename:-translate-y-1/2 peer-focus-within/fl-ename:text-xs peer-focus-within/fl-ename:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ename:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ename:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ename:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ename:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput :model-value="editBirthDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-ebd" @keydown="editPreventNonDigit" @update:model-value="onEditBirthInput">
                 <template #trailing>
                   <UPopover v-model:open="editBirthOpen">
@@ -1179,11 +1179,11 @@ async function saveLead() {
 
           <!-- Ürün + Kaynak -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.productId" :items="productOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.sourceId" :items="sourceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.sourceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Kaynak <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1258,18 +1258,18 @@ async function saveLead() {
         <div class="flex flex-col gap-4 [&_input]:!font-semibold">
 
           <!-- TC Kimlik No -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput :model-value="addForm.tcNo" placeholder=" " class="w-full peer/fl-tc" @update:model-value="onTcInput" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tc:top-0 peer-focus-within/fl-tc:-translate-y-1/2 peer-focus-within/fl-tc:text-xs peer-focus-within/fl-tc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tc:text-[var(--ui-text-highlighted)]">TC Kimlik No <span class="text-[var(--ui-error)]">*</span></label>
           </div>
 
           <!-- Ad Soyad + Doğum Tarihi -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model="addForm.fullName" placeholder=" " class="w-full peer/fl-name" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-name:top-0 peer-focus-within/fl-name:-translate-y-1/2 peer-focus-within/fl-name:text-xs peer-focus-within/fl-name:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-name:top-0 peer-has-[input:not(:placeholder-shown)]/fl-name:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-name:text-xs peer-has-[input:not(:placeholder-shown)]/fl-name:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput :model-value="birthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-bd" @keydown="preventNonDigitKey" @update:model-value="onBirthDateInput">
                 <template #trailing>
                   <UPopover v-model:open="birthDateOpen">
@@ -1289,7 +1289,7 @@ async function saveLead() {
 
           <!-- Ürün + Kaynak -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="addForm.productId"
                 :items="productOptions"
@@ -1303,7 +1303,7 @@ async function saveLead() {
               />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', addForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="addForm.sourceId"
                 :items="sourceOptions"
@@ -1320,7 +1320,7 @@ async function saveLead() {
           </div>
 
           <!-- Atanan Kişi -->
-          <div class="relative select-fl [&_.truncate]:!font-semibold">
+          <div class="relative fl-select [&_.truncate]:!font-semibold">
             <template v-if="isAllianzSource">
               <UInput model-value="Havuza At (Atanmamış)" disabled class="w-full" />
             </template>
@@ -1479,10 +1479,5 @@ async function saveLead() {
 .lead-time-urgent {
   background: rgb(239 68 68 / 0.1);
   color: #ef4444;
-}
-
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
 }
 </style>

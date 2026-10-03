@@ -246,19 +246,19 @@ function exportExcel() {
     <!-- Filtre Kartı -->
     <UCard>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div class="col-span-2 sm:col-span-1 relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="col-span-2 sm:col-span-1 relative fl-select ">
           <USelectMenu v-model="selectedUserId" :items="userOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
           <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', selectedUserId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Temsilci</label>
         </div>
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedYear" :items="yearOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Yıl</label>
         </div>
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Ay</label>
         </div>
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedDateType" :items="dateTypeOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
         </div>
@@ -568,7 +568,7 @@ function exportExcel() {
       <template #body>
         <div class="space-y-4">
           <p class="text-sm text-muted">Atanmamış poliçeleri görüntülemek için özel şifreyi girin.</p>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="secretInput" type="password" placeholder=" " class="w-full peer/fl-secret" @keyup.enter="verifySecretAndFetch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-secret:top-0 peer-focus-within/fl-secret:-translate-y-1/2 peer-focus-within/fl-secret:text-xs peer-focus-within/fl-secret:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-secret:top-0 peer-has-[input:not(:placeholder-shown)]/fl-secret:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-secret:text-xs peer-has-[input:not(:placeholder-shown)]/fl-secret:text-[var(--ui-text-highlighted)]">Şifre</label>
           </div>
@@ -585,10 +585,6 @@ function exportExcel() {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 :deep(.calisan-mutabakat-table th:nth-child(1))  { width: 120px; min-width: 120px; max-width: 120px; }
 :deep(.calisan-mutabakat-table th:nth-child(2))  { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.calisan-mutabakat-table th:nth-child(3))  { width: 130px; min-width: 130px; max-width: 130px; }

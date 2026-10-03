@@ -209,19 +209,19 @@ onMounted(async () => {
           <!-- Düzenleme modu -->
           <template v-else>
             <div class="w-full space-y-3 text-left">
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="profileForm.name" placeholder=" " class="w-full peer/fl-pname" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pname:top-0 peer-focus-within/fl-pname:-translate-y-1/2 peer-focus-within/fl-pname:text-xs peer-focus-within/fl-pname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pname:text-[var(--ui-text-highlighted)]">Ad Soyad</label>
               </div>
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="profileForm.email" type="email" placeholder=" " class="w-full peer/fl-pmail" data-no-uppercase />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pmail:top-0 peer-focus-within/fl-pmail:-translate-y-1/2 peer-focus-within/fl-pmail:text-xs peer-focus-within/fl-pmail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pmail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pmail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-[var(--ui-text-highlighted)]">E-posta</label>
               </div>
-              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative fl-select-form ">
                 <USelect v-model="profileForm.role" :items="roleOptions" value-key="value" placeholder=" " class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', profileForm.role ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Rol</label>
               </div>
-              <div v-if="profileForm.role === 'acente'" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div v-if="profileForm.role === 'acente'" class="relative fl-select-form ">
                 <USelect v-model="profileForm.branchId" :items="branches.map(b => ({ label: b.name, value: b.id }))" value-key="value" placeholder=" " class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', profileForm.branchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şube</label>
               </div>
@@ -278,8 +278,4 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 </style>

@@ -111,7 +111,7 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative w-full sm:w-[250px] fl-input">
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-csearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Şirket Ara</label>
           </div>
@@ -171,13 +171,13 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
           <USeparator />
 
           <!-- Şirket Adı -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-cname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cname:top-0 peer-focus-within/fl-cname:-translate-y-1/2 peer-focus-within/fl-cname:text-xs peer-focus-within/fl-cname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cname:text-[var(--ui-text-highlighted)]">Şirket Adı <span class="text-red-500">*</span></label>
           </div>
 
           <!-- Web Sitesi -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="form.website" placeholder=" " class="w-full peer/fl-cweb" data-no-uppercase />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cweb:top-0 peer-focus-within/fl-cweb:-translate-y-1/2 peer-focus-within/fl-cweb:text-xs peer-focus-within/fl-cweb:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cweb:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cweb:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cweb:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cweb:text-[var(--ui-text-highlighted)]">Web Sitesi</label>
           </div>
@@ -197,7 +197,7 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
           <USeparator />
 
           <!-- Logo URL -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput :model-value="form.logo" placeholder=" " class="w-full peer/fl-curl" data-no-uppercase @update:model-value="(v: string) => { form.logo = v; logoPreview = v || null }" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-curl:top-0 peer-focus-within/fl-curl:-translate-y-1/2 peer-focus-within/fl-curl:text-xs peer-focus-within/fl-curl:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-curl:top-0 peer-has-[input:not(:placeholder-shown)]/fl-curl:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-curl:text-xs peer-has-[input:not(:placeholder-shown)]/fl-curl:text-[var(--ui-text-highlighted)]">Logo URL (alternatif)</label>
           </div>

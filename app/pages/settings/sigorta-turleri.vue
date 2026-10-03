@@ -97,7 +97,7 @@ function getRowActions(insurance: InsuranceType) {
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative w-full sm:w-[250px] fl-input">
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-itsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itsearch:top-0 peer-focus-within/fl-itsearch:-translate-y-1/2 peer-focus-within/fl-itsearch:text-xs peer-focus-within/fl-itsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-[var(--ui-text-highlighted)]">Poliçe Türü Ara</label>
           </div>
@@ -149,17 +149,17 @@ function getRowActions(insurance: InsuranceType) {
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingInsurance ? 'Poliçe Türü Düzenle' : 'Yeni Poliçe Türü'" class="sm:max-w-lg">
       <template #body>
         <UForm :schema="insuranceSchema" :state="form" @submit="saveInsurance" class="space-y-5">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-itname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itname:top-0 peer-focus-within/fl-itname:-translate-y-1/2 peer-focus-within/fl-itname:text-xs peer-focus-within/fl-itname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itname:text-[var(--ui-text-highlighted)]">Sigorta Türü Adı <span class="text-red-500">*</span></label>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelect v-model="form.code" :items="codeOptions" value-key="value" placeholder=" " class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.code ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Kategori <span class="text-red-500">*</span></label>
             </div>
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelect v-model="form.branchGroup" :items="groupOptions" value-key="value" placeholder=" " class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.branchGroup ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Grup</label>
             </div>
@@ -168,11 +168,11 @@ function getRowActions(insurance: InsuranceType) {
           <USeparator />
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model.number="form.defaultCommRate" type="number" :min="0" :max="100" placeholder=" " class="w-full peer/fl-itcomm" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itcomm:top-0 peer-focus-within/fl-itcomm:-translate-y-1/2 peer-focus-within/fl-itcomm:text-xs peer-focus-within/fl-itcomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itcomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itcomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itcomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itcomm:text-[var(--ui-text-highlighted)]">Komisyon (%)</label>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model.number="form.renewalDays" type="number" :min="0" :max="90" placeholder=" " class="w-full peer/fl-itdays" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itdays:top-0 peer-focus-within/fl-itdays:-translate-y-1/2 peer-focus-within/fl-itdays:text-xs peer-focus-within/fl-itdays:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itdays:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itdays:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itdays:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itdays:text-[var(--ui-text-highlighted)]">Hatırlatma (gün)</label>
             </div>
@@ -210,10 +210,6 @@ function getRowActions(insurance: InsuranceType) {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 :deep(.sigorta-turleri-table th:nth-child(1)) { width: 220px; min-width: 220px; max-width: 220px; }
 :deep(.sigorta-turleri-table th:nth-child(2)) { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.sigorta-turleri-table th:nth-child(3)) { width: 110px; min-width: 110px; max-width: 110px; }

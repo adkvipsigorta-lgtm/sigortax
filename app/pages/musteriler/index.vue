@@ -585,15 +585,15 @@ async function exportToExcel() {
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">
-            <div class="relative w-[220px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative w-[220px] fl-input">
               <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-csearch" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Müşteri Ara</label>
             </div>
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+            <div class="relative fl-select  w-[180px]">
               <USelect v-model="typeFilter" :items="typeOptions" value-key="value" placeholder=" " class="w-full" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Müşteri Tipi</label>
             </div>
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+            <div class="relative fl-select  w-[180px]">
               <USelect v-model="categoryFilter" :items="categoryFilterOptions" value-key="value" placeholder=" " class="w-full" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Kategori</label>
             </div>
@@ -762,17 +762,17 @@ async function exportToExcel() {
               </div>
             </UFormField>
             <!-- Ad Soyad / Firma Unvanı -->
-            <div class="col-span-2 relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="col-span-2 relative fl-input">
               <UInput :model-value="form.name" placeholder=" " class="w-full peer/fl-mname" @update:model-value="onNameInput" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mname:top-0 peer-focus-within/fl-mname:-translate-y-1/2 peer-focus-within/fl-mname:text-xs peer-focus-within/fl-mname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mname:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Ad Soyad' : 'Firma Unvanı' }} <span class="text-red-500">*</span></label>
             </div>
             <!-- TC / VKN -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput :model-value="form.identityNo" placeholder=" " :maxlength="identityMaxLength" class="w-full peer/fl-mid" @update:model-value="onIdentityInput" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mid:top-0 peer-focus-within/fl-mid:-translate-y-1/2 peer-focus-within/fl-mid:text-xs peer-focus-within/fl-mid:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mid:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mid:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mid:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mid:text-[var(--ui-text-highlighted)]">{{ identityLabel }} <span class="text-red-500">*</span></label>
             </div>
             <!-- Doğum Tarihi / Vergi Dairesi -->
-            <div v-if="isIndividual" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isIndividual" class="relative fl-input">
               <UInput :model-value="birthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-mbdate" @update:model-value="onBirthDateInput($event)">
                 <template #trailing>
                   <UPopover v-model:open="birthDatePopoverOpen">
@@ -785,17 +785,17 @@ async function exportToExcel() {
               </UInput>
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mbdate:top-0 peer-focus-within/fl-mbdate:-translate-y-1/2 peer-focus-within/fl-mbdate:text-xs peer-focus-within/fl-mbdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mbdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mbdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mbdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mbdate:text-[var(--ui-text-highlighted)]">Doğum Tarihi</label>
             </div>
-            <div v-else class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-else class="relative fl-input">
               <UInput v-model="form.taxOffice" placeholder=" " class="w-full peer/fl-mtax" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mtax:top-0 peer-focus-within/fl-mtax:-translate-y-1/2 peer-focus-within/fl-mtax:text-xs peer-focus-within/fl-mtax:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mtax:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mtax:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mtax:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mtax:text-[var(--ui-text-highlighted)]">Vergi Dairesi</label>
             </div>
             <!-- E-posta -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model="form.email" type="email" placeholder=" " class="w-full peer/fl-memail" data-no-uppercase />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-memail:top-0 peer-focus-within/fl-memail:-translate-y-1/2 peer-focus-within/fl-memail:text-xs peer-focus-within/fl-memail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-memail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-memail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-memail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-memail:text-[var(--ui-text-highlighted)]">E-posta</label>
             </div>
             <!-- Meslek / Yetkili Kişi -->
-            <div v-if="isIndividual ? showField('job') : true" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isIndividual ? showField('job') : true" class="relative fl-input">
               <UInput v-if="isIndividual" v-model="form.job" placeholder=" " class="w-full peer/fl-mjob" />
               <UInput v-else v-model="form.contactPerson" placeholder=" " class="w-full peer/fl-mjob" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mjob:top-0 peer-focus-within/fl-mjob:-translate-y-1/2 peer-focus-within/fl-mjob:text-xs peer-focus-within/fl-mjob:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mjob:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mjob:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mjob:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mjob:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Meslek' : 'Yetkili Kişi' }}</label>
@@ -809,42 +809,42 @@ async function exportToExcel() {
             </div>
             <!-- Medeni Durum / Sektör -->
             <div v-if="isIndividual ? showField('marital_status') : showField('sector')">
-              <div v-if="isIndividual" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div v-if="isIndividual" class="relative fl-select ">
                 <USelect v-model="form.maritalStatus" :items="maritalOptions" value-key="value" placeholder=" " class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.maritalStatus ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Medeni Durum</label>
               </div>
-              <div v-else class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div v-else class="relative fl-input">
                 <UInput v-model="form.sector" placeholder=" " class="w-full peer/fl-msec" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-msec:top-0 peer-focus-within/fl-msec:-translate-y-1/2 peer-focus-within/fl-msec:text-xs peer-focus-within/fl-msec:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-msec:top-0 peer-has-[input:not(:placeholder-shown)]/fl-msec:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-msec:text-xs peer-has-[input:not(:placeholder-shown)]/fl-msec:text-[var(--ui-text-highlighted)]">Sektör</label>
               </div>
             </div>
             <!-- Çocuk / Çalışan Sayısı -->
-            <div v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" class="relative fl-input">
               <UInput v-model.number="form.dependentsCount" type="number" :min="0" placeholder=" " class="w-full peer/fl-mdep" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mdep:top-0 peer-focus-within/fl-mdep:-translate-y-1/2 peer-focus-within/fl-mdep:text-xs peer-focus-within/fl-mdep:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mdep:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mdep:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mdep:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mdep:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Çocuk Sayısı' : 'Çalışan Sayısı' }}</label>
             </div>
             <!-- Konum -->
             <template v-if="showField('city')">
-              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative fl-select ">
                 <USelectMenu v-model="form.countryId" :items="countryOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.countryId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Ülke</label>
               </div>
-              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative fl-select ">
                 <USelectMenu v-model="form.city" :items="cityOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.countryId" class="w-full" @update:search-term="(v: string) => citySearch = v" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.city ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şehir</label>
               </div>
-              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative fl-select ">
                 <USelectMenu v-model="form.district" :items="districtOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.city" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.district ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">İlçe</label>
               </div>
             </template>
             <!-- Adres -->
-            <div v-if="showField('address')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="showField('address')" class="relative fl-input">
               <UInput v-model="form.address" placeholder=" " class="w-full peer/fl-maddr" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-maddr:top-0 peer-focus-within/fl-maddr:-translate-y-1/2 peer-focus-within/fl-maddr:text-xs peer-focus-within/fl-maddr:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-maddr:top-0 peer-has-[input:not(:placeholder-shown)]/fl-maddr:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-maddr:text-xs peer-has-[input:not(:placeholder-shown)]/fl-maddr:text-[var(--ui-text-highlighted)]">Adres</label>
             </div>
             <!-- Not -->
-            <div v-if="showField('note')" class="col-span-2 relative [&_textarea]:!pt-5 [&_textarea]:!pb-2.5">
+            <div v-if="showField('note')" class="col-span-2 relative fl-input">
               <UTextarea v-model="form.note" :rows="2" placeholder=" " class="w-full peer/fl-mnote" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.note ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Not</label>
             </div>
@@ -876,10 +876,6 @@ async function exportToExcel() {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 /* Kolon genişliklerini table-fixed ile kilitler — sayfa değiştirince yer kayması olmaz */
 :deep(.musteriler-table th:nth-child(1)) { width: 80px;  min-width: 80px;  max-width: 80px;  }
 :deep(.musteriler-table th:nth-child(2)) { width: 200px; min-width: 200px; max-width: 200px; }

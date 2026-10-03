@@ -148,7 +148,7 @@ function formatDate(date: string): string {
 
         <div class="space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-end gap-3">
-            <div class="relative flex-1 sm:max-w-[200px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative flex-1 sm:max-w-[200px] fl-input">
               <UInput v-model.number="timeout" type="number" :min="5" :max="480" placeholder=" " class="w-full peer/fl-ltimeout" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ltimeout:top-0 peer-focus-within/fl-ltimeout:-translate-y-1/2 peer-focus-within/fl-ltimeout:text-xs peer-focus-within/fl-ltimeout:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:text-[var(--ui-text-highlighted)]">Süre (dakika)</label>
             </div>
@@ -203,7 +203,7 @@ function formatDate(date: string): string {
           <div>
             <p class="text-sm font-medium mb-2">API Anahtarı</p>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <div class="relative flex-1 [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative flex-1 fl-input">
                 <UInput :model-value="webhookApiKey" readonly class="w-full font-mono peer/fl-wkey" placeholder=" " />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-wkey:top-0 peer-focus-within/fl-wkey:-translate-y-1/2 peer-focus-within/fl-wkey:text-xs peer-focus-within/fl-wkey:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-wkey:top-0 peer-has-[input:not(:placeholder-shown)]/fl-wkey:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-wkey:text-xs peer-has-[input:not(:placeholder-shown)]/fl-wkey:text-[var(--ui-text-highlighted)]">Webhook API Key</label>
               </div>
@@ -246,11 +246,11 @@ function formatDate(date: string): string {
     <UModal v-model:open="addHolidayOpen" title="Tatil Ekle" class="sm:max-w-sm">
       <template #body>
         <form @submit.prevent="addHoliday" class="space-y-5">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="holidayForm.name" placeholder=" " class="w-full peer/fl-hname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-hname:top-0 peer-focus-within/fl-hname:-translate-y-1/2 peer-focus-within/fl-hname:text-xs peer-focus-within/fl-hname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-hname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-hname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-hname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-hname:text-[var(--ui-text-highlighted)]">Tatil Adı <span class="text-red-500">*</span></label>
           </div>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput :model-value="holidayDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-hdate" @keydown="preventNonDigitKey" @update:model-value="onHolidayDateInput">
               <template #trailing>
                 <UPopover v-model:open="holidayDatePopoverOpen">

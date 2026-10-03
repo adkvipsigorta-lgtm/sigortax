@@ -145,7 +145,7 @@ function getRowActions(branch: Branch) {
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative w-full sm:w-[250px] fl-input">
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-bsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bsearch:top-0 peer-focus-within/fl-bsearch:-translate-y-1/2 peer-focus-within/fl-bsearch:text-xs peer-focus-within/fl-bsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bsearch:text-[var(--ui-text-highlighted)]">Acente Ara</label>
           </div>
@@ -203,15 +203,15 @@ function getRowActions(branch: Branch) {
         <UForm :schema="branchSchema" :state="form" @submit="saveBranch" class="space-y-5">
           <!-- Acente Bilgileri -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5 sm:col-span-2">
+            <div class="relative fl-input sm:col-span-2">
               <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-bname" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bname:top-0 peer-focus-within/fl-bname:-translate-y-1/2 peer-focus-within/fl-bname:text-xs peer-focus-within/fl-bname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bname:text-[var(--ui-text-highlighted)]">Acente Adı <span class="text-red-500">*</span></label>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model.number="form.commissionRate" type="number" :min="0" :max="100" placeholder=" " class="w-full peer/fl-bcomm" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bcomm:top-0 peer-focus-within/fl-bcomm:-translate-y-1/2 peer-focus-within/fl-bcomm:text-xs peer-focus-within/fl-bcomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bcomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bcomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bcomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bcomm:text-[var(--ui-text-highlighted)]">Komisyon (%) <span class="text-red-500">*</span></label>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model="form.phone" placeholder=" " class="w-full peer/fl-bphone" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bphone:top-0 peer-focus-within/fl-bphone:-translate-y-1/2 peer-focus-within/fl-bphone:text-xs peer-focus-within/fl-bphone:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bphone:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bphone:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bphone:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bphone:text-[var(--ui-text-highlighted)]">Telefon</label>
             </div>
@@ -220,7 +220,7 @@ function getRowActions(branch: Branch) {
           <USeparator />
 
           <!-- IBAN -->
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="form.iban" placeholder=" " class="w-full font-mono peer/fl-biban" maxlength="32" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-biban:top-0 peer-focus-within/fl-biban:-translate-y-1/2 peer-focus-within/fl-biban:text-xs peer-focus-within/fl-biban:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-biban:top-0 peer-has-[input:not(:placeholder-shown)]/fl-biban:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-biban:text-xs peer-has-[input:not(:placeholder-shown)]/fl-biban:text-[var(--ui-text-highlighted)]">IBAN</label>
           </div>
@@ -241,7 +241,7 @@ function getRowActions(branch: Branch) {
             </div>
 
             <div class="flex gap-2">
-              <div class="relative flex-1 [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative flex-1 fl-input">
                 <UInput v-model="newAlias" placeholder=" " class="w-full peer/fl-balias" @keydown.enter.prevent="addAlias" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-balias:top-0 peer-focus-within/fl-balias:-translate-y-1/2 peer-focus-within/fl-balias:text-xs peer-focus-within/fl-balias:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-balias:top-0 peer-has-[input:not(:placeholder-shown)]/fl-balias:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-balias:text-xs peer-has-[input:not(:placeholder-shown)]/fl-balias:text-[var(--ui-text-highlighted)]">Resmî unvan / alt şirket adı</label>
               </div>

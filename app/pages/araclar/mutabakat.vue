@@ -190,22 +190,22 @@ function exportCsv() {
     <!-- Filtre Kartı -->
     <UCard>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div class="col-span-2 sm:col-span-1 relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="col-span-2 sm:col-span-1 relative fl-select ">
           <USelectMenu v-model="selectedBranchId" :items="branchOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
           <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', selectedBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Tali Acente</label>
         </div>
 
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedYear" :items="yearOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Yıl</label>
         </div>
 
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Ay</label>
         </div>
 
-        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+        <div class="relative fl-select ">
           <USelect v-model="selectedDateType" :items="dateTypeOptions" value-key="value" placeholder=" " class="w-full" />
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
         </div>
@@ -502,10 +502,6 @@ function exportCsv() {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 :deep(.mutabakat-table th:nth-child(1))  { width: 140px; min-width: 140px; max-width: 140px; }
 :deep(.mutabakat-table th:nth-child(2))  { width: 130px; min-width: 130px; max-width: 130px; }
 :deep(.mutabakat-table th:nth-child(3))  { width: 110px; min-width: 110px; max-width: 110px; }

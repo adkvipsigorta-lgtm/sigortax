@@ -313,8 +313,8 @@ function getStatusColor(s: string) {
                   @click="activeTab = 'templates'"
                 >Şablonlar</button>
               </div>
-              <USelect v-model="filterChannel" :items="channelOptions" size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" />
-              <USelect v-model="filterStatus" :items="statusOptions" size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" />
+              <USelect v-model="filterChannel" :items="channelOptions" size="xs" :ui="{ base: 'h-[38px]' }" class="w-[180px]" />
+              <USelect v-model="filterStatus" :items="statusOptions" size="xs" :ui="{ base: 'h-[38px]' }" class="w-[180px]" />
             </div>
           </div>
         </div>

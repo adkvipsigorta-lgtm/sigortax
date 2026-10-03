@@ -408,8 +408,8 @@ const stats = computed(() => {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 >Poliçeler</h3>
             <div class="flex items-center gap-3">
-              <USelect v-model="policyDateType" :items="[{ label: 'Tanzim Tarihi', value: 'issued_at' }, { label: 'Başlangıç Tarihi', value: 'starts_at' }]" size="xs" class="w-[180px] h-[30px]" />
-              <div class="flex items-center gap-1 border border-gray-300 dark:border-gray-700 rounded-lg px-2 h-[30px]">
+              <USelect v-model="policyDateType" :items="[{ label: 'Tanzim Tarihi', value: 'issued_at' }, { label: 'Başlangıç Tarihi', value: 'starts_at' }]" size="xs" class="w-[180px] h-[38px]" />
+              <div class="flex items-center gap-1 border border-gray-300 dark:border-gray-700 rounded-lg px-2 h-[38px]">
                 <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
                 <span class="text-xs font-medium min-w-[110px] text-center whitespace-nowrap">{{ monthLabel }}</span>
                 <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />

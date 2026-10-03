@@ -76,7 +76,7 @@ watch(countryCode, (val) => {
 <template>
   <div class="flex gap-2">
     <!-- Alan Kodu: USelectMenu, tam isim gösterilir, sığmazsa ... olmadan kesilir -->
-    <div class="relative w-24 shrink-0 [&_button]:!pt-5 [&_button]:!pb-2.5 [&_.truncate]:[text-overflow:clip] [&_.truncate]:!font-semibold">
+    <div class="relative w-24 shrink-0 fl-select [&_.truncate]:[text-overflow:clip]">
       <USelectMenu
         v-model="countryCode"
         :items="codeOptions"
@@ -92,7 +92,7 @@ watch(countryCode, (val) => {
       </label>
     </div>
     <!-- Telefon Numarası: floating label UInput -->
-    <div class="relative flex-1 [&_input]:!pt-5 [&_input]:!pb-2.5">
+    <div class="relative flex-1 fl-input">
       <UInput
         :model-value="displayValue"
         type="tel"

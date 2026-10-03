@@ -1121,7 +1121,7 @@ async function savePolicy() {
           <!-- Müşteri -->
           <UFormField :class="['col-span-12', pdfHighlight('customerId')]" name="customerId">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="form.customerId"
                 :items="customerOptions"
@@ -1177,21 +1177,21 @@ async function savePolicy() {
           <!-- Üretim Türü | Tali Acente (koşullu) | Poliçe Türü -->
           <UFormField name="productionType" :class="[showBranchField ? 'col-span-4' : 'col-span-6', pdfHighlight('productionType')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelect v-model="form.productionType" :items="prodOptions" value-key="value" placeholder=" " class="w-full" :disabled="isReconciled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.productionType ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Üretim Yeri <span class="text-[var(--ui-error)]">*</span></label>
             </div>
           </UFormField>
           <UFormField v-if="showBranchField" name="branchId" class="col-span-4">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.branchId" :items="branchOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" :disabled="isReconciled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.branchId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Tali Acente <span class="text-[var(--ui-error)]">*</span></label>
             </div>
           </UFormField>
           <UFormField name="insuranceId" :class="[showBranchField ? 'col-span-4' : 'col-span-6', pdfHighlight('insuranceId')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.insuranceId" :items="insuranceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" :disabled="isReconciled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.insuranceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Poliçe Türü <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1200,14 +1200,14 @@ async function savePolicy() {
           <!-- Sigorta Şirketi | Poliçe Numarası -->
           <UFormField name="companyId" :class="['col-span-6', pdfHighlight('companyId')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.companyId" :items="companyOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" :disabled="isReconciled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.companyId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Sigorta Şirketi <span class="text-[var(--ui-error)]">*</span></label>
             </div>
           </UFormField>
           <UFormField name="policyNo" :class="['col-span-6', pdfHighlight('policyNo')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.policyNo" placeholder=" " class="w-full peer/fl-polyno" :loading="policyNoChecking" :disabled="isReconciled" @blur="checkPolicyNoDuplicate" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polyno:top-0 peer-focus-within/fl-polyno:-translate-y-1/2 peer-focus-within/fl-polyno:text-xs peer-focus-within/fl-polyno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polyno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polyno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polyno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polyno:text-[var(--ui-text-highlighted)]">Poliçe Numarası <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1217,21 +1217,21 @@ async function savePolicy() {
           <!-- İş Türü | Kaynak (sadece Yeni İş) | Satış Temsilcisi -->
           <UFormField name="businessType" :class="[form.businessType && referenceSourceOptions.length > 0 ? 'col-span-4' : 'col-span-6', pdfHighlight('businessType')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelect v-model="form.businessType" :items="businessTypeOptions" placeholder=" " class="w-full" :disabled="isReconciled || form.isCancelled" @update:model-value="form.referenceSource = undefined" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.businessType ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">İş Türü</label>
             </div>
           </UFormField>
           <UFormField v-if="form.businessType && referenceSourceOptions.length > 0" name="referenceSource" :class="['col-span-4', pdfHighlight('referenceSource')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.referenceSource" :items="referenceSourceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" :disabled="isReconciled || form.isCancelled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.referenceSource ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Kaynak</label>
             </div>
           </UFormField>
           <UFormField name="soldBy" :class="[form.businessType && referenceSourceOptions.length > 0 ? 'col-span-4' : 'col-span-6', pdfHighlight('soldBy')]">
             <template #label />
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.soldBy" :items="userOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" :disabled="isReconciled || form.isCancelled" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.soldBy ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Satış Temsilcisi</label>
             </div>
@@ -1241,7 +1241,7 @@ async function savePolicy() {
           <template v-if="isFieldEnabled('policy_insured_name') || isFieldEnabled('policy_insured_no')">
             <UFormField v-if="isFieldEnabled('policy_insured_name')" :class="isFieldEnabled('policy_insured_no') ? 'col-span-6' : 'col-span-12'">
               <template #label />
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="form.insuredName" placeholder=" " class="w-full peer/fl-insured" :disabled="isReconciled" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-insured:top-0 peer-focus-within/fl-insured:-translate-y-1/2 peer-focus-within/fl-insured:text-xs peer-focus-within/fl-insured:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-insured:top-0 peer-has-[input:not(:placeholder-shown)]/fl-insured:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-insured:text-xs peer-has-[input:not(:placeholder-shown)]/fl-insured:text-[var(--ui-text-highlighted)]">Sigorta Ettiren</label>
               </div>
@@ -1253,7 +1253,7 @@ async function savePolicy() {
 
           <UFormField name="issuedAt" :class="['col-span-4', pdfHighlight('issuedAt')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="issuedAtDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-issued" :disabled="isReconciled" @keydown="preventNonDigitKey" @update:model-value="onDateInput('issuedAt', $event)">
                 <template #trailing>
                   <UPopover v-model:open="issuedAtPopoverOpen">
@@ -1269,7 +1269,7 @@ async function savePolicy() {
           </UFormField>
           <UFormField name="startsAt" :class="['col-span-4', pdfHighlight('startsAt')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="startsAtDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-starts" :disabled="isReconciled" @keydown="preventNonDigitKey" @update:model-value="onDateInput('startsAt', $event)">
                 <template #trailing>
                   <UPopover v-model:open="startsAtPopoverOpen">
@@ -1285,7 +1285,7 @@ async function savePolicy() {
           </UFormField>
           <UFormField name="expiresAt" :class="['col-span-4', pdfHighlight('expiresAt')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="expiresAtDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-expires" :disabled="isReconciled" @keydown="preventNonDigitKey" @update:model-value="onDateInput('expiresAt', $event)">
                 <template #trailing>
                   <UPopover v-model:open="expiresAtPopoverOpen">
@@ -1306,31 +1306,31 @@ async function savePolicy() {
               <span class="text-xs font-semibold text-muted uppercase tracking-wider">Araç Bilgileri</span>
               <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
             </div>
-            <div :class="['relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5', pdfHighlight('plateNo')]">
+            <div :class="['relative col-span-6 fl-form', pdfHighlight('plateNo')]">
               <UInput :model-value="form.plateNo" placeholder=" " class="w-full peer/fl-plate" @update:model-value="onPlateInput" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-plate:top-0 peer-focus-within/fl-plate:-translate-y-1/2 peer-focus-within/fl-plate:text-xs peer-focus-within/fl-plate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-plate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-plate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-plate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-plate:text-[var(--ui-text-highlighted)]">Plaka</label>
             </div>
-            <div :class="['relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5', pdfHighlight('registrationNo')]">
+            <div :class="['relative col-span-6 fl-form', pdfHighlight('registrationNo')]">
               <UInput v-model="form.registrationNo" placeholder=" " class="w-full peer/fl-regno" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-regno:top-0 peer-focus-within/fl-regno:-translate-y-1/2 peer-focus-within/fl-regno:text-xs peer-focus-within/fl-regno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-regno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-regno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-regno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-regno:text-[var(--ui-text-highlighted)]">Ruhsat Seri No</label>
             </div>
-            <div v-if="isFieldEnabled('chassis_no')" class="relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isFieldEnabled('chassis_no')" class="relative col-span-6 fl-form">
               <UInput v-model="form.chassisNo" placeholder=" " class="w-full peer/fl-chassis" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-chassis:top-0 peer-focus-within/fl-chassis:-translate-y-1/2 peer-focus-within/fl-chassis:text-xs peer-focus-within/fl-chassis:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-chassis:top-0 peer-has-[input:not(:placeholder-shown)]/fl-chassis:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-chassis:text-xs peer-has-[input:not(:placeholder-shown)]/fl-chassis:text-[var(--ui-text-highlighted)]">Şasi No</label>
             </div>
-            <div v-if="isFieldEnabled('engine_no')" class="relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isFieldEnabled('engine_no')" class="relative col-span-6 fl-form">
               <UInput v-model="form.engineNo" placeholder=" " class="w-full peer/fl-engine" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-engine:top-0 peer-focus-within/fl-engine:-translate-y-1/2 peer-focus-within/fl-engine:text-xs peer-focus-within/fl-engine:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-engine:top-0 peer-has-[input:not(:placeholder-shown)]/fl-engine:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-engine:text-xs peer-has-[input:not(:placeholder-shown)]/fl-engine:text-[var(--ui-text-highlighted)]">Motor No</label>
             </div>
-            <div v-if="isFieldEnabled('policy_brand')" class="relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isFieldEnabled('policy_brand')" class="relative col-span-6 fl-form">
               <UInput v-model="form.vehicleBrand" placeholder=" " class="w-full peer/fl-brand" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-brand:top-0 peer-focus-within/fl-brand:-translate-y-1/2 peer-focus-within/fl-brand:text-xs peer-focus-within/fl-brand:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-brand:top-0 peer-has-[input:not(:placeholder-shown)]/fl-brand:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-brand:text-xs peer-has-[input:not(:placeholder-shown)]/fl-brand:text-[var(--ui-text-highlighted)]">Marka</label>
             </div>
-            <div v-if="isFieldEnabled('policy_model')" class="relative col-span-6 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isFieldEnabled('policy_model')" class="relative col-span-6 fl-form">
               <UInput v-model="form.vehicleModel" placeholder=" " class="w-full peer/fl-model" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-model:top-0 peer-focus-within/fl-model:-translate-y-1/2 peer-focus-within/fl-model:text-xs peer-focus-within/fl-model:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-model:top-0 peer-has-[input:not(:placeholder-shown)]/fl-model:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-model:text-xs peer-has-[input:not(:placeholder-shown)]/fl-model:text-[var(--ui-text-highlighted)]">Model</label>
             </div>
-            <div v-if="isFieldEnabled('vehicle_year')" :class="['relative [&_input]:!pt-5 [&_input]:!pb-2.5', trafficFieldCount % 2 === 1 ? 'col-span-12' : 'col-span-6']">
+            <div v-if="isFieldEnabled('vehicle_year')" :class="['relative fl-form', trafficFieldCount % 2 === 1 ? 'col-span-12' : 'col-span-6']">
               <UInput v-model="form.vehicleYear" placeholder=" " class="w-full peer/fl-year" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-year:top-0 peer-focus-within/fl-year:-translate-y-1/2 peer-focus-within/fl-year:text-xs peer-focus-within/fl-year:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-year:top-0 peer-has-[input:not(:placeholder-shown)]/fl-year:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-year:text-xs peer-has-[input:not(:placeholder-shown)]/fl-year:text-[var(--ui-text-highlighted)]">Model Yılı</label>
             </div>
@@ -1342,7 +1342,7 @@ async function savePolicy() {
               <span class="text-xs font-semibold text-muted uppercase tracking-wider">Konut Bilgileri</span>
               <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
             </div>
-            <div class="relative col-span-12 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative col-span-12 fl-form">
               <UInput v-model="form.uavtCode" placeholder=" " class="w-full peer/fl-uavt" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uavt:top-0 peer-focus-within/fl-uavt:-translate-y-1/2 peer-focus-within/fl-uavt:text-xs peer-focus-within/fl-uavt:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uavt:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uavt:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uavt:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uavt:text-[var(--ui-text-highlighted)]">UAVT Kodu</label>
             </div>
@@ -1354,11 +1354,11 @@ async function savePolicy() {
               <span class="text-xs font-semibold text-muted uppercase tracking-wider">DASK Bilgileri</span>
               <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
             </div>
-            <div v-if="isFieldEnabled('policy_uavt')" :class="['relative [&_input]:!pt-5 [&_input]:!pb-2.5', !isFieldEnabled('dask_no') ? 'col-span-12' : 'col-span-6']">
+            <div v-if="isFieldEnabled('policy_uavt')" :class="['relative fl-form', !isFieldEnabled('dask_no') ? 'col-span-12' : 'col-span-6']">
               <UInput v-model="form.uavtCode" placeholder=" " class="w-full peer/fl-uavt2" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uavt2:top-0 peer-focus-within/fl-uavt2:-translate-y-1/2 peer-focus-within/fl-uavt2:text-xs peer-focus-within/fl-uavt2:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uavt2:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-[var(--ui-text-highlighted)]">UAVT Kodu</label>
             </div>
-            <div v-if="isFieldEnabled('dask_no')" :class="['relative [&_input]:!pt-5 [&_input]:!pb-2.5', !isFieldEnabled('policy_uavt') ? 'col-span-12' : 'col-span-6']">
+            <div v-if="isFieldEnabled('dask_no')" :class="['relative fl-form', !isFieldEnabled('policy_uavt') ? 'col-span-12' : 'col-span-6']">
               <UInput v-model="form.daskNo" placeholder=" " class="w-full peer/fl-dask" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-dask:top-0 peer-focus-within/fl-dask:-translate-y-1/2 peer-focus-within/fl-dask:text-xs peer-focus-within/fl-dask:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-dask:top-0 peer-has-[input:not(:placeholder-shown)]/fl-dask:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-dask:text-xs peer-has-[input:not(:placeholder-shown)]/fl-dask:text-[var(--ui-text-highlighted)]">DASK Poliçe No</label>
             </div>
@@ -1372,7 +1372,7 @@ async function savePolicy() {
             </div>
             <UFormField v-if="isFieldEnabled('policy_network')" class="col-span-12">
               <template #label />
-              <div class="relative select-fl [&_.truncate]:!font-semibold">
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelect v-model="form.network" :items="[{ label: 'Geniş', value: 'GENIS' }, { label: 'Dar', value: 'DAR' }]" value-key="value" placeholder=" " class="w-full" :disabled="isReconciled" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.network ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Network</label>
               </div>
@@ -1384,21 +1384,21 @@ async function savePolicy() {
 
           <UFormField name="grossPremium" :class="[showBranchCommField ? 'col-span-3' : 'col-span-4', pdfHighlight('grossPremium')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="grossDisplay" placeholder=" " class="w-full peer/fl-gross" :disabled="isReconciled" @update:model-value="onGrossInput" @blur="onGrossBlur" @paste="onGrossPaste" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gross:top-0 peer-focus-within/fl-gross:-translate-y-1/2 peer-focus-within/fl-gross:text-xs peer-focus-within/fl-gross:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gross:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gross:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gross:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gross:text-[var(--ui-text-highlighted)]">Brüt Prim <span class="text-[var(--ui-error)]">*</span></label>
             </div>
           </UFormField>
           <UFormField name="netPremium" :class="[showBranchCommField ? 'col-span-3' : 'col-span-4', pdfHighlight('netPremium')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="netDisplay" placeholder=" " class="w-full peer/fl-net" :disabled="isReconciled" @update:model-value="onNetInput" @blur="onNetBlur" @paste="onNetPaste" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-net:top-0 peer-focus-within/fl-net:-translate-y-1/2 peer-focus-within/fl-net:text-xs peer-focus-within/fl-net:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-net:top-0 peer-has-[input:not(:placeholder-shown)]/fl-net:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-net:text-xs peer-has-[input:not(:placeholder-shown)]/fl-net:text-[var(--ui-text-highlighted)]">Net Prim <span class="text-[var(--ui-error)]">*</span></label>
             </div>
           </UFormField>
           <UFormField v-if="!commissionAsAmount" name="companyCommRate" :class="[showBranchCommField ? 'col-span-3' : 'col-span-4', pdfHighlight('companyCommRate')]">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.companyCommRate || ''" type="number" step="0.01" :min="0" :max="100" placeholder=" " class="w-full peer/fl-comm" :disabled="isReconciled" @keydown="preventNumberFieldInvalidKey" @paste="onNumberPaste" @update:model-value="(v) => { form.companyCommRate = v === '' ? 0 : Number(v); syncCommFromRate() }" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-comm:top-0 peer-focus-within/fl-comm:-translate-y-1/2 peer-focus-within/fl-comm:text-xs peer-focus-within/fl-comm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-comm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-comm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-comm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-comm:text-[var(--ui-text-highlighted)]">Komisyon Oranı (%) <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1410,7 +1410,7 @@ async function savePolicy() {
           </UFormField>
           <UFormField v-else name="companyCommAmount" :class="showBranchCommField ? 'col-span-3' : 'col-span-4'">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.companyCommAmount || ''" type="number" step="0.01" :min="form.isZeyil ? undefined : 0" placeholder=" " class="w-full peer/fl-commamt" :disabled="isReconciled" @keydown="preventNumberFieldInvalidKey" @paste="onNumberPaste" @update:model-value="(v) => { form.companyCommAmount = v === '' ? 0 : Number(v); syncCommFromAmount() }" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-commamt:top-0 peer-focus-within/fl-commamt:-translate-y-1/2 peer-focus-within/fl-commamt:text-xs peer-focus-within/fl-commamt:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-commamt:top-0 peer-has-[input:not(:placeholder-shown)]/fl-commamt:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-commamt:text-xs peer-has-[input:not(:placeholder-shown)]/fl-commamt:text-[var(--ui-text-highlighted)]">Komisyon Tutarı (₺) <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1418,14 +1418,14 @@ async function savePolicy() {
           <!-- Tali Acente Komisyonu -->
           <UFormField v-if="showBranchCommField && !commissionAsAmount" name="branchCommRate" class="col-span-3">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.branchCommRate || ''" type="number" step="0.01" :min="0" :max="100" placeholder=" " class="w-full peer/fl-bcomm" :disabled="isReconciled" @keydown="preventNumberFieldInvalidKey" @paste="onNumberPaste" @update:model-value="(v) => { form.branchCommRate = v === '' ? 0 : Number(v); syncBranchFromRate() }" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bcomm:top-0 peer-focus-within/fl-bcomm:-translate-y-1/2 peer-focus-within/fl-bcomm:text-xs peer-focus-within/fl-bcomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bcomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bcomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bcomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bcomm:text-[var(--ui-text-highlighted)]">Tali Acente Kom. (%)</label>
             </div>
           </UFormField>
           <UFormField v-else-if="showBranchCommField" name="branchCommAmount" class="col-span-3">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.branchCommAmount || ''" type="number" step="0.01" :min="form.isZeyil ? undefined : 0" placeholder=" " class="w-full peer/fl-bcommamt" :disabled="isReconciled" @keydown="preventNumberFieldInvalidKey" @paste="onNumberPaste" @update:model-value="(v) => { form.branchCommAmount = v === '' ? 0 : Number(v); syncBranchFromAmount() }" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bcommamt:top-0 peer-focus-within/fl-bcommamt:-translate-y-1/2 peer-focus-within/fl-bcommamt:text-xs peer-focus-within/fl-bcommamt:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bcommamt:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bcommamt:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bcommamt:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bcommamt:text-[var(--ui-text-highlighted)]">Tali Acente Kom. (₺)</label>
             </div>
@@ -1433,7 +1433,7 @@ async function savePolicy() {
 
           <div v-if="isFieldEnabled('policy_zeyil_checkbox')" class="col-span-12 flex items-center gap-3">
             <UCheckbox v-model="form.isZeyil" label="Zeyil olarak kaydet" :disabled="isReconciled" />
-            <div v-if="form.isZeyil" class="relative w-24 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="form.isZeyil" class="relative w-24 fl-form">
               <UInput v-model.number="form.endorsementNo" type="number" :min="2" placeholder=" " class="w-full peer/fl-zeyil" :disabled="isReconciled" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-zeyil:top-0 peer-focus-within/fl-zeyil:-translate-y-1/2 peer-focus-within/fl-zeyil:text-xs peer-focus-within/fl-zeyil:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-zeyil:top-0 peer-has-[input:not(:placeholder-shown)]/fl-zeyil:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-zeyil:text-xs peer-has-[input:not(:placeholder-shown)]/fl-zeyil:text-[var(--ui-text-highlighted)]">No</label>
             </div>
@@ -1529,10 +1529,6 @@ async function savePolicy() {
 }
 :deep(input[type=number]) {
   -moz-appearance: textfield;
-}
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
 }
 .policy-form :deep(p:not(.text-amber-700):not(.text-amber-300)) {
   font-size: 0.7rem !important;

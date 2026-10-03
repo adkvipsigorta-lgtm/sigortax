@@ -564,7 +564,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
 
           <!-- ===== TEKLİF FORMU ===== -->
           <template v-if="activeTab === 'OFFER'">
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="form.customerId"
                 :items="customerOptions"
@@ -595,7 +595,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <div class="relative select-fl [&_.truncate]:!font-semibold">
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu
                   v-model="form.insuranceId"
                   :items="insuranceOptions"
@@ -609,7 +609,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.insuranceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Sigorta Türü <span class="text-[var(--ui-error)]">*</span></label>
               </div>
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput :model-value="finishDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-finish" @keydown="preventNonDigitKey" @update:model-value="onFinishDateInput">
                   <template #trailing>
                     <UPopover v-model:open="finishDateOpen">
@@ -631,31 +631,31 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
               <div class="grid grid-cols-2 gap-3">
-                <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div class="relative fl-form">
                   <UInput :model-value="form.plateNo" placeholder=" " class="w-full peer/fl-plate" @update:model-value="onPlateInput" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-plate:top-0 peer-focus-within/fl-plate:-translate-y-1/2 peer-focus-within/fl-plate:text-xs peer-focus-within/fl-plate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-plate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-plate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-plate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-plate:text-[var(--ui-text-highlighted)]">Plaka</label>
                 </div>
-                <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div class="relative fl-form">
                   <UInput v-model="form.registrationNo" placeholder=" " class="w-full peer/fl-regno" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-regno:top-0 peer-focus-within/fl-regno:-translate-y-1/2 peer-focus-within/fl-regno:text-xs peer-focus-within/fl-regno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-regno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-regno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-regno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-regno:text-[var(--ui-text-highlighted)]">Ruhsat Seri No</label>
                 </div>
-                <div v-if="isFieldEnabled('chassis_no')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('chassis_no')" class="relative fl-form">
                   <UInput v-model="form.chassisNo" placeholder=" " class="w-full peer/fl-chassis" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-chassis:top-0 peer-focus-within/fl-chassis:-translate-y-1/2 peer-focus-within/fl-chassis:text-xs peer-focus-within/fl-chassis:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-chassis:top-0 peer-has-[input:not(:placeholder-shown)]/fl-chassis:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-chassis:text-xs peer-has-[input:not(:placeholder-shown)]/fl-chassis:text-[var(--ui-text-highlighted)]">Şasi No</label>
                 </div>
-                <div v-if="isFieldEnabled('engine_no')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('engine_no')" class="relative fl-form">
                   <UInput v-model="form.engineNo" placeholder=" " class="w-full peer/fl-engine" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-engine:top-0 peer-focus-within/fl-engine:-translate-y-1/2 peer-focus-within/fl-engine:text-xs peer-focus-within/fl-engine:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-engine:top-0 peer-has-[input:not(:placeholder-shown)]/fl-engine:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-engine:text-xs peer-has-[input:not(:placeholder-shown)]/fl-engine:text-[var(--ui-text-highlighted)]">Motor No</label>
                 </div>
-                <div v-if="isFieldEnabled('policy_brand')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('policy_brand')" class="relative fl-form">
                   <UInput v-model="form.vehicleBrand" placeholder=" " class="w-full peer/fl-brand" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-brand:top-0 peer-focus-within/fl-brand:-translate-y-1/2 peer-focus-within/fl-brand:text-xs peer-focus-within/fl-brand:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-brand:top-0 peer-has-[input:not(:placeholder-shown)]/fl-brand:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-brand:text-xs peer-has-[input:not(:placeholder-shown)]/fl-brand:text-[var(--ui-text-highlighted)]">Marka</label>
                 </div>
-                <div v-if="isFieldEnabled('policy_model')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('policy_model')" class="relative fl-form">
                   <UInput v-model="form.vehicleModel" placeholder=" " class="w-full peer/fl-model" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-model:top-0 peer-focus-within/fl-model:-translate-y-1/2 peer-focus-within/fl-model:text-xs peer-focus-within/fl-model:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-model:top-0 peer-has-[input:not(:placeholder-shown)]/fl-model:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-model:text-xs peer-has-[input:not(:placeholder-shown)]/fl-model:text-[var(--ui-text-highlighted)]">Model</label>
                 </div>
-                <div v-if="isFieldEnabled('vehicle_year')" :class="['relative [&_input]:!pt-5 [&_input]:!pb-2.5', trafficFieldCount % 2 === 1 ? 'col-span-2' : '']">
+                <div v-if="isFieldEnabled('vehicle_year')" :class="['relative fl-form', trafficFieldCount % 2 === 1 ? 'col-span-2' : '']">
                   <UInput v-model="form.vehicleYear" placeholder=" " class="w-full peer/fl-year" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-year:top-0 peer-focus-within/fl-year:-translate-y-1/2 peer-focus-within/fl-year:text-xs peer-focus-within/fl-year:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-year:top-0 peer-has-[input:not(:placeholder-shown)]/fl-year:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-year:text-xs peer-has-[input:not(:placeholder-shown)]/fl-year:text-[var(--ui-text-highlighted)]">Model Yılı</label>
                 </div>
@@ -668,7 +668,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <span class="text-xs font-semibold text-muted uppercase tracking-wider">Konut Bilgileri</span>
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="form.uavtCode" placeholder=" " class="w-full peer/fl-uavt" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uavt:top-0 peer-focus-within/fl-uavt:-translate-y-1/2 peer-focus-within/fl-uavt:text-xs peer-focus-within/fl-uavt:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uavt:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uavt:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uavt:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uavt:text-[var(--ui-text-highlighted)]">UAVT Kodu</label>
               </div>
@@ -681,11 +681,11 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
               <div class="grid gap-3" :class="(isFieldEnabled('policy_uavt') && isFieldEnabled('dask_no')) ? 'grid-cols-2' : 'grid-cols-1'">
-                <div v-if="isFieldEnabled('policy_uavt')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('policy_uavt')" class="relative fl-form">
                   <UInput v-model="form.uavtCode" placeholder=" " class="w-full peer/fl-uavt2" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uavt2:top-0 peer-focus-within/fl-uavt2:-translate-y-1/2 peer-focus-within/fl-uavt2:text-xs peer-focus-within/fl-uavt2:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uavt2:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-[var(--ui-text-highlighted)]">UAVT Kodu</label>
                 </div>
-                <div v-if="isFieldEnabled('dask_no')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div v-if="isFieldEnabled('dask_no')" class="relative fl-form">
                   <UInput v-model="form.daskNo" placeholder=" " class="w-full peer/fl-dask" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-dask:top-0 peer-focus-within/fl-dask:-translate-y-1/2 peer-focus-within/fl-dask:text-xs peer-focus-within/fl-dask:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-dask:top-0 peer-has-[input:not(:placeholder-shown)]/fl-dask:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-dask:text-xs peer-has-[input:not(:placeholder-shown)]/fl-dask:text-[var(--ui-text-highlighted)]">DASK Poliçe No</label>
                 </div>
@@ -698,17 +698,17 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <span class="text-xs font-semibold text-muted uppercase tracking-wider">Sağlık Bilgileri</span>
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
-              <div v-if="isFieldEnabled('policy_network')" class="relative select-fl [&_.truncate]:!font-semibold">
+              <div v-if="isFieldEnabled('policy_network')" class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu v-model="form.network" :items="networkOptions" value-key="value" placeholder=" " class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.network ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Network</label>
               </div>
-              <div class="relative [&_textarea]:!pt-7 [&_textarea]:!pb-2">
+              <div class="relative fl-input">
                 <UTextarea v-model="form.insureds" placeholder=" " :rows="2" class="w-full peer/fl-insureds" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-4 peer-focus-within/fl-insureds:top-0 peer-focus-within/fl-insureds:-translate-y-1/2 peer-focus-within/fl-insureds:text-xs peer-focus-within/fl-insureds:text-[var(--ui-primary)] peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:top-0 peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:-translate-y-1/2 peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:text-xs peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:text-[var(--ui-text-highlighted)]">Sigortalılar</label>
               </div>
             </template>
 
-            <div class="relative [&_textarea]:!pt-7 [&_textarea]:!pb-2">
+            <div class="relative fl-input">
               <UTextarea v-model="form.offerNote" placeholder=" " :rows="2" class="w-full peer/fl-note" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-4 peer-focus-within/fl-note:top-0 peer-focus-within/fl-note:-translate-y-1/2 peer-focus-within/fl-note:text-xs peer-focus-within/fl-note:text-[var(--ui-primary)] peer-has-[textarea:not(:placeholder-shown)]/fl-note:top-0 peer-has-[textarea:not(:placeholder-shown)]/fl-note:-translate-y-1/2 peer-has-[textarea:not(:placeholder-shown)]/fl-note:text-xs peer-has-[textarea:not(:placeholder-shown)]/fl-note:text-[var(--ui-text-highlighted)]">Teklif Notu</label>
             </div>
@@ -717,18 +717,18 @@ function onQuickLeadPaste(e: ClipboardEvent) {
           <!-- ===== YENİ LEAD FORMU ===== -->
           <template v-if="activeTab === 'LEAD'">
             <!-- TC Kimlik No -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.leadTcNo" placeholder=" " class="w-full peer/fl-ltc" @update:model-value="onLeadTcInput" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ltc:top-0 peer-focus-within/fl-ltc:-translate-y-1/2 peer-focus-within/fl-ltc:text-xs peer-focus-within/fl-ltc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ltc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ltc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ltc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ltc:text-[var(--ui-text-highlighted)]">TC Kimlik No <span class="text-[var(--ui-error)]">*</span></label>
             </div>
 
             <!-- Ad Soyad + Doğum Tarihi -->
             <div class="grid grid-cols-2 gap-3">
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="form.leadFullName" placeholder=" " class="w-full peer/fl-lname" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lname:top-0 peer-focus-within/fl-lname:-translate-y-1/2 peer-focus-within/fl-lname:text-xs peer-focus-within/fl-lname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lname:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
               </div>
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput :model-value="refBirthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-lbd" @keydown="preventNonDigitKey" @update:model-value="onRefBirthDateInput">
                   <template #trailing>
                     <UPopover v-model:open="refBirthDateOpen">
@@ -748,11 +748,11 @@ function onQuickLeadPaste(e: ClipboardEvent) {
 
             <!-- Ürün + Kaynak -->
             <div class="grid grid-cols-2 gap-3">
-              <div class="relative select-fl [&_.truncate]:!font-semibold">
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu v-model="form.leadProductId" :items="leadProducts" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.leadProductId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
               </div>
-              <div class="relative select-fl [&_.truncate]:!font-semibold">
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu v-model="form.leadSourceId" :items="leadSources" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.leadSourceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Kaynak <span class="text-[var(--ui-error)]">*</span></label>
               </div>
@@ -821,13 +821,13 @@ function onQuickLeadPaste(e: ClipboardEvent) {
             <PhoneInput v-model="form.quickPhone" label="Telefon No" :required="true" />
 
             <!-- Ürün -->
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.quickProductId" :items="leadProducts" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.quickProductId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
             </div>
 
             <!-- Atanan Kişi -->
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="form.assignedTo" :items="leadAssignOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.assignedTo ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Atanan Kişi</label>
             </div>
@@ -835,11 +835,11 @@ function onQuickLeadPaste(e: ClipboardEvent) {
 
           <!-- Ortak: Öncelik (sadece teklif) + Atanan -->
           <div v-if="activeTab !== 'QUICK'" :class="activeTab === 'OFFER' ? 'grid grid-cols-2 gap-3' : ''">
-            <div v-if="activeTab === 'OFFER'" class="relative select-fl [&_.truncate]:!font-semibold">
+            <div v-if="activeTab === 'OFFER'" class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelect v-model="form.priority" :items="priorityOptions" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.priority ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Öncelik</label>
             </div>
-            <div class="relative select-fl [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="form.assignedTo"
                 :items="activeTab === 'LEAD' ? leadAssignOptions : users"
@@ -879,8 +879,4 @@ function onQuickLeadPaste(e: ClipboardEvent) {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 </style>

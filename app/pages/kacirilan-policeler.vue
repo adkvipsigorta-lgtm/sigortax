@@ -318,15 +318,15 @@ function urgencyBadge(days: number) {
                 </UButton>
               </div>
               <!-- Filtreler -->
-              <div class="relative hidden sm:flex w-[200px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative hidden sm:flex w-[200px] fl-input">
                 <UInput v-model="search" placeholder=" " class="w-full peer/fl-lpsearch" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Müşteri, plaka, TC</label>
               </div>
-              <div class="relative hidden sm:flex w-[180px] select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative hidden sm:flex w-[180px] fl-select ">
                 <USelect v-model="branch" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...(stats?.branches || []).map((b: any) => ({ label: `${b.name} (${b.cnt})`, value: String(b.id) }))]" placeholder=" " class="w-full" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
               </div>
-              <div class="relative hidden sm:flex w-[160px] select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <div class="relative hidden sm:flex w-[160px] fl-select ">
                 <USelect v-model="statusFilter" :items="statusOptions" placeholder=" " class="w-full" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
               </div>
@@ -494,7 +494,7 @@ function urgencyBadge(days: number) {
             <p class="text-sm">{{ vadeDegistirItem?.customer_name }}</p>
             <p class="text-xs text-muted mt-0.5">Mevcut bitiş tarihi: <span class="font-medium">{{ vadeDegistirItem ? formatDate(vadeDegistirItem.expires_at) : '' }}</span></p>
           </div>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput type="date" v-model="newExpectedDate" placeholder=" " class="w-full peer/fl-vdate" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-vdate:top-0 peer-focus-within/fl-vdate:-translate-y-1/2 peer-focus-within/fl-vdate:text-xs peer-focus-within/fl-vdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-vdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-vdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-[var(--ui-text-highlighted)]">Yeni Tahmini Vade Tarihi</label>
           </div>
@@ -532,10 +532,6 @@ function urgencyBadge(days: number) {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 td.kp-no-clip { overflow: visible; white-space: normal; }
 

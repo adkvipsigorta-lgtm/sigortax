@@ -283,14 +283,14 @@ onMounted(fetchOptions)
           </div>
           <!-- Acente Adı -->
           <div class="py-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.agency_name" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aname" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aname:top-0 peer-focus-within/fl-aname:-translate-y-1/2 peer-focus-within/fl-aname:text-xs peer-focus-within/fl-aname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aname:text-[var(--ui-text-highlighted)]">Acente Adı</label>
             </div>
           </div>
           <!-- Açıklama -->
           <div class="py-4 last:pb-0">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.agency_description" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-adesc" data-no-uppercase />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-adesc:top-0 peer-focus-within/fl-adesc:-translate-y-1/2 peer-focus-within/fl-adesc:text-xs peer-focus-within/fl-adesc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-adesc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-adesc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-adesc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-adesc:text-[var(--ui-text-highlighted)]">Açıklama</label>
             </div>
@@ -311,13 +311,13 @@ onMounted(fetchOptions)
             <PhoneInput v-model="form.agency_phone" :disabled="!isAdmin" />
           </div>
           <div class="py-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.agency_email" type="email" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aemail" data-no-uppercase />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aemail:top-0 peer-focus-within/fl-aemail:-translate-y-1/2 peer-focus-within/fl-aemail:text-xs peer-focus-within/fl-aemail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aemail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aemail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aemail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aemail:text-[var(--ui-text-highlighted)]">E-posta</label>
             </div>
           </div>
           <div class="py-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.agency_website" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aweb" data-no-uppercase />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aweb:top-0 peer-focus-within/fl-aweb:-translate-y-1/2 peer-focus-within/fl-aweb:text-xs peer-focus-within/fl-aweb:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aweb:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aweb:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aweb:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aweb:text-[var(--ui-text-highlighted)]">Web Sitesi</label>
             </div>
@@ -334,19 +334,19 @@ onMounted(fetchOptions)
           </button>
         </template>
         <div v-show="openSections.has('resmi')" class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 pt-2">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput v-model="form.agency_tax_office" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-atax" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-atax:top-0 peer-focus-within/fl-atax:-translate-y-1/2 peer-focus-within/fl-atax:text-xs peer-focus-within/fl-atax:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-atax:top-0 peer-has-[input:not(:placeholder-shown)]/fl-atax:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-atax:text-xs peer-has-[input:not(:placeholder-shown)]/fl-atax:text-[var(--ui-text-highlighted)]">Vergi Dairesi</label>
           </div>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput v-model="form.agency_tax_number" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-ataxno" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ataxno:top-0 peer-focus-within/fl-ataxno:-translate-y-1/2 peer-focus-within/fl-ataxno:text-xs peer-focus-within/fl-ataxno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ataxno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ataxno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ataxno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ataxno:text-[var(--ui-text-highlighted)]">Vergi Numarası</label>
           </div>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput v-model="form.agency_mersis_no" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-amersis" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-amersis:top-0 peer-focus-within/fl-amersis:-translate-y-1/2 peer-focus-within/fl-amersis:text-xs peer-focus-within/fl-amersis:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-amersis:top-0 peer-has-[input:not(:placeholder-shown)]/fl-amersis:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-amersis:text-xs peer-has-[input:not(:placeholder-shown)]/fl-amersis:text-[var(--ui-text-highlighted)]">MERSİS No</label>
           </div>
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput v-model="form.agency_tobb_no" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-atobb" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-atobb:top-0 peer-focus-within/fl-atobb:-translate-y-1/2 peer-focus-within/fl-atobb:text-xs peer-focus-within/fl-atobb:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-atobb:top-0 peer-has-[input:not(:placeholder-shown)]/fl-atobb:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-atobb:text-xs peer-has-[input:not(:placeholder-shown)]/fl-atobb:text-[var(--ui-text-highlighted)]">TOBB Sicil No</label>
           </div>
@@ -372,7 +372,7 @@ onMounted(fetchOptions)
                 </button>
               </div>
               <div class="w-full max-w-sm space-y-2">
-                <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <div class="relative fl-form">
                   <UInput v-model="form.gemini_api_key" :disabled="!isAdmin" type="password" placeholder=" " class="w-full font-mono peer/fl-agemini" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-agemini:top-0 peer-focus-within/fl-agemini:-translate-y-1/2 peer-focus-within/fl-agemini:text-xs peer-focus-within/fl-agemini:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-agemini:top-0 peer-has-[input:not(:placeholder-shown)]/fl-agemini:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-agemini:text-xs peer-has-[input:not(:placeholder-shown)]/fl-agemini:text-[var(--ui-text-highlighted)]">Gemini API Anahtarı</label>
                 </div>
@@ -452,19 +452,19 @@ onMounted(fetchOptions)
             </div>
           </div>
           <div class="py-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.netgsm_usercode" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-nuser" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-nuser:top-0 peer-focus-within/fl-nuser:-translate-y-1/2 peer-focus-within/fl-nuser:text-xs peer-focus-within/fl-nuser:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-nuser:top-0 peer-has-[input:not(:placeholder-shown)]/fl-nuser:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-nuser:text-xs peer-has-[input:not(:placeholder-shown)]/fl-nuser:text-[var(--ui-text-highlighted)]">Abone No (Usercode)</label>
             </div>
           </div>
           <div class="py-4">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.netgsm_password" type="password" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-npass" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-npass:top-0 peer-focus-within/fl-npass:-translate-y-1/2 peer-focus-within/fl-npass:text-xs peer-focus-within/fl-npass:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-npass:top-0 peer-has-[input:not(:placeholder-shown)]/fl-npass:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-npass:text-xs peer-has-[input:not(:placeholder-shown)]/fl-npass:text-[var(--ui-text-highlighted)]">API Şifresi</label>
             </div>
           </div>
           <div class="py-4 last:pb-0">
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.netgsm_msgheader" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-nmsg" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-nmsg:top-0 peer-focus-within/fl-nmsg:-translate-y-1/2 peer-focus-within/fl-nmsg:text-xs peer-focus-within/fl-nmsg:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-nmsg:top-0 peer-has-[input:not(:placeholder-shown)]/fl-nmsg:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-nmsg:text-xs peer-has-[input:not(:placeholder-shown)]/fl-nmsg:text-[var(--ui-text-highlighted)]">Mesaj Başlığı</label>
             </div>
@@ -503,8 +503,4 @@ onMounted(fetchOptions)
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 </style>

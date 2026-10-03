@@ -103,7 +103,7 @@ function getRowActions(item: LeadProduct) {
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative w-full sm:w-[250px] fl-input">
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lpsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Ürün Ara</label>
           </div>
@@ -154,7 +154,7 @@ function getRowActions(item: LeadProduct) {
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Ürün Düzenle' : 'Yeni Ürün'" class="sm:max-w-md">
       <template #body>
         <UForm :schema="schema" :state="form" @submit="save" class="space-y-5">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-input">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-lpname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpname:top-0 peer-focus-within/fl-lpname:-translate-y-1/2 peer-focus-within/fl-lpname:text-xs peer-focus-within/fl-lpname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-[var(--ui-text-highlighted)]">Ürün Adı <span class="text-red-500">*</span></label>
           </div>
@@ -167,7 +167,7 @@ function getRowActions(item: LeadProduct) {
                 <span class="text-xs text-muted">{{ form.color }}</span>
               </div>
             </div>
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model.number="form.sortOrder" type="number" :min="0" placeholder=" " class="w-full peer/fl-lpsort" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsort:top-0 peer-focus-within/fl-lpsort:-translate-y-1/2 peer-focus-within/fl-lpsort:text-xs peer-focus-within/fl-lpsort:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsort:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-[var(--ui-text-highlighted)]">Sıralama</label>
             </div>

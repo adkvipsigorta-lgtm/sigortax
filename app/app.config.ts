@@ -7,8 +7,14 @@ export default defineAppConfig({
     button: {
       variants: {
         size: {
+          md: {
+            base: 'px-3 py-2 text-sm gap-1.5 min-h-[38px]'
+          },
+          lg: {
+            base: 'px-3 py-2 text-sm gap-2 min-h-[38px]'
+          },
           xl: {
-            base: 'px-4 text-base gap-2 min-h-[50px]'
+            base: 'px-4 py-2 text-sm gap-2 min-h-[38px]'
           }
         }
       }

@@ -379,7 +379,7 @@ async function saveCustomer() {
           <UFormField name="name" class="col-span-12">
             <template #label />
             <!-- pt-5 (20px) → label-metin arası ~12px boşluk; pb-2.5 (10px) → alt denge -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput
                 :model-value="form.name"
                 placeholder=" "
@@ -410,7 +410,7 @@ async function saveCustomer() {
 
           <UFormField name="identityNo" class="col-span-6">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.identityNo" placeholder=" " :maxlength="identityMaxLength" class="w-full peer/fl-identity" @update:model-value="onIdentityInput" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-identity:top-0 peer-focus-within/fl-identity:-translate-y-1/2 peer-focus-within/fl-identity:text-xs peer-focus-within/fl-identity:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-identity:top-0 peer-has-[input:not(:placeholder-shown)]/fl-identity:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-identity:text-xs peer-has-[input:not(:placeholder-shown)]/fl-identity:text-[var(--ui-text-highlighted)]">
                 {{ identityLabel }} <span class="text-[var(--ui-error)]">*</span>
@@ -421,7 +421,7 @@ async function saveCustomer() {
           <UFormField :name="isIndividual ? 'birthDate' : 'taxOffice'" class="col-span-6">
             <template #label />
             <!-- Doğum Tarihi: takvim butonu UInput #trailing içinde -->
-            <div v-if="isIndividual" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-if="isIndividual" class="relative fl-form">
               <UInput
                 :model-value="birthDateDisplay"
                 placeholder=" "
@@ -443,7 +443,7 @@ async function saveCustomer() {
               </label>
             </div>
             <!-- Vergi Dairesi: düz floating label -->
-            <div v-else class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div v-else class="relative fl-form">
               <UInput v-model="form.taxOffice" placeholder=" " class="w-full peer/fl-taxoffice" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-taxoffice:top-0 peer-focus-within/fl-taxoffice:-translate-y-1/2 peer-focus-within/fl-taxoffice:text-xs peer-focus-within/fl-taxoffice:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-taxoffice:top-0 peer-has-[input:not(:placeholder-shown)]/fl-taxoffice:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-taxoffice:text-xs peer-has-[input:not(:placeholder-shown)]/fl-taxoffice:text-[var(--ui-text-highlighted)]">
                 Vergi Dairesi
@@ -453,7 +453,7 @@ async function saveCustomer() {
 
           <UFormField name="email" class="col-span-6">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput :model-value="form.email" type="email" placeholder=" " class="w-full peer/fl-email" @update:model-value="(v) => form.email = String(v).toLowerCase()" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-email:top-0 peer-focus-within/fl-email:-translate-y-1/2 peer-focus-within/fl-email:text-xs peer-focus-within/fl-email:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-email:top-0 peer-has-[input:not(:placeholder-shown)]/fl-email:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-email:text-xs peer-has-[input:not(:placeholder-shown)]/fl-email:text-[var(--ui-text-highlighted)]">
                 E-posta
@@ -463,7 +463,7 @@ async function saveCustomer() {
 
           <UFormField v-if="isIndividual ? showField('job') : true" :name="isIndividual ? 'job' : 'contactPerson'" class="col-span-6">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-if="isIndividual" v-model="form.job" placeholder=" " class="w-full peer/fl-job" />
               <UInput v-else v-model="form.contactPerson" placeholder=" " class="w-full peer/fl-job" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-job:top-0 peer-focus-within/fl-job:-translate-y-1/2 peer-focus-within/fl-job:text-xs peer-focus-within/fl-job:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-job:top-0 peer-has-[input:not(:placeholder-shown)]/fl-job:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-job:text-xs peer-has-[input:not(:placeholder-shown)]/fl-job:text-[var(--ui-text-highlighted)]">
@@ -512,7 +512,7 @@ async function saveCustomer() {
 
           <UFormField v-if="showField('address')" name="address" class="col-span-6">
             <template #label />
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="form.address" placeholder=" " class="w-full peer/fl-address" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-address:top-0 peer-focus-within/fl-address:-translate-y-1/2 peer-focus-within/fl-address:text-xs peer-focus-within/fl-address:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-address:top-0 peer-has-[input:not(:placeholder-shown)]/fl-address:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-address:text-xs peer-has-[input:not(:placeholder-shown)]/fl-address:text-[var(--ui-text-highlighted)]">
                 Adres

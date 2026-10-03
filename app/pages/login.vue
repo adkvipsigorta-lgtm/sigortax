@@ -326,7 +326,7 @@ function resetToCredentials() {
 
         <!-- Email -->
         <UFormField name="email" :error="false">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput
               :model-value="loginState.email"
               type="email"
@@ -350,7 +350,7 @@ function resetToCredentials() {
 
         <!-- Password -->
         <UFormField name="password" :error="false">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput
               :model-value="loginState.password"
               :type="showPassword ? 'text' : 'password'"
@@ -408,7 +408,7 @@ function resetToCredentials() {
 
       <UForm :schema="totpSchema" :state="totpState" class="login-form space-y-5" @error="onFormError" @submit="handleTotpVerify">
         <UFormField name="code" :error="false">
-          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+          <div class="relative fl-form">
             <UInput
               :model-value="totpState.code"
               placeholder=" "
@@ -501,7 +501,7 @@ function resetToCredentials() {
       </div>
 
       <div class="space-y-5">
-        <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+        <div class="relative fl-form">
           <UInput
             v-model="setupVerifyCode"
             placeholder=" "

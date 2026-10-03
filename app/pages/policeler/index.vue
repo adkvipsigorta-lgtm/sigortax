@@ -652,7 +652,7 @@ function toHex(color?: string): string {
       <template #header>
         <div class="space-y-3">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="relative w-full sm:w-72 [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative w-full sm:w-72 fl-input">
               <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-polsearch" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polsearch:top-0 peer-focus-within/fl-polsearch:-translate-y-1/2 peer-focus-within/fl-polsearch:text-xs peer-focus-within/fl-polsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri, plaka ara</label>
             </div>
@@ -662,27 +662,27 @@ function toHex(color?: string): string {
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelectMenu v-model="filterInsuranceId" :items="insuranceFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterInsuranceId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigortalar</label>
             </div>
 
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelectMenu v-model="filterCompanyId" :items="companyFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterCompanyId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigorta Şirketleri</label>
             </div>
 
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelect v-model="filterProd" :items="prodFilterOptions" value-key="value" placeholder=" " class="w-full" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Üretim Yeri</label>
             </div>
 
-            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div class="relative fl-select ">
               <USelect v-model="filterStatus" :items="statusFilterOptions" value-key="value" placeholder=" " class="w-full" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
             </div>
 
-            <div v-if="showBranchFilter" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <div v-if="showBranchFilter" class="relative fl-select ">
               <USelectMenu v-model="filterBranchId" :items="branchFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Acente</label>
             </div>
@@ -1059,7 +1059,7 @@ function toHex(color?: string): string {
             </div>
 
             <!-- İptal Tarihi -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-input">
               <UInput v-model="cancelDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-cdate">
                 <template #trailing>
                   <UPopover v-model:open="cancelDatePopoverOpen" :ui="{ content: 'p-0' }">
@@ -1075,14 +1075,14 @@ function toHex(color?: string): string {
 
             <div class="grid grid-cols-2 gap-4">
               <!-- İade Brüt Prim -->
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-input">
                 <UInput :model-value="cancelGrossDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cgross" @update:model-value="onCancelCurrencyInput('cancelGrossRefund', $event)" @blur="onCancelCurrencyBlur('cancelGrossRefund')">
                   <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cgross:top-0 peer-focus-within/fl-cgross:-translate-y-1/2 peer-focus-within/fl-cgross:text-xs peer-focus-within/fl-cgross:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cgross:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cgross:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-[var(--ui-text-highlighted)]">İade Brüt Prim</label>
               </div>
               <!-- İade Net Prim -->
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-input">
                 <UInput :model-value="cancelNetDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cnet" @update:model-value="onCancelCurrencyInput('cancelNetRefund', $event)" @blur="onCancelCurrencyBlur('cancelNetRefund')">
                   <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
@@ -1149,10 +1149,6 @@ function toHex(color?: string): string {
 </template>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 /* Mobilde expand kolonu gizle (zeyil geçmişi mobilde gereksiz) */
 @media (max-width: 639px) {
   :deep(.policeler-table th:nth-child(1)),

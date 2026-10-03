@@ -47,16 +47,34 @@ select {
   animation: nav-loading 0.9s ease-in-out infinite;
 }
 
-/* Kullanıcının yazdığı değer koyu, placeholder normal */
-input:not(:placeholder-shown),
-select,
-textarea:not(:placeholder-shown) {
+/* ═══════════════════════════════════════════════════
+   FLOATING LABEL — Tek noktadan kontrol
+   ═══════════════════════════════════════════════════ */
+
+/* --- Seviye 1: Filtre/tablo/modal — kompakt (42px) --- */
+.fl-input { min-height: 38px; display: flex; align-items: stretch; }
+.fl-input input  { padding-top: 14px !important; padding-bottom: 4px !important; min-height: 38px; }
+.fl-input textarea { padding-top: 14px !important; padding-bottom: 4px !important; }
+
+.fl-select { min-height: 38px; }
+.fl-select button { min-height: 38px !important; height: auto !important; padding-top: 14px !important; padding-bottom: 4px !important; }
+
+/* --- Seviye 2: Login/profil — geniş (46px) --- */
+.fl-form { min-height: 42px; display: flex; align-items: stretch; }
+.fl-form input  { padding-top: 18px !important; padding-bottom: 6px !important; min-height: 42px; }
+.fl-form textarea { padding-top: 18px !important; padding-bottom: 6px !important; }
+
+.fl-select-form { min-height: 42px; }
+.fl-select-form button { min-height: 42px !important; height: auto !important; padding-top: 18px !important; padding-bottom: 6px !important; }
+
+/* Bold: sadece login/profil formlarında yazılan değer koyu */
+.fl-form input:not(:placeholder-shown),
+.fl-form textarea:not(:placeholder-shown) {
   font-weight: 600;
 }
-input::placeholder,
-textarea::placeholder {
-  font-weight: 400;
-}
+
+/* Placeholder her yerde normal */
+input::placeholder, textarea::placeholder { font-weight: 400; }
 
 /* Badge standardı: eşit genişlik + ortalama */
 [data-slot="badge"] {
@@ -64,4 +82,3 @@ textarea::placeholder {
   justify-content: center;
   text-align: center;
 }
-

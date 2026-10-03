@@ -44,7 +44,7 @@
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-wrap items-center gap-2">
-              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
+              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[38px]">
                 <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevDay" />
                 <input
                   v-model="selectedDate"
@@ -64,7 +64,7 @@
               >
                 Bu Ay
               </UButton>
-              <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
+              <div v-if="isAdmin" class="relative fl-select  w-[200px]">
                 <USelect v-model="filterSoldBy" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...userOptions]" placeholder=" " class="w-full" @change="fetch" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
               </div>
@@ -615,10 +615,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.select-fl :deep(button) {
-  min-height: 50px !important;
-  height: auto !important;
-}
 .slide-up-enter-active, .slide-up-leave-active {
   transition: all 0.25s ease;
 }

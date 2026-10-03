@@ -335,7 +335,7 @@ onMounted(() => {
       <!-- Profil Alanları -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
         <!-- Ad Soyad -->
-        <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+        <div class="relative fl-form">
           <UInput :model-value="profile.name" placeholder=" " class="w-full peer/fl-name" :class="nameTouched && nameError ? 'fl-error' : ''" @update:model-value="onNameInput" @blur="validateName">
             <template v-if="nameTouched && nameError" #trailing>
               <UTooltip :text="nameError"><UIcon name="i-lucide-circle-alert" class="size-4 text-red-500 cursor-help shrink-0" /></UTooltip>
@@ -345,7 +345,7 @@ onMounted(() => {
         </div>
 
         <!-- E-posta -->
-        <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+        <div class="relative fl-form">
           <UInput :model-value="profile.email" type="email" placeholder=" " class="w-full peer/fl-pemail" :class="emailTouched && emailError ? 'fl-error' : ''" data-no-uppercase @update:model-value="onEmailInput" @blur="validateEmail">
             <template v-if="emailTouched && emailError" #trailing>
               <UTooltip :text="emailError"><UIcon name="i-lucide-circle-alert" class="size-4 text-red-500 cursor-help shrink-0" /></UTooltip>
@@ -358,7 +358,7 @@ onMounted(() => {
         <PhoneInput v-model="profile.phone" />
 
         <!-- Doğum Tarihi -->
-        <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+        <div class="relative fl-form">
           <UInput :model-value="birthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-bdate" :class="birthDateError ? 'fl-error' : ''" @keydown="preventNonDigitKey" @update:model-value="onBirthDateInput" @blur="validateBirthDate">
             <template #trailing>
               <div class="flex items-center gap-1">
@@ -390,7 +390,7 @@ onMounted(() => {
           <h3 class="text-sm font-medium mb-4">Şifre Değiştirme</h3>
           <div class="space-y-4 sm:max-w-md">
             <!-- Mevcut Şifre -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="passwordForm.currentPassword" :type="showCurrentPw ? 'text' : 'password'" placeholder=" " class="w-full peer/fl-curpw" :class="currentPwTouched && currentPwError ? 'fl-error' : ''" autocomplete="current-password" @blur="validateCurrentPw" @input="currentPwTouched = true; currentPwError = ''">
                 <template #trailing>
                   <div class="flex items-center gap-1">
@@ -403,7 +403,7 @@ onMounted(() => {
             </div>
 
             <!-- Yeni Şifre -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="passwordForm.newPassword" :type="showNewPw ? 'text' : 'password'" placeholder=" " class="w-full peer/fl-newpw" :class="newPwTouched && newPwError ? 'fl-error' : ''" autocomplete="new-password" @blur="validateNewPw" @input="newPwTouched = true; newPwError = ''">
                 <template #trailing>
                   <div class="flex items-center gap-1">
@@ -416,7 +416,7 @@ onMounted(() => {
             </div>
 
             <!-- Yeni Şifre (Tekrar) -->
-            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <div class="relative fl-form">
               <UInput v-model="passwordForm.confirmPassword" :type="showConfirmPw ? 'text' : 'password'" placeholder=" " class="w-full peer/fl-confpw" :class="confirmPwTouched && confirmPwError ? 'fl-error' : ''" autocomplete="new-password" @blur="validateConfirmPw" @input="confirmPwTouched = true; confirmPwError = ''">
                 <template #trailing>
                   <div class="flex items-center gap-1">
@@ -467,7 +467,7 @@ onMounted(() => {
               </div>
             </div>
             <div class="max-w-xs mx-auto space-y-3">
-              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <div class="relative fl-form">
                 <UInput v-model="verificationCode" placeholder=" " class="w-full tracking-widest text-center peer/fl-2facode" maxlength="6" inputmode="numeric" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-2facode:top-0 peer-focus-within/fl-2facode:-translate-y-1/2 peer-focus-within/fl-2facode:text-xs peer-focus-within/fl-2facode:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-2facode:top-0 peer-has-[input:not(:placeholder-shown)]/fl-2facode:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-2facode:text-xs peer-has-[input:not(:placeholder-shown)]/fl-2facode:text-[var(--ui-text-highlighted)]">Doğrulama Kodu</label>
               </div>
