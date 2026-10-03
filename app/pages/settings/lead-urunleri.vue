@@ -26,7 +26,6 @@ const products = usePaginatedData<LeadProduct>({
 
 onMounted(() => products.fetchData())
 
-// Arama
 const searchInput = ref('')
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 watch(searchInput, (val) => {
@@ -34,7 +33,6 @@ watch(searchInput, (val) => {
   searchTimeout = setTimeout(() => products.setSearch(val), 400)
 })
 
-// Tablo
 const columns = [
   { accessorKey: 'name', header: 'Ürün Adı', size: 250, minSize: 200 },
   { accessorKey: 'color', header: 'Renk', minSize: 80, maxSize: 80 },
@@ -44,7 +42,6 @@ const columns = [
   { accessorKey: 'actions', header: '', minSize: 50, maxSize: 50 }
 ]
 
-// Modal
 const isModalOpen = ref(false)
 const isDeleteModalOpen = ref(false)
 const editingItem = ref<LeadProduct | null>(null)
@@ -53,25 +50,12 @@ const deletingItemId = ref<number | null>(null)
 const defaultForm = { name: '', color: '#8b5cf6', isActive: true, requiresFile: false, sortOrder: 0 }
 const form = ref({ ...defaultForm })
 
-const schema = z.object({
-  name: z.string().min(2, 'Ürün adı en az 2 karakter olmalıdır'),
-})
+const schema = z.object({ name: z.string().min(2, 'Ürün adı en az 2 karakter olmalıdır') })
 
-function openAddModal() {
-  editingItem.value = null
-  form.value = { ...defaultForm }
-  isModalOpen.value = true
-}
-
+function openAddModal() { editingItem.value = null; form.value = { ...defaultForm }; isModalOpen.value = true }
 function openEditModal(item: LeadProduct) {
   editingItem.value = item
-  form.value = {
-    name: item.name,
-    color: item.color || '#8b5cf6',
-    isActive: item.isActive,
-    requiresFile: item.requiresFile,
-    sortOrder: item.sortOrder
-  }
+  form.value = { name: item.name, color: item.color || '#8b5cf6', isActive: item.isActive, requiresFile: item.requiresFile, sortOrder: item.sortOrder }
   isModalOpen.value = true
 }
 
@@ -80,47 +64,24 @@ async function save() {
   if (saving.value) return
   saving.value = true
   try {
-    if (editingItem.value) {
-      await put(`lead-products/${editingItem.value.id}`, form.value)
-      toast.add({ title: 'Ürün güncellendi', color: 'success' })
-    } else {
-      await post('lead-products', form.value)
-      toast.add({ title: 'Yeni ürün eklendi', color: 'success' })
-    }
-    isModalOpen.value = false
-    products.refresh()
-  } catch (error: any) {
-    toast.add({ title: error.message || 'İşlem başarısız', color: 'error' })
-  }
+    if (editingItem.value) { await put(`lead-products/${editingItem.value.id}`, form.value); toast.add({ title: 'Ürün güncellendi', color: 'success' }) }
+    else { await post('lead-products', form.value); toast.add({ title: 'Yeni ürün eklendi', color: 'success' }) }
+    isModalOpen.value = false; products.refresh()
+  } catch (error: any) { toast.add({ title: error.message || 'İşlem başarısız', color: 'error' }) }
   saving.value = false
 }
 
-function confirmDelete(id: number) {
-  deletingItemId.value = id
-  isDeleteModalOpen.value = true
-}
-
+function confirmDelete(id: number) { deletingItemId.value = id; isDeleteModalOpen.value = true }
 async function doDelete() {
   if (!deletingItemId.value) return
-  try {
-    await del(`lead-products/${deletingItemId.value}`)
-    toast.add({ title: 'Ürün silindi', color: 'success' })
-    products.refresh()
-  } catch {
-    toast.add({ title: 'Silinemedi', color: 'error' })
-  }
-  isDeleteModalOpen.value = false
-  deletingItemId.value = null
+  try { await del(`lead-products/${deletingItemId.value}`); toast.add({ title: 'Ürün silindi', color: 'success' }); products.refresh() }
+  catch { toast.add({ title: 'Silinemedi', color: 'error' }) }
+  isDeleteModalOpen.value = false; deletingItemId.value = null
 }
 
 async function toggleActive(item: LeadProduct) {
-  try {
-    await put(`lead-products/${item.id}`, { isActive: !item.isActive })
-    item.isActive = !item.isActive
-    toast.add({ title: item.isActive ? 'Ürün aktif edildi' : 'Ürün pasif edildi', color: 'success' })
-  } catch {
-    toast.add({ title: 'Durum değiştirilemedi', color: 'error' })
-  }
+  try { await put(`lead-products/${item.id}`, { isActive: !item.isActive }); item.isActive = !item.isActive; toast.add({ title: item.isActive ? 'Ürün aktif edildi' : 'Ürün pasif edildi', color: 'success' }) }
+  catch { toast.add({ title: 'Durum değiştirilemedi', color: 'error' }) }
 }
 
 function getRowActions(item: LeadProduct) {
@@ -133,17 +94,20 @@ function getRowActions(item: LeadProduct) {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Lead Ürünleri</h1>
+      <p class="text-sm text-muted mt-1">Lead'lerde seçilecek ürün listesini yönetin.</p>
+    </div>
+
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div>
-            <h3 class="font-semibold">Lead Ürünleri</h3>
-            <p class="text-xs text-muted">Lead'lerde seçilecek ürün listesini yönetin</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lpsearch" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Ürün Ara</label>
           </div>
-          <div class="flex items-center justify-between gap-2">
-            <UInput v-model="searchInput" icon="i-lucide-search" placeholder="Ürün ara..." size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" />
-            <UButton label="Yeni Ürün" icon="i-lucide-plus" size="xs" @click="openAddModal" />
-          </div>
+          <UButton label="Yeni Ürün" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
         </div>
       </template>
 
@@ -163,27 +127,16 @@ function getRowActions(item: LeadProduct) {
           <template #name-cell="{ row }">
             <span class="font-semibold" :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span>
           </template>
-
           <template #color-cell="{ row }">
             <span v-if="row.original.color" class="inline-block w-5 h-5 rounded" :style="{ backgroundColor: row.original.color }" />
             <span v-else class="text-muted">-</span>
           </template>
-
           <template #requiresFile-cell="{ row }">
-            <span v-if="row.original.requiresFile" class="inline-flex items-center gap-1 text-xs font-semibold text-green-600">
-              <UIcon name="i-lucide-check-circle" class="size-3.5" /> Açık
-            </span>
+            <span v-if="row.original.requiresFile" class="inline-flex items-center gap-1 text-xs font-semibold text-green-600"><UIcon name="i-lucide-check-circle" class="size-3.5" /> Açık</span>
             <span v-else class="text-xs text-muted">Kapalı</span>
           </template>
-
-          <template #sortOrder-cell="{ row }">
-            <span class="tabular-nums font-semibold">{{ row.original.sortOrder }}</span>
-          </template>
-
-          <template #isActive-cell="{ row }">
-            <USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" />
-          </template>
-
+          <template #sortOrder-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.sortOrder }}</span></template>
+          <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)">
               <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" />
@@ -201,21 +154,23 @@ function getRowActions(item: LeadProduct) {
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Ürün Düzenle' : 'Yeni Ürün'" class="sm:max-w-md">
       <template #body>
         <UForm :schema="schema" :state="form" @submit="save" class="space-y-5">
-          <UFormField label="Ürün Adı" name="name" required>
-            <UInput v-model="form.name" placeholder="Örneğin: Kasko, Trafik..." icon="i-lucide-package" class="w-full" />
-          </UFormField>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-lpname" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpname:top-0 peer-focus-within/fl-lpname:-translate-y-1/2 peer-focus-within/fl-lpname:text-xs peer-focus-within/fl-lpname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-[var(--ui-text-highlighted)]">Ürün Adı <span class="text-red-500">*</span></label>
+          </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <UFormField label="Badge Rengi" name="color">
+            <div>
+              <p class="text-sm font-medium mb-2">Badge Rengi</p>
               <div class="flex items-center gap-2">
                 <input type="color" v-model="form.color" class="w-8 h-8 rounded cursor-pointer border border-default" />
                 <span class="text-xs text-muted">{{ form.color }}</span>
               </div>
-            </UFormField>
-
-            <UFormField label="Sıralama" name="sortOrder">
-              <UInput v-model.number="form.sortOrder" type="number" :min="0" placeholder="0" icon="i-lucide-arrow-up-down" class="w-full" />
-            </UFormField>
+            </div>
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model.number="form.sortOrder" type="number" :min="0" placeholder=" " class="w-full peer/fl-lpsort" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsort:top-0 peer-focus-within/fl-lpsort:-translate-y-1/2 peer-focus-within/fl-lpsort:text-xs peer-focus-within/fl-lpsort:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsort:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-[var(--ui-text-highlighted)]">Sıralama</label>
+            </div>
           </div>
 
           <div class="flex items-center justify-between">
@@ -231,8 +186,8 @@ function getRowActions(item: LeadProduct) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" :disabled="saving" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" type="submit" :loading="saving" :disabled="saving" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="saving" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="saving" :disabled="saving" />
           </div>
         </UForm>
       </template>
@@ -242,8 +197,8 @@ function getRowActions(item: LeadProduct) {
     <UModal :dismissible="false" v-model:open="isDeleteModalOpen" title="Ürünü Sil">
       <template #body>
         <div class="flex items-start gap-3">
-          <div class="size-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
-            <UIcon name="i-lucide-triangle-alert" class="size-5 text-error" />
+          <div class="size-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+            <UIcon name="i-lucide-triangle-alert" class="size-5 text-red-500" />
           </div>
           <div>
             <p class="font-medium">Bu ürünü silmek istediğinize emin misiniz?</p>
@@ -253,8 +208,8 @@ function getRowActions(item: LeadProduct) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
         </div>
       </template>
     </UModal>

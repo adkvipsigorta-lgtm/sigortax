@@ -722,6 +722,11 @@ function onDragLeave() { isDragging.value = false }
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Allianz XML Import</h1>
+      <p class="text-sm text-muted mt-1">Allianz sisteminden indirilen XML dosyasını içe aktarın.</p>
+    </div>
 
     <!-- ─── UPLOAD EKRANI ─── -->
     <UCard v-if="!importing && !isPreviewOpen && !isProcessing && !isDone">
@@ -744,6 +749,8 @@ function onDragLeave() { isDragging.value = false }
           v-if="!isDragging"
           label="Dosya Seç"
           icon="i-lucide-file-up"
+          size="xl"
+          class="font-semibold"
           @click.stop="fileInput?.click()"
         />
         <input ref="fileInput" type="file" accept=".xml" class="hidden" @change="handleFileUpload" />
@@ -767,15 +774,15 @@ function onDragLeave() { isDragging.value = false }
           <p class="text-muted">{{ importProgressText || 'XML işleniyor...' }}</p>
           <p class="font-medium">{{ importProgress }}%</p>
         </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div class="w-full bg-neutral-200 rounded-full h-2">
           <div class="bg-primary h-2 rounded-full transition-all duration-300" :style="{ width: importProgress + '%' }" />
         </div>
       </div>
       <UCard v-for="i in 3" :key="'sk'+i" :ui="{ body: 'p-0' }">
         <template #header>
           <div class="flex items-center justify-between animate-pulse">
-            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32" />
-            <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-16" />
+            <div class="h-4 bg-neutral-200 rounded w-32" />
+            <div class="h-5 bg-neutral-200 rounded w-16" />
           </div>
         </template>
         <SkeletonTable :rows="4" :cols="10" />
@@ -798,14 +805,16 @@ function onDragLeave() { isDragging.value = false }
             label="Vazgeç"
             color="neutral"
             variant="outline"
-            size="sm"
+            size="xl"
+            class="font-semibold"
             @click="resetState()"
           />
           <UButton
             v-if="selectedCount === 0 && duplicateCount > 0"
             :label="`${duplicateCount} Poliçenin Eksik Alanlarını Güncelle`"
             icon="i-lucide-refresh-cw"
-            size="sm"
+            size="xl"
+            class="font-semibold"
             color="warning"
             @click="updateExisting()"
           />
@@ -813,7 +822,8 @@ function onDragLeave() { isDragging.value = false }
             v-else
             :label="`${selectedCount} Poliçe Import Et`"
             icon="i-lucide-download"
-            size="sm"
+            size="xl"
+            class="font-semibold"
             @click="saveImport()"
           />
         </div>
@@ -1038,7 +1048,7 @@ function onDragLeave() { isDragging.value = false }
             <span>İlerleme</span>
             <span class="font-semibold tabular-nums">{{ progressPercent }}%</span>
           </div>
-          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+          <div class="w-full bg-neutral-200 rounded-full h-3 overflow-hidden">
             <div
               class="bg-primary h-3 rounded-full transition-all duration-100"
               :style="{ width: progressPercent + '%' }"
@@ -1095,7 +1105,7 @@ function onDragLeave() { isDragging.value = false }
           </div>
           <div
             class="text-center p-5 rounded-xl border"
-            :class="errorCount > 0 ? 'bg-error/10 border-error/20' : 'bg-gray-100 dark:bg-gray-800 border-transparent'"
+            :class="errorCount > 0 ? 'bg-error/10 border-error/20' : 'bg-neutral-100 border-transparent'"
           >
             <p class="text-4xl font-black tabular-nums" :class="errorCount > 0 ? 'text-error' : 'text-muted'">
               {{ errorCount }}
@@ -1115,8 +1125,8 @@ function onDragLeave() { isDragging.value = false }
         </div>
 
         <div class="flex gap-3">
-          <UButton label="Yeni XML Yükle" icon="i-lucide-upload" @click="resetState()" />
-          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline" to="/policeler" />
+          <UButton label="Yeni XML Yükle" icon="i-lucide-upload" size="xl" class="font-semibold" @click="resetState()" />
+          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline" size="xl" class="font-semibold" to="/policeler" />
         </div>
       </div>
     </UCard>

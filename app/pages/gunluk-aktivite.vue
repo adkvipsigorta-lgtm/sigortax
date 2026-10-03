@@ -1,5 +1,11 @@
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Günlük Aktivite</h1>
+      <p class="text-sm text-muted mt-1">Günlük poliçe takibi ve eksik alan kontrolü.</p>
+    </div>
+
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <!-- Poliçe -->
@@ -37,44 +43,31 @@
     <!-- Table -->
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div>
-            <h3 class="font-semibold">Günlük Aktivite</h3>
-            <p class="text-xs text-muted">Günlük poliçe takibi ve eksik alan kontrolü</p>
-          </div>
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-1.5">
-              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-[var(--ui-radius)] px-2 text-xs w-[180px] h-[30px]">
+        <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
                 <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevDay" />
                 <input
                   v-model="selectedDate"
                   type="date"
-                  class="flex-1 text-xs font-medium bg-transparent border-0 outline-none cursor-pointer text-center"
+                  class="flex-1 text-sm font-semibold bg-transparent border-0 outline-none cursor-pointer text-center w-[130px]"
                   @change="fetch"
                 />
                 <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextDay" />
               </div>
-              <UButton size="xs" color="neutral" variant="outline" class="h-[30px]" @click="goToday">Bugün</UButton>
+              <UButton size="xl" color="neutral" variant="outline" class="font-semibold" @click="goToday">Bugün</UButton>
               <UButton
-                size="xs"
+                size="xl"
                 :color="viewMode === 'month' ? 'primary' : 'neutral'"
                 :variant="viewMode === 'month' ? 'solid' : 'outline'"
-                class="h-[30px]"
+                class="font-semibold"
                 @click="toggleMonthView"
               >
                 Bu Ay
               </UButton>
-              <USelect
-                v-if="isAdmin"
-                v-model="filterSoldBy"
-                :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...userOptions]"
-                class="w-[180px]"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                @change="fetch"
-              />
-            </div>
-          </div>
+              <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
+                <USelect v-model="filterSoldBy" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...userOptions]" placeholder=" " class="w-full" @change="fetch" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
+              </div>
         </div>
       </template>
 
@@ -271,21 +264,25 @@
 
               <!-- PDF -->
               <td class="py-2 px-3 text-center hidden md:table-cell">
-                <div class="relative inline-flex">
-                  <UButton
-                    :icon="p.docCount > 0 ? 'i-lucide-file-check' : 'i-lucide-upload'"
-                    :color="p.docCount > 0 ? 'success' : 'neutral'"
-                    :variant="p.docCount > 0 ? 'soft' : 'ghost'"
-                    size="2xs"
-                    :title="p.docCount > 0 ? `${p.docCount} belge yüklü — tıklayarak yeni ekle` : 'PDF yükle'"
-                    :loading="uploadingPolicyId === p.id"
-                    @click="triggerUpload(p)"
-                  />
-                  <span
-                    v-if="p.docCount > 0"
-                    class="absolute -top-1 -right-1 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-green-600 text-white text-[8px] font-bold leading-none px-0.5"
-                  >{{ p.docCount }}</span>
-                </div>
+                <button
+                  v-if="p.docCount > 0"
+                  class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-semibold hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                  :title="`${p.docCount} belge yüklü — müşteri sayfasına git`"
+                  @click="handleDocClick(p)"
+                >
+                  <UIcon name="i-lucide-file-check" class="size-3" />
+                  {{ p.docCount }}
+                </button>
+                <UButton
+                  v-else
+                  icon="i-lucide-upload"
+                  color="neutral"
+                  variant="ghost"
+                  size="2xs"
+                  title="PDF yükle"
+                  :loading="uploadingPolicyId === p.id"
+                  @click="handleDocClick(p)"
+                />
                 <input
                   :ref="el => { if (el) fileInputRefs[p.id] = el as HTMLInputElement }"
                   type="file"
@@ -344,11 +341,15 @@ function showToast(opts: { title: string; color?: string; duration?: number; act
 const fileInputRefs: Record<number, HTMLInputElement> = {}
 const uploadingPolicyId = ref<number | null>(null)
 
-function triggerUpload(policy: any) {
-  const input = fileInputRefs[policy.id]
-  if (input) {
-    input.value = ''
-    input.click()
+function handleDocClick(policy: any) {
+  if (policy.docCount > 0) {
+    navigateTo(`/musteriler/${policy.customerId}`)
+  } else {
+    const input = fileInputRefs[policy.id]
+    if (input) {
+      input.value = ''
+      input.click()
+    }
   }
 }
 
@@ -358,26 +359,30 @@ async function onFileSelected(policy: any, event: Event) {
 
   uploadingPolicyId.value = policy.id
   try {
-    const { token } = useAuth()
     const fd = new FormData()
     fd.append('file', file)
     fd.append('policyId', String(policy.id))
     if (policy.customerId) fd.append('customerId', String(policy.customerId))
+    const ext = file.name.split('.').pop() || 'pdf'
+    if (policy.policyNo) fd.append('customName', policy.policyNo + '.' + ext)
 
-    const res = await fetch('/api/documents', {
+    const tk = localStorage.getItem('auth_token') || ''
+    const json = await $fetch('/api/documents', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token.value}` },
+      headers: { Authorization: `Bearer ${tk}` },
       body: fd
-    })
-    const json = await res.json()
-    if (json.success) {
+    }) as any
+
+    if (json?.success) {
       policy.docCount = (policy.docCount || 0) + 1
       showToast({ title: 'Belge yüklendi', color: 'success' })
     } else {
-      showToast({ title: json.message || 'Yükleme başarısız', color: 'error' })
+      showToast({ title: json?.message || 'Yükleme başarısız', color: 'error' })
     }
-  } catch {
-    showToast({ title: 'Yükleme sırasında hata oluştu', color: 'error' })
+  } catch (err: any) {
+    console.error('[PDF Upload Error]', err)
+    const msg = err?.data?.message || err?.message || 'Bilinmeyen hata'
+    showToast({ title: 'Yükleme hatası: ' + msg, color: 'error' })
   }
   uploadingPolicyId.value = null
 }
@@ -610,6 +615,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 .slide-up-enter-active, .slide-up-leave-active {
   transition: all 0.25s ease;
 }

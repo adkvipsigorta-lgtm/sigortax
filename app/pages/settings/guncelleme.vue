@@ -84,7 +84,7 @@ async function rollback(name: string) {
     toast.add({ title: res.message || 'Geri alma tamamlandı', color: 'success' })
     setTimeout(() => window.location.reload(), 1500)
   } catch (e: any) {
-    toast.add({ title: e?.data?.message || 'Rollback başarısız', color: 'error' })
+    toast.add({ title: e?.data?.message || 'Geri alma başarısız', color: 'error' })
   } finally {
     rollingBack.value = null
   }
@@ -110,20 +110,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-3xl space-y-4">
-    <UCard>
+  <div class="max-w-2xl mx-auto">
+    <!-- Sayfa Başlığı -->
+    <div class="mb-6 pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Güncellemeler</h1>
+      <p class="text-sm text-muted mt-1">Uzaktan uygulama güncellemelerini yönetin.</p>
+    </div>
+
+    <!-- Güncelleme Kontrolü -->
+    <UCard class="mb-6">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 class="font-semibold">Güncellemeler</h3>
-            <p class="text-xs text-muted mt-0.5">Uzaktan uygulama güncellemesi</p>
-          </div>
+          <h2 class="font-semibold">Sürüm Durumu</h2>
           <UButton
             label="Tekrar Kontrol Et"
             icon="i-lucide-refresh-cw"
-            size="xs"
+            size="xl"
             variant="outline"
             color="neutral"
+            class="font-semibold"
             :loading="checking"
             @click="check"
           />
@@ -161,7 +166,7 @@ onMounted(() => {
                 <span v-else>Yeni sürüm mevcut</span>
                 <span class="text-primary ml-1">v{{ info.release?.version }}</span>
               </p>
-              <p class="text-xs text-muted" v-if="info.release?.released_at">
+              <p v-if="info.release?.released_at" class="text-xs text-muted">
                 Yayınlanma: {{ formatDate(info.release.released_at) }}
               </p>
             </div>
@@ -176,11 +181,13 @@ onMounted(() => {
             :label="`v${info.release?.version} sürümüne güncelle`"
             icon="i-lucide-download"
             color="primary"
+            size="xl"
+            class="font-semibold"
             :loading="applying"
             block
             @click="apply"
           />
-          <p v-if="applying" class="text-xs text-warning text-center">Güncelleme uygulanıyor, kapatmayın…</p>
+          <p v-if="applying" class="text-xs text-warning-600 text-center">Güncelleme uygulanıyor, kapatmayın…</p>
         </div>
 
         <p class="text-xs text-muted flex items-center gap-1">
@@ -195,11 +202,9 @@ onMounted(() => {
     <!-- Yedekler -->
     <UCard v-if="backups.length">
       <template #header>
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="font-semibold">Yedekler</h3>
-            <p class="text-xs text-muted mt-0.5">Son {{ backups.length }} yedek — gerekirse geri alabilirsiniz</p>
-          </div>
+        <div>
+          <h2 class="font-semibold">Yedekler</h2>
+          <p class="text-xs text-muted mt-0.5">Son {{ backups.length }} yedek — gerekirse geri alabilirsiniz.</p>
         </div>
       </template>
 
@@ -207,20 +212,19 @@ onMounted(() => {
         <div
           v-for="b in backups"
           :key="b.name"
-          class="flex items-center justify-between gap-3 p-3 border border-default rounded-lg hover:bg-elevated"
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 border border-default rounded-lg"
         >
           <div class="min-w-0">
             <p class="text-sm font-medium">v{{ b.version }}</p>
-            <p class="text-xs text-muted">{{ formatDate(b.created_at) }} • {{ formatSize(b.size_bytes) }}</p>
-            <p class="text-xs font-mono text-muted mt-0.5">{{ b.name }}</p>
+            <p class="text-xs text-muted">{{ formatDate(b.created_at) }} · {{ formatSize(b.size_bytes) }}</p>
           </div>
           <UButton
             label="Geri Al"
             icon="i-lucide-history"
-            size="xs"
+            size="xl"
             variant="outline"
             color="warning"
-            class="shrink-0"
+            class="font-semibold shrink-0 sm:w-auto w-full"
             :loading="rollingBack === b.name"
             @click="rollback(b.name)"
           />

@@ -32,7 +32,12 @@ class Response
     {
         $response = ['success' => false, 'message' => $message];
         if ($errors !== null) {
-            $response['errors'] = $errors;
+            // 401 icin reason bilgisini ust seviyeye tasii
+            if ($status === 401 && is_array($errors) && isset($errors['reason'])) {
+                $response['reason'] = $errors['reason'];
+            } else {
+                $response['errors'] = $errors;
+            }
         }
         self::json($response, $status);
     }

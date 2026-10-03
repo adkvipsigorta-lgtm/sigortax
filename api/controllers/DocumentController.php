@@ -111,8 +111,12 @@ class DocumentController
             $fileMeta = DocumentCrypto::encryptFile($file['tmp_name'], $target, $dek);
             $dekEnc = DocumentCrypto::encryptDek($dek);
 
+            $displayName = !empty($_POST['customName'])
+                ? $this->sanitizeFilename($_POST['customName'])
+                : $this->sanitizeFilename($file['name']);
+
             $id = Database::insert('documents', [
-                'name' => $this->sanitizeFilename($file['name']),
+                'name' => $displayName,
                 'file_path' => '',                                  // legacy kolon - artik kullanilmiyor
                 'storage_hash' => $hash,
                 'mime_type' => $detectedMime,

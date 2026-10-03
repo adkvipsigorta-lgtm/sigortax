@@ -132,6 +132,22 @@ class CustomerController
         $customer['active_policies'] = $activePolicies;
         $formatted = $this->formatCustomer($customer);
 
+        // Portal grup şirketleri
+        $portalGroupMembers = [];
+        if (!empty($customer['portal_group_id'])) {
+            $groupMembers = Database::fetchAll(
+                "SELECT id, name, identity_no, customer_type FROM customers WHERE portal_group_id = ? AND id != ? AND deleted_at IS NULL ORDER BY name",
+                [(int) $customer['portal_group_id'], $id]
+            );
+            $portalGroupMembers = array_map(fn($m) => [
+                'id' => (int) $m['id'],
+                'name' => $m['name'],
+                'identityNo' => $m['identity_no'],
+                'customerType' => $m['customer_type'],
+            ], $groupMembers);
+        }
+        $formatted['portalGroupMembers'] = $portalGroupMembers;
+
         $formatted['policies'] = $formattedPolicies;
         $formatted['stats'] = [
             'totalPolicies' => count($policies),
@@ -379,6 +395,7 @@ class CustomerController
             'categoryId' => $categoryId,
             'activePolicies' => (int) ($c['active_policies'] ?? 0),
             'totalGross' => (float) ($c['total_gross'] ?? 0),
+            'portalGroupId' => $c['portal_group_id'] ? (int) $c['portal_group_id'] : null,
             'createdAt' => $c['created_at'],
         ];
     }
@@ -552,6 +569,66 @@ class CustomerController
         $stmt->execute([$id, 'NOTE', $note, $user['userId'], date('Y-m-d H:i:s')]);
 
         Response::success(['id' => (int) $pdo->lastInsertId()], 'Not eklendi');
+    }
+
+    /**
+     * Portal grubuna müşteri ekle
+     * POST /api/customers/{id}/portal-group
+     * Body: { customerId: int } — eklenecek müşteri ID
+     */
+    public function addToPortalGroup(array $user, int $id, array $input): void
+    {
+        Permission::require($user, 'customers.manage');
+
+        $targetId = (int) ($input['customerId'] ?? 0);
+        if (!$targetId || $targetId === $id) {
+            Response::error('Geçersiz müşteri', 422);
+        }
+
+        $customer = Database::fetch("SELECT id, portal_group_id FROM customers WHERE id = ? AND deleted_at IS NULL", [$id]);
+        if (!$customer) Response::error('Müşteri bulunamadı', 404);
+
+        $target = Database::fetch("SELECT id, portal_group_id FROM customers WHERE id = ? AND deleted_at IS NULL", [$targetId]);
+        if (!$target) Response::error('Eklenecek müşteri bulunamadı', 404);
+
+        $groupId = $customer['portal_group_id'] ? (int) $customer['portal_group_id'] : null;
+
+        if (!$groupId) {
+            // Yeni grup oluştur — ana müşterinin ID'sini grup ID olarak kullan
+            $groupId = $id;
+            Database::query("UPDATE customers SET portal_group_id = ? WHERE id = ?", [$groupId, $id]);
+        }
+
+        // Hedef müşteri başka bir gruptaysa çıkar
+        Database::query("UPDATE customers SET portal_group_id = ? WHERE id = ?", [$groupId, $targetId]);
+
+        Response::success(null, 'Müşteri gruba eklendi');
+    }
+
+    /**
+     * Portal grubundan müşteri çıkar
+     * DELETE /api/customers/{id}/portal-group/{memberId}
+     */
+    public function removeFromPortalGroup(array $user, int $id, int $memberId): void
+    {
+        Permission::require($user, 'customers.manage');
+
+        $customer = Database::fetch("SELECT id, portal_group_id FROM customers WHERE id = ? AND deleted_at IS NULL", [$id]);
+        if (!$customer || !$customer['portal_group_id']) Response::error('Grup bulunamadı', 404);
+
+        // Üyeyi gruptan çıkar
+        Database::query("UPDATE customers SET portal_group_id = NULL WHERE id = ? AND portal_group_id = ?", [$memberId, (int) $customer['portal_group_id']]);
+
+        // Grupta tek kişi kaldıysa grubu tamamen kaldır
+        $remaining = Database::fetch(
+            "SELECT COUNT(*) as cnt FROM customers WHERE portal_group_id = ? AND deleted_at IS NULL",
+            [(int) $customer['portal_group_id']]
+        );
+        if ((int) $remaining['cnt'] <= 1) {
+            Database::query("UPDATE customers SET portal_group_id = NULL WHERE portal_group_id = ?", [(int) $customer['portal_group_id']]);
+        }
+
+        Response::success(null, 'Müşteri gruptan çıkarıldı');
     }
 
     /**

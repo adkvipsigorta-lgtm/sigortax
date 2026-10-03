@@ -84,6 +84,8 @@ const form = reactive({
   name: '',
   email: '',
   password: '',
+  phone: '',
+  tcNo: '',
   role: 'kullanıcı' as string,
   branchId: null as number | null,
   isActive: true,
@@ -127,17 +129,24 @@ function removeCustomer(id: number) {
 const selectedCustomerNames = ref<Record<number, string>>({})
 
 const formSchema = computed(() => {
-  const base = z.object({
-    name: z.string().min(2, 'Ad en az 2 karakter olmalıdir'),
+  if (editing.value) {
+    return z.object({
+      name: z.string().min(2, 'Ad en az 2 karakter olmalıdır'),
+      email: z.string().email('Geçerli bir e-posta girin'),
+      password: z.string().optional().or(z.literal('')),
+      role: z.string().min(1, 'Rol seçin'),
+      branchId: z.any().optional(),
+      isActive: z.boolean()
+    })
+  }
+  return z.object({
+    name: z.string().min(2, 'Ad en az 2 karakter olmalıdır'),
     email: z.string().email('Geçerli bir e-posta girin'),
-    password: editing.value
-      ? z.string().optional().or(z.literal(''))
-      : z.string().min(6, 'Şifre en az 6 karakter olmalıdir'),
+    phone: z.string().min(10, 'Geçerli telefon giriniz'),
     role: z.string().min(1, 'Rol seçin'),
     branchId: z.any().optional(),
     isActive: z.boolean()
   })
-  return base
 })
 
 // Delete
@@ -197,6 +206,8 @@ function openCreate() {
   form.name = ''
   form.email = ''
   form.password = ''
+  form.phone = ''
+  form.tcNo = ''
   form.role = 'kullanıcı'
   form.branchId = null
   form.isActive = true
@@ -244,16 +255,17 @@ async function saveUser() {
       isSalesRep: form.role !== 'musteri' ? form.isSalesRep : false,
       customerIds: form.role === 'musteri' ? form.customerIds : undefined
     }
-    if (form.password) {
-      payload.password = form.password
-    }
 
     if (editing.value) {
+      if (form.password) payload.password = form.password
       await put(`users/${editing.value.id}`, payload)
       toast.add({ title: 'Kullanıcı güncellendi', color: 'success' })
     } else {
-      await post('users', payload)
-      toast.add({ title: 'Kullanıcı oluşturuldu', color: 'success' })
+      payload.phone = form.phone
+      payload.tcNo = form.tcNo || undefined
+      const res = await post('users', payload)
+      const smsSent = res?.data?.smsSent
+      toast.add({ title: smsSent ? 'Kullanıcı oluşturuldu ve giriş bilgileri SMS ile gönderildi' : 'Kullanıcı oluşturuldu ancak SMS gönderilemedi', color: smsSent ? 'success' : 'warning' })
     }
     modalOpen.value = false
     users.refresh()
@@ -286,8 +298,21 @@ async function deleteUser() {
 
 async function toggleStatus(u: UserItem) {
   try {
+    const goingPassive = u.isActive
     await put(`users/${u.id}`, { isActive: !u.isActive })
-    toast.add({ title: u.isActive ? 'Kullanıcı devre disi birakildi' : 'Kullanıcı etkinlestirildi', color: 'success' })
+
+    // Pasife alınıyorsa tüm izinleri kapat
+    if (goingPassive) {
+      try {
+        const pRes = await get<any>(`users/${u.id}/permissions`)
+        const perms: Record<string, boolean> = {}
+        for (const p of (pRes.data || [])) { perms[p.key] = false }
+        if (Object.keys(perms).length) await put(`users/${u.id}/permissions`, { permissions: perms })
+      } catch {}
+      toast.add({ title: 'Kullanıcı pasife alındı ve tüm izinleri kapatıldı', color: 'success' })
+    } else {
+      toast.add({ title: 'Kullanıcı etkinleştirildi', color: 'success' })
+    }
     users.refresh()
   } catch (error: any) {
     toast.add({ title: error.message || 'Durum değiştirilemedi', color: 'error' })
@@ -302,7 +327,6 @@ function getRowActions(u: UserItem) {
   if (!isAdmin.value) return []
   const items: any[][] = [
     [
-      { label: 'Personel Kartı', icon: 'i-lucide-id-card', onSelect: () => navigateTo(`/personel/${u.id}`) },
       { label: 'İzinler', icon: 'i-lucide-shield', onSelect: () => navigateTo(`/settings/kullanicilar/${u.id}/izinler`) },
       { label: 'Düzenle', icon: 'i-lucide-pencil', onSelect: () => openEdit(u) },
       {
@@ -328,20 +352,21 @@ function getRowActions(u: UserItem) {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Takım Yönetimi</h1>
+      <p class="text-sm text-muted mt-1">Kullanıcıları ve rollerini yönetin.</p>
+    </div>
+
     <UCard :ui="{ body: 'p-4' }">
       <!-- Header -->
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <UInput
-            v-model="searchInput"
-            icon="i-lucide-search"
-            placeholder="Kullanıcı ara..."
-            size="xs"
-            class="w-[180px] h-[30px]"
-          />
-          <div class="flex items-center gap-3">
-            <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus" size="xs" @click="openCreate" />
+          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-usearch" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-usearch:top-0 peer-focus-within/fl-usearch:-translate-y-1/2 peer-focus-within/fl-usearch:text-xs peer-focus-within/fl-usearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-usearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-usearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-[var(--ui-text-highlighted)]">Kullanıcı Ara</label>
           </div>
+          <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus" size="xl" class="font-semibold" @click="openCreate" />
         </div>
       </template>
 
@@ -381,7 +406,7 @@ function getRowActions(u: UserItem) {
                 {{ row.original.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
               </div>
               <div class="min-w-0">
-                <span class="font-semibold text-primary truncate block" :title="row.original.name">{{ row.original.name }}</span>
+                <NuxtLink :to="`/settings/kullanicilar/${row.original.id}/izinler`" class="font-semibold text-primary truncate block hover:underline" :title="row.original.name">{{ row.original.name }}</NuxtLink>
                 <p class="text-xs text-muted">{{ row.original.email }}</p>
               </div>
             </div>
@@ -427,72 +452,66 @@ function getRowActions(u: UserItem) {
     <!-- Kullanıcı Ekle/Düzenle Modal -->
     <UModal :dismissible="false" v-model:open="modalOpen" :title="editing ? 'Kullanıcı Düzenle' : 'Yeni Kullanıcı'">
       <template #body>
-        <UForm :schema="formSchema" :state="form" @submit="saveUser" class="space-y-4">
-          <UFormField label="Ad Soyad" name="name">
-            <UInput v-model="form.name" placeholder="Örnek Isim" class="w-full" />
-          </UFormField>
+        <UForm :schema="formSchema" :state="form" @submit="saveUser" class="space-y-5">
+          <!-- TC Kimlik No (sadece yeni kullanıcı) -->
+          <div v-if="!editing" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.tcNo" placeholder=" " maxlength="11" inputmode="numeric" class="w-full peer/fl-utc" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-utc:top-0 peer-focus-within/fl-utc:-translate-y-1/2 peer-focus-within/fl-utc:text-xs peer-focus-within/fl-utc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-utc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-utc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-utc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-utc:text-[var(--ui-text-highlighted)]">TC Kimlik No</label>
+          </div>
 
-          <UFormField label="E-posta" name="email">
-            <UInput v-model="form.email" type="email" placeholder="örnek@mail.com" class="w-full" />
-          </UFormField>
+          <!-- Ad Soyad -->
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-uname" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uname:top-0 peer-focus-within/fl-uname:-translate-y-1/2 peer-focus-within/fl-uname:text-xs peer-focus-within/fl-uname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uname:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-red-500">*</span></label>
+          </div>
 
-          <UFormField :label="editing ? 'Yeni Şifre (bos birakilirsa değişmez)' : 'Şifre'" name="password">
-            <UInput v-model="form.password" type="password" placeholder="En az 6 karakter" class="w-full" />
-          </UFormField>
+          <!-- E-posta -->
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.email" type="email" placeholder=" " class="w-full peer/fl-uemail" data-no-uppercase />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uemail:top-0 peer-focus-within/fl-uemail:-translate-y-1/2 peer-focus-within/fl-uemail:text-xs peer-focus-within/fl-uemail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uemail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uemail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uemail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uemail:text-[var(--ui-text-highlighted)]">E-posta <span class="text-red-500">*</span></label>
+          </div>
 
-          <UFormField label="Rol" name="role">
-            <USelect
-              v-model="form.role"
-              :items="roleOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
+          <!-- Telefon (sadece yeni kullanıcı) -->
+          <div v-if="!editing" class="py-1">
+            <PhoneInput v-model="form.phone" />
+          </div>
 
-          <UFormField v-if="form.role === 'acente'" label="Sube" name="branchId">
-            <USelect
-              v-model="form.branchId"
-              :items="branches.map(b => ({ label: b.name, value: b.id }))"
-              value-key="value"
-              placeholder="Sube seçin"
-              class="w-full"
-            />
-          </UFormField>
+          <!-- Şifre (sadece düzenlemede) -->
+          <div v-if="editing" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.password" type="password" placeholder=" " class="w-full peer/fl-upass" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-upass:top-0 peer-focus-within/fl-upass:-translate-y-1/2 peer-focus-within/fl-upass:text-xs peer-focus-within/fl-upass:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-upass:top-0 peer-has-[input:not(:placeholder-shown)]/fl-upass:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-upass:text-xs peer-has-[input:not(:placeholder-shown)]/fl-upass:text-[var(--ui-text-highlighted)]">Yeni Şifre (boş bırakılırsa değişmez)</label>
+          </div>
 
-          <!-- Musteri baglama (portal kullanicisi icin) -->
-          <UFormField v-if="form.role === 'musteri'" label="Bağlı Müşteriler" name="customerIds">
-            <div class="space-y-2">
-              <!-- Secili musteriler -->
-              <div v-if="form.customerIds.length" class="flex flex-wrap gap-1.5">
-                <UBadge v-for="cid in form.customerIds" :key="cid" color="primary" variant="subtle" size="sm" class="gap-1">
-                  {{ selectedCustomerNames[cid] || `#${cid}` }}
-                  <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="2xs" :padded="false" @click="removeCustomer(cid)" />
-                </UBadge>
-              </div>
-              <!-- Arama -->
-              <div class="relative">
-                <UInput
-                  v-model="customerSearchQuery"
-                  icon="i-lucide-search"
-                  placeholder="Müşteri ara..."
-                  class="w-full"
-                  :loading="customerSearching"
-                />
-                <div v-if="customerSearchResults.length" class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-900 rounded-lg border border-default shadow-lg max-h-48 overflow-y-auto">
-                  <button
-                    v-for="c in customerSearchResults"
-                    :key="c.id"
-                    type="button"
-                    class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    @click="addCustomer(c)"
-                  >
-                    {{ c.name }}
-                  </button>
-                </div>
-              </div>
-              <p class="text-xs text-muted">Bu kullanıcı portalde seçili müşterilerin poliçelerini görebilecek.</p>
+          <!-- Rol -->
+          <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <USelect v-model="form.role" :items="roleOptions" value-key="value" placeholder=" " class="w-full" />
+            <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.role ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Rol <span class="text-red-500">*</span></label>
+          </div>
+
+          <!-- Şube (acente ise) -->
+          <div v-if="form.role === 'acente'" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+            <USelect v-model="form.branchId" :items="branches.map(b => ({ label: b.name, value: b.id }))" value-key="value" placeholder=" " class="w-full" />
+            <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.branchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şube</label>
+          </div>
+
+          <!-- Müşteri bağlama (portal kullanıcısı için) -->
+          <div v-if="form.role === 'musteri'" class="space-y-2">
+            <p class="text-sm font-medium">Bağlı Müşteriler</p>
+            <div v-if="form.customerIds.length" class="flex flex-wrap gap-1.5">
+              <UBadge v-for="cid in form.customerIds" :key="cid" color="primary" variant="subtle" size="sm" class="gap-1">
+                {{ selectedCustomerNames[cid] || `#${cid}` }}
+                <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="2xs" :padded="false" @click="removeCustomer(cid)" />
+              </UBadge>
             </div>
-          </UFormField>
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="customerSearchQuery" placeholder=" " class="w-full peer/fl-csearch" :loading="customerSearching" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Müşteri Ara</label>
+              <div v-if="customerSearchResults.length" class="absolute z-50 mt-1 w-full bg-white rounded-lg border border-default shadow-lg max-h-48 overflow-y-auto">
+                <button v-for="c in customerSearchResults" :key="c.id" type="button" class="w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 transition-colors" @click="addCustomer(c)">{{ c.name }}</button>
+              </div>
+            </div>
+            <p class="text-xs text-muted">Bu kullanıcı portalde seçili müşterilerin poliçelerini görebilecek.</p>
+          </div>
 
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
@@ -506,12 +525,8 @@ function getRowActions(u: UserItem) {
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <UButton label="Vazgeç" color="neutral" variant="outline" @click="modalOpen = false" />
-            <UButton
-              :label="editing ? 'Güncelle' : 'Oluştur'"
-              :loading="saving"
-              type="submit"
-            />
+            <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="modalOpen = false" />
+            <UButton :label="editing ? 'Güncelle' : 'Oluştur'" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" type="submit" />
           </div>
         </UForm>
       </template>
@@ -521,25 +536,19 @@ function getRowActions(u: UserItem) {
     <UModal :dismissible="false" v-model:open="deleteModalOpen" title="Kullanıcı Sil">
       <template #body>
         <div class="flex items-start gap-3">
-          <div class="size-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
-            <UIcon name="i-lucide-trash-2" class="size-5 text-error" />
+          <div class="size-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+            <UIcon name="i-lucide-trash-2" class="size-5 text-red-500" />
           </div>
           <div>
-            <p class="font-medium">{{ deletingUser?.name }} adli kullanıcıyi silmek istediginize emin misiniz?</p>
-            <p class="text-xs text-muted mt-1">Bu islem geri alinamaz.</p>
+            <p class="font-medium">{{ deletingUser?.name }} adlı kullanıcıyı silmek istediğinize emin misiniz?</p>
+            <p class="text-xs text-muted mt-1">Bu işlem geri alınamaz.</p>
           </div>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="deleteModalOpen = false" />
-          <UButton
-            label="Sil"
-            color="error"
-            icon="i-lucide-trash-2"
-            :loading="deleting"
-            @click="deleteUser"
-          />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" :loading="deleting" @click="deleteUser" />
         </div>
       </template>
     </UModal>
@@ -548,6 +557,10 @@ function getRowActions(u: UserItem) {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 :deep(.kullanicilar-table th:nth-child(1)) { width: 200px; min-width: 200px; max-width: 200px; }
 :deep(.kullanicilar-table th:nth-child(2)) { width: 100px; min-width: 100px; max-width: 100px; }
 :deep(.kullanicilar-table th:nth-child(3)) { width: 140px; min-width: 140px; max-width: 140px; }

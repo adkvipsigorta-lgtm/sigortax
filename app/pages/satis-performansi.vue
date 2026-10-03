@@ -103,6 +103,12 @@ onMounted(async () => {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Satış Performansı</h1>
+      <p class="text-sm text-muted mt-1">Aylık poliçe üretimi ve satış detayları.</p>
+    </div>
+
     <!-- Stat Kartları -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       <UCard :ui="{ body: 'p-3' }">
@@ -140,22 +146,25 @@ onMounted(async () => {
     <!-- Tablo Kartı -->
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div>
-            <h3 class="font-semibold">Aylık Satış Performansı</h3>
-            <p class="text-xs text-muted">Aylık poliçe üretimi ve satış detayları</p>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
+            <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
+            <span class="font-semibold text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ monthLabel }}</span>
+            <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />
           </div>
-          <div class="flex flex-wrap items-center gap-1.5">
-            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-[var(--ui-radius)] px-2 text-xs w-[180px] h-[30px]">
-              <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
-              <span class="font-medium flex-1 text-center whitespace-nowrap">{{ monthLabel }}</span>
-              <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />
-            </div>
-            <USelect v-if="isAdmin" v-model="filterSoldBy" :items="userOptions" size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" @update:model-value="onSoldByChange" />
-            <USelect v-model="filterType" :items="[{ label: 'Tüm İş Türleri', value: 'all' }, { label: 'YENİ İŞ', value: 'NEW' }, { label: 'YENİLEME', value: 'RENEWAL' }, { label: 'İPTAL', value: 'CANCELLED' }]" size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" />
-            <USelect v-if="insuranceOptions.length" v-model="filterInsurance" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...insuranceOptions.map(n => ({ label: n, value: n }))]" size="xs" :ui="{ base: 'h-[30px]' }" class="w-[180px]" />
-            <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="xs" color="error" variant="ghost" @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
+          <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
+            <USelect v-model="filterSoldBy" :items="userOptions" placeholder=" " class="w-full" @update:model-value="onSoldByChange" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
           </div>
+          <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+            <USelect v-model="filterType" :items="[{ label: 'Tüm İş Türleri', value: 'all' }, { label: 'YENİ İŞ', value: 'NEW' }, { label: 'YENİLEME', value: 'RENEWAL' }, { label: 'İPTAL', value: 'CANCELLED' }]" placeholder=" " class="w-full" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">İş Türü</label>
+          </div>
+          <div v-if="insuranceOptions.length" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+            <USelect v-model="filterInsurance" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...insuranceOptions.map(n => ({ label: n, value: n }))]" placeholder=" " class="w-full" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
+          </div>
+          <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="xl" color="error" variant="ghost" class="font-semibold" @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
         </div>
       </template>
 
@@ -221,6 +230,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
 .badge-cell {

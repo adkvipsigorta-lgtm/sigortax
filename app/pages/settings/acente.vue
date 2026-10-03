@@ -16,7 +16,7 @@ const { user } = useAuth()
 const isAdmin = computed(() => user.value?.role === 'admin')
 
 const agencySchema = z.object({
-  agency_name: z.string().min(2, 'Acente adı en az 2 karakter olmalıdir'),
+  agency_name: z.string().min(2, 'Acente adı en az 2 karakter olmalıdır'),
   agency_description: z.string().optional().or(z.literal('')),
   agency_logo: z.string().optional().or(z.literal('')),
   agency_phone: z.string().min(10, 'Geçerli telefon giriniz').optional().or(z.literal('')),
@@ -35,6 +35,25 @@ const agencySchema = z.object({
 const loading = ref(true)
 const saving = ref(false)
 const showApiKeyHelp = ref(false)
+
+const apiKeySteps = [
+  { title: 'Google AI Studio\u2019ya gidin', desc: 'aistudio.google.com/apikey', link: 'https://aistudio.google.com/apikey' },
+  { title: 'Google hesabınızla giriş yapın', desc: 'Gmail hesabınız yeterli' },
+  { title: '"Create API Key" butonuna tıklayın', desc: 'Yeni bir proje oluşturun veya mevcut projeyi seçin' },
+  { title: 'Oluşturulan anahtarı kopyalayın', desc: 'Anahtar "AIza..." ile başlar' },
+  { title: 'Yukarıdaki alana yapıştırın ve kaydedin', desc: 'PDF okuma özelliği otomatik aktif olur' }
+]
+
+// Accordion state — ilk açılışta Genel Bilgiler açık
+const openSections = ref<Set<string>>(new Set(['genel']))
+
+function toggleSection(key: string) {
+  if (openSections.value.has(key)) {
+    openSections.value.delete(key)
+  } else {
+    openSections.value.add(key)
+  }
+}
 
 const form = reactive({
   agency_name: '',
@@ -119,38 +138,25 @@ const locationDistrictId = computed({
 
 async function fetchCountries() {
   if (allCountries.value.length) return
-  try {
-    const res = await get('countries')
-    allCountries.value = (res.data || []).map((c: any) => ({ label: c.name, value: c.id }))
-  } catch {}
+  try { const res = await get('countries'); allCountries.value = (res.data || []).map((c: any) => ({ label: c.name, value: c.id })) } catch {}
 }
 async function fetchCities(countryId: number) {
-  try {
-    const res = await get(`cities?countryId=${countryId}`)
-    allCities.value = (res.data || []).map((c: any) => ({ label: c.name, value: c.id }))
-  } catch {}
+  try { const res = await get(`cities?countryId=${countryId}`); allCities.value = (res.data || []).map((c: any) => ({ label: c.name, value: c.id })) } catch {}
 }
 async function fetchDistricts(cityId: number) {
-  try {
-    const res = await get(`cities/${cityId}/districts`)
-    allDistricts.value = (res.data || []).map((d: any) => ({ label: d.name, value: d.id }))
-  } catch {}
+  try { const res = await get(`cities/${cityId}/districts`); allDistricts.value = (res.data || []).map((d: any) => ({ label: d.name, value: d.id })) } catch {}
 }
 
 let skipLocationWatch = false
 watch(() => form.agency_country_id, () => {
   if (skipLocationWatch) return
-  form.agency_city_id = ''
-  form.agency_district_id = ''
-  allCities.value = []
-  allDistricts.value = []
+  form.agency_city_id = ''; form.agency_district_id = ''; allCities.value = []; allDistricts.value = []
   if (form.agency_country_id) fetchCities(Number(form.agency_country_id))
 })
 watch(() => form.agency_city_id, (val) => {
   if (skipLocationWatch) return
   form.agency_district_id = ''
-  if (val) fetchDistricts(Number(val))
-  else allDistricts.value = []
+  if (val) fetchDistricts(Number(val)); else allDistricts.value = []
 })
 
 async function fetchOptions() {
@@ -168,16 +174,13 @@ async function fetchOptions() {
         }
       }
     })
-    // Load cities/districts after form populated
     skipLocationWatch = true
     if (form.agency_country_id) await fetchCities(Number(form.agency_country_id))
     if (form.agency_city_id) await fetchDistricts(Number(form.agency_city_id))
     nextTick(() => { skipLocationWatch = false })
   } catch (error: any) {
     toast.add({ title: error.message || 'Bilgiler yüklenemedi', color: 'error' })
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
 }
 
 async function saveOptions() {
@@ -190,17 +193,11 @@ async function saveOptions() {
       netgsm_enabled: form.netgsm_enabled ? 'true' : 'false',
       netgsm_password: form.netgsm_password?.includes('***') ? undefined : form.netgsm_password,
     })
-    setAgency({
-      name: form.agency_name || 'Sigorta Takip',
-      logo: form.agency_logo || null,
-      description: form.agency_description || ''
-    })
+    setAgency({ name: form.agency_name || 'Sigorta Takip', logo: form.agency_logo || null, description: form.agency_description || '' })
     toast.add({ title: 'Acente bilgileri kaydedildi', color: 'success' })
   } catch (error: any) {
     toast.add({ title: error.message || 'Kaydedilemedi', color: 'error' })
-  } finally {
-    saving.value = false
-  }
+  } finally { saving.value = false }
 }
 
 // Logo upload
@@ -210,486 +207,304 @@ async function handleLogoUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-
-  if (file.size > 2 * 1024 * 1024) {
-    toast.add({ title: 'Logo 2MB\'den buyuk olamaz', color: 'error' })
-    return
-  }
-
+  if (file.size > 2 * 1024 * 1024) { toast.add({ title: 'Logo 2MB\'den büyük olamaz', color: 'error' }); return }
   uploadingLogo.value = true
   try {
     const formData = new FormData()
     formData.append('logo', file)
-
     const { token } = useAuth()
-    const response = await fetch('/api/companies/upload-logo', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token.value}` },
-      body: formData
-    })
+    const response = await fetch('/api/companies/upload-logo', { method: 'POST', headers: { Authorization: `Bearer ${token.value}` }, body: formData })
     const data = await response.json()
-    if (data.success && data.data?.url) {
-      form.agency_logo = data.data.url
-      toast.add({ title: 'Logo yüklendi', color: 'success' })
-    } else {
-      toast.add({ title: data.message || 'Logo yüklenemedi', color: 'error' })
-    }
-  } catch {
-    toast.add({ title: 'Logo yüklenirken hata olustu', color: 'error' })
-  } finally {
-    uploadingLogo.value = false
-    input.value = ''
-  }
+    if (data.success && data.data?.url) { form.agency_logo = data.data.url; toast.add({ title: 'Logo yüklendi', color: 'success' }) }
+    else { toast.add({ title: data.message || 'Logo yüklenemedi', color: 'error' }) }
+  } catch { toast.add({ title: 'Logo yüklenirken hata oluştu', color: 'error' }) }
+  finally { uploadingLogo.value = false; input.value = '' }
 }
 
-function removeLogo() {
-  form.agency_logo = ''
-}
+function removeLogo() { form.agency_logo = '' }
 
 onMounted(fetchOptions)
 </script>
 
 <template>
-  <div class="space-y-4">
-    <UForm :schema="agencySchema" :state="form" @submit="saveOptions">
-      <!-- Başlık -->
-      <div class="flex items-center justify-between mb-4">
+  <div class="max-w-2xl mx-auto">
+    <!-- Sayfa Başlığı -->
+    <div class="mb-6 pb-4 border-b border-default">
+      <div class="flex items-center justify-between">
         <div>
-          <h3 class="font-semibold">Acente Bilgileri</h3>
-          <p class="text-xs text-muted">Acentenizin genel bilgilerini ve iletişim detaylarini yonetin.</p>
+          <h1 class="text-xl font-semibold">Acente Bilgileri</h1>
+          <p class="text-sm text-muted mt-1">Acentenizin genel bilgilerini ve entegrasyon ayarlarını yönetin.</p>
         </div>
-        <UButton v-if="isAdmin" label="Kaydet" size="xs" :loading="saving" type="submit" />
+        <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="saveOptions" />
       </div>
+    </div>
 
-      <!-- Loading -->
-      <div v-if="loading" class="space-y-4">
-        <SkeletonCard>
-          <div class="flex items-start gap-4">
-            <div class="size-20 rounded-lg bg-gray-200 dark:bg-gray-700 shrink-0" />
-            <div class="flex-1 space-y-3">
-              <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-48" />
-              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64" />
-              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40" />
+    <!-- Loading -->
+    <div v-if="loading" class="space-y-4">
+      <SkeletonCard v-for="i in 3" :key="i">
+        <div class="space-y-3">
+          <div class="h-5 bg-neutral-200 rounded w-48" />
+          <div class="h-4 bg-neutral-200 rounded w-64" />
+          <div class="h-4 bg-neutral-200 rounded w-40" />
+        </div>
+      </SkeletonCard>
+    </div>
+
+    <UForm v-else :schema="agencySchema" :state="form" class="space-y-4" @submit="saveOptions">
+
+      <!-- ═══ Genel Bilgiler ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('genel')">
+            <h2 class="font-semibold">Genel Bilgiler</h2>
+            <UIcon :name="openSections.has('genel') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('genel')" class="space-y-0 divide-y divide-default">
+          <!-- Logo -->
+          <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
+            <div class="min-w-48">
+              <p class="text-sm font-medium">Logo</p>
+              <p class="text-xs text-muted">Giriş ekranı ve sidebar'da görünür.</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="size-16 rounded-lg border border-default bg-neutral-50 flex items-center justify-center overflow-hidden">
+                <img v-if="form.agency_logo" :src="form.agency_logo" alt="Logo" class="size-full object-contain p-1">
+                <UIcon v-else name="i-lucide-building" class="size-8 text-muted" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="cursor-pointer">
+                  <UButton :label="form.agency_logo ? 'Değiştir' : 'Yükle'" icon="i-lucide-upload" color="neutral" variant="outline" size="xl" class="font-semibold" :loading="uploadingLogo" as="span" />
+                  <input type="file" accept="image/*" class="hidden" :disabled="!isAdmin" @change="handleLogoUpload">
+                </label>
+                <UButton v-if="form.agency_logo" label="Kaldır" icon="i-lucide-trash-2" color="error" variant="ghost" size="xl" class="font-semibold" @click="removeLogo" />
+              </div>
             </div>
           </div>
-        </SkeletonCard>
-        <SkeletonCard>
-          <div class="space-y-3">
-            <div class="h-9 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-            <div class="h-9 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-            <div class="h-9 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-          </div>
-        </SkeletonCard>
-      </div>
-
-      <template v-else>
-        <!-- Logo & Genel Bilgiler -->
-        <UCard class="mb-4">
-          <template #header>
-            <h3 class="font-semibold">Genel Bilgiler</h3>
-          </template>
-
-          <div class="space-y-0 divide-y divide-default">
-            <!-- Logo -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Logo</p>
-                <p class="text-xs text-muted">Giriş ekrani ve sidebar'da gorunur.</p>
-              </div>
-              <div class="flex items-center gap-4">
-                <div class="size-16 rounded-lg border border-default bg-gray-50 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                  <img
-                    v-if="form.agency_logo"
-                    :src="form.agency_logo"
-                    alt="Logo"
-                    class="size-full object-contain p-1"
-                  >
-                  <UIcon v-else name="i-lucide-building" class="size-8 text-muted" />
-                </div>
-                <div class="flex flex-col gap-1.5">
-                  <label class="cursor-pointer">
-                    <UButton
-                      :label="form.agency_logo ? 'Değiştir' : 'Yükle'"
-                      icon="i-lucide-upload"
-                      color="neutral"
-                      variant="outline"
-                      size="xs"
-                      :loading="uploadingLogo"
-                      as="span"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      class="hidden"
-                      :disabled="!isAdmin"
-                      @change="handleLogoUpload"
-                    >
-                  </label>
-                  <UButton
-                    v-if="form.agency_logo"
-                    label="Kaldir"
-                    icon="i-lucide-trash-2"
-                    color="error"
-                    variant="ghost"
-                    size="xs"
-                    @click="removeLogo"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Acente Adi -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Acente Adi</p>
-                <p class="text-xs text-muted">Resmi acente unvani.</p>
-              </div>
-              <UFormField name="agency_name" class="w-full max-w-sm">
-                <UInput v-model="form.agency_name" :disabled="!isAdmin" class="w-full" placeholder="Örnek Sigorta Acenteligi" />
-              </UFormField>
-            </div>
-
-            <!-- Açıklama -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 last:pb-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Açıklama</p>
-                <p class="text-xs text-muted">Giriş ekraninda görünecek kisa tanitim.</p>
-              </div>
-              <UFormField name="agency_description" class="w-full max-w-sm">
-                <UInput v-model="form.agency_description" :disabled="!isAdmin" class="w-full" placeholder="Hesabınıza giriş yapın" />
-              </UFormField>
+          <!-- Acente Adı -->
+          <div class="py-4">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.agency_name" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aname" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aname:top-0 peer-focus-within/fl-aname:-translate-y-1/2 peer-focus-within/fl-aname:text-xs peer-focus-within/fl-aname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aname:text-[var(--ui-text-highlighted)]">Acente Adı</label>
             </div>
           </div>
-        </UCard>
-
-        <!-- İletişim Bilgileri -->
-        <UCard class="mb-4">
-          <template #header>
-            <h3 class="font-semibold">İletişim Bilgileri</h3>
-          </template>
-
-          <div class="space-y-0 divide-y divide-default">
-            <!-- Telefon -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Telefon</p>
-                <p class="text-xs text-muted">Ana iletişim hatti.</p>
-              </div>
-              <UFormField name="agency_phone" class="w-full max-w-sm">
-                <PhoneInput v-model="form.agency_phone" :disabled="!isAdmin" />
-              </UFormField>
-            </div>
-
-            <!-- E-posta -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">E-posta</p>
-                <p class="text-xs text-muted">Genel iletişim adresi.</p>
-              </div>
-              <UFormField name="agency_email" class="w-full max-w-sm">
-                <UInput v-model="form.agency_email" :disabled="!isAdmin" type="email" class="w-full" placeholder="info@acenteniz.com" />
-              </UFormField>
-            </div>
-
-            <!-- Website -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Web Sitesi</p>
-              </div>
-              <UFormField name="agency_website" class="w-full max-w-sm">
-                <UInput v-model="form.agency_website" :disabled="!isAdmin" class="w-full" placeholder="www.acenteniz.com" />
-              </UFormField>
-            </div>
-
-            <!-- Ulke -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Ulke</p>
-              </div>
-              <UFormField name="agency_country_id" class="w-full max-w-sm">
-                <USelectMenu v-model="locationCountryId" :items="countryOptions" value-key="value" label-key="label" placeholder="Ulke arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!isAdmin" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
-              </UFormField>
-            </div>
-
-            <!-- Şehir -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Şehir</p>
-              </div>
-              <UFormField name="agency_city_id" class="w-full max-w-sm">
-                <USelectMenu v-model="locationCityId" :items="cityOptions" value-key="value" label-key="label" placeholder="Şehir arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!isAdmin || !form.agency_country_id" class="w-full" @update:search-term="(v: string) => citySearch = v" />
-              </UFormField>
-            </div>
-
-            <!-- Ilce -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Ilce</p>
-              </div>
-              <UFormField name="agency_district_id" class="w-full max-w-sm">
-                <USelectMenu v-model="locationDistrictId" :items="districtOptions" value-key="value" label-key="label" placeholder="Ilce arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!isAdmin || !form.agency_city_id" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
-              </UFormField>
-            </div>
-
-            <!-- Adres -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 last:pb-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Adres</p>
-                <p class="text-xs text-muted">Acente adresi.</p>
-              </div>
-              <UFormField name="agency_address" class="w-full max-w-sm">
-                <UTextarea v-model="form.agency_address" :disabled="!isAdmin" :rows="2" class="w-full" placeholder="Açık adres" />
-              </UFormField>
+          <!-- Açıklama -->
+          <div class="py-4 last:pb-0">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.agency_description" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-adesc" data-no-uppercase />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-adesc:top-0 peer-focus-within/fl-adesc:-translate-y-1/2 peer-focus-within/fl-adesc:text-xs peer-focus-within/fl-adesc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-adesc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-adesc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-adesc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-adesc:text-[var(--ui-text-highlighted)]">Açıklama</label>
             </div>
           </div>
-        </UCard>
+        </div>
+      </UCard>
 
-        <!-- Resmi Bilgiler -->
-        <UCard>
-          <template #header>
-            <h3 class="font-semibold">Resmi Bilgiler</h3>
-          </template>
-
-          <div class="space-y-0 divide-y divide-default">
-            <!-- Vergi Dairesi -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Vergi Dairesi</p>
-              </div>
-              <UFormField name="agency_tax_office" class="w-full max-w-sm">
-                <UInput v-model="form.agency_tax_office" :disabled="!isAdmin" class="w-full" placeholder="Kadikoy V.D." />
-              </UFormField>
-            </div>
-
-            <!-- Vergi No -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Vergi Numarasi</p>
-              </div>
-              <UFormField name="agency_tax_number" class="w-full max-w-sm">
-                <UInput v-model="form.agency_tax_number" :disabled="!isAdmin" class="w-full" placeholder="1234567890" />
-              </UFormField>
-            </div>
-
-            <!-- MERSIS No -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">MERSIS No</p>
-                <p class="text-xs text-muted">Merkezi Sicil Kayit Sistemi numarası.</p>
-              </div>
-              <UFormField name="agency_mersis_no" class="w-full max-w-sm">
-                <UInput v-model="form.agency_mersis_no" :disabled="!isAdmin" class="w-full" />
-              </UFormField>
-            </div>
-
-            <!-- TOBB No -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 last:pb-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">TOBB Sicil No</p>
-                <p class="text-xs text-muted">Levha sicil numarası.</p>
-              </div>
-              <UFormField name="agency_tobb_no" class="w-full max-w-sm">
-                <UInput v-model="form.agency_tobb_no" :disabled="!isAdmin" class="w-full" />
-              </UFormField>
+      <!-- ═══ İletişim Bilgileri ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('iletisim')">
+            <h2 class="font-semibold">İletişim Bilgileri</h2>
+            <UIcon :name="openSections.has('iletisim') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('iletisim')" class="space-y-0 divide-y divide-default">
+          <div class="py-4 first:pt-0">
+            <PhoneInput v-model="form.agency_phone" :disabled="!isAdmin" />
+          </div>
+          <div class="py-4">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.agency_email" type="email" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aemail" data-no-uppercase />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aemail:top-0 peer-focus-within/fl-aemail:-translate-y-1/2 peer-focus-within/fl-aemail:text-xs peer-focus-within/fl-aemail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aemail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aemail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aemail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aemail:text-[var(--ui-text-highlighted)]">E-posta</label>
             </div>
           </div>
-        </UCard>
-
-        <!-- AI Entegrasyonu -->
-        <UCard>
-          <template #header>
-            <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-sparkles" class="size-4 text-amber-500" />
-              <div>
-                <h3 class="font-semibold">AI Entegrasyonu</h3>
-                <p class="text-xs text-muted">PDF okuma ve otomatik form doldurma için Gemini API ayarları.</p>
-              </div>
+          <div class="py-4">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.agency_website" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-aweb" data-no-uppercase />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-aweb:top-0 peer-focus-within/fl-aweb:-translate-y-1/2 peer-focus-within/fl-aweb:text-xs peer-focus-within/fl-aweb:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-aweb:top-0 peer-has-[input:not(:placeholder-shown)]/fl-aweb:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-aweb:text-xs peer-has-[input:not(:placeholder-shown)]/fl-aweb:text-[var(--ui-text-highlighted)]">Web Sitesi</label>
             </div>
-          </template>
+          </div>
+        </div>
+      </UCard>
+
+      <!-- ═══ Resmi Bilgiler ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('resmi')">
+            <h2 class="font-semibold">Resmi Bilgiler</h2>
+            <UIcon :name="openSections.has('resmi') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('resmi')" class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 pt-2">
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.agency_tax_office" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-atax" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-atax:top-0 peer-focus-within/fl-atax:-translate-y-1/2 peer-focus-within/fl-atax:text-xs peer-focus-within/fl-atax:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-atax:top-0 peer-has-[input:not(:placeholder-shown)]/fl-atax:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-atax:text-xs peer-has-[input:not(:placeholder-shown)]/fl-atax:text-[var(--ui-text-highlighted)]">Vergi Dairesi</label>
+          </div>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.agency_tax_number" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-ataxno" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ataxno:top-0 peer-focus-within/fl-ataxno:-translate-y-1/2 peer-focus-within/fl-ataxno:text-xs peer-focus-within/fl-ataxno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ataxno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ataxno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ataxno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ataxno:text-[var(--ui-text-highlighted)]">Vergi Numarası</label>
+          </div>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.agency_mersis_no" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-amersis" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-amersis:top-0 peer-focus-within/fl-amersis:-translate-y-1/2 peer-focus-within/fl-amersis:text-xs peer-focus-within/fl-amersis:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-amersis:top-0 peer-has-[input:not(:placeholder-shown)]/fl-amersis:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-amersis:text-xs peer-has-[input:not(:placeholder-shown)]/fl-amersis:text-[var(--ui-text-highlighted)]">MERSİS No</label>
+          </div>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.agency_tobb_no" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-atobb" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-atobb:top-0 peer-focus-within/fl-atobb:-translate-y-1/2 peer-focus-within/fl-atobb:text-xs peer-focus-within/fl-atobb:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-atobb:top-0 peer-has-[input:not(:placeholder-shown)]/fl-atobb:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-atobb:text-xs peer-has-[input:not(:placeholder-shown)]/fl-atobb:text-[var(--ui-text-highlighted)]">TOBB Sicil No</label>
+          </div>
+        </div>
+      </UCard>
+
+      <!-- ═══ AI Entegrasyonu ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('ai')">
+            <h2 class="font-semibold">AI Entegrasyonu</h2>
+            <UIcon :name="openSections.has('ai') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('ai')">
           <div class="divide-y divide-default">
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
+            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
               <div class="min-w-48">
                 <p class="text-sm font-medium">Gemini API Anahtarı</p>
-                <p class="text-xs text-muted">Google AI Studio'dan alınan API anahtarı. Girilmezse PDF okuma özelliği devre dışı kalır.</p>
+                <p class="text-xs text-muted">Google AI Studio'dan alınan API anahtarı.</p>
                 <button type="button" class="text-xs text-primary hover:underline mt-1 cursor-pointer" @click="showApiKeyHelp = true">
                   <UIcon name="i-lucide-help-circle" class="size-3 inline" /> Nasıl alınır?
                 </button>
               </div>
               <div class="w-full max-w-sm space-y-2">
-                <UFormField name="gemini_api_key">
-                  <UInput v-model="form.gemini_api_key" :disabled="!isAdmin" type="password" class="w-full font-mono" placeholder="AIza..." />
-                </UFormField>
+                <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                  <UInput v-model="form.gemini_api_key" :disabled="!isAdmin" type="password" placeholder=" " class="w-full font-mono peer/fl-agemini" />
+                  <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-agemini:top-0 peer-focus-within/fl-agemini:-translate-y-1/2 peer-focus-within/fl-agemini:text-xs peer-focus-within/fl-agemini:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-agemini:top-0 peer-has-[input:not(:placeholder-shown)]/fl-agemini:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-agemini:text-xs peer-has-[input:not(:placeholder-shown)]/fl-agemini:text-[var(--ui-text-highlighted)]">Gemini API Anahtarı</label>
+                </div>
                 <div class="flex items-center gap-2">
-                  <UBadge v-if="form.gemini_api_key && !form.gemini_api_key.includes('***')" color="success" variant="subtle" size="xs">Yeni anahtar girildi</UBadge>
-                  <UBadge v-else-if="form.gemini_api_key && form.gemini_api_key.includes('***')" color="success" variant="subtle" size="xs">PDF okuma aktif</UBadge>
-                  <UBadge v-else color="neutral" variant="subtle" size="xs">PDF okuma kapalı</UBadge>
+                  <UBadge v-if="form.gemini_api_key && !form.gemini_api_key.includes('***')" color="success" variant="subtle" size="sm">Yeni anahtar girildi</UBadge>
+                  <UBadge v-else-if="form.gemini_api_key && form.gemini_api_key.includes('***')" color="success" variant="subtle" size="sm">PDF okuma aktif</UBadge>
+                  <UBadge v-else color="neutral" variant="subtle" size="sm">PDF okuma kapalı</UBadge>
                   <UButton v-if="form.gemini_api_key && isAdmin" size="xs" color="error" variant="ghost" @click="form.gemini_api_key = ''">Anahtarı Kaldır</UButton>
                 </div>
               </div>
             </div>
           </div>
-
           <!-- AI Satış Koçu -->
           <div class="border-t border-default mt-4 pt-4">
             <div class="flex max-sm:flex-col justify-between items-start gap-4">
               <div class="min-w-48">
                 <p class="text-sm font-medium">AI Satış Koçu</p>
-                <p class="text-xs text-muted">Temsilcilere akıllı satış önerileri sunar. Gemini API anahtarı gereklidir.</p>
+                <p class="text-xs text-muted">Temsilcilere akıllı satış önerileri sunar.</p>
               </div>
               <div class="w-full max-w-sm space-y-2">
                 <div class="flex items-center gap-3">
                   <USwitch v-model="form.ai_coach_enabled" size="xs" :disabled="!isAdmin || !form.gemini_api_key" />
                   <span class="text-sm" :class="form.ai_coach_enabled ? 'text-green-600 font-medium' : 'text-muted'">{{ form.ai_coach_enabled ? 'Aktif' : 'Pasif' }}</span>
                 </div>
-                <p v-if="!form.gemini_api_key" class="text-xs text-amber-600">Önce Gemini API anahtarını giriniz</p>
+                <p v-if="!form.gemini_api_key" class="text-xs text-warning-600">Önce Gemini API anahtarını giriniz.</p>
               </div>
             </div>
           </div>
+        </div>
+      </UCard>
 
-        </UCard>
-
-        <!-- Müşteri Portalı -->
-        <UCard>
-          <template #header>
-            <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-globe" class="size-4 text-blue-500" />
-              <div>
-                <h3 class="font-semibold">Müşteri Portalı</h3>
-                <p class="text-xs text-muted">Müşterilerinizin poliçelerini görüntüleyebildiği dış erişim paneli.</p>
-              </div>
+      <!-- ═══ Müşteri Portalı ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('portal')">
+            <h2 class="font-semibold">Müşteri Portalı</h2>
+            <UIcon :name="openSections.has('portal') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('portal')">
+          <div class="flex max-sm:flex-col justify-between items-start gap-4">
+            <div class="min-w-48">
+              <p class="text-sm font-medium">Portal Durumu</p>
+              <p class="text-xs text-muted">Aktif edildiğinde müşteriler portaldan giriş yapabilir.</p>
             </div>
-          </template>
-          <div class="divide-y divide-default">
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Portal Durumu</p>
-                <p class="text-xs text-muted">Aktif edildiğinde musteri.sigortax.net üzerinden müşteriler giriş yapabilir.</p>
+            <div class="w-full max-w-sm space-y-2">
+              <div class="flex items-center gap-3">
+                <USwitch v-model="form.customer_portal_enabled" size="xs" :disabled="!isAdmin" />
+                <span class="text-sm" :class="form.customer_portal_enabled ? 'text-green-600 font-medium' : 'text-muted'">{{ form.customer_portal_enabled ? 'Aktif' : 'Pasif' }}</span>
               </div>
-              <div class="w-full max-w-sm space-y-2">
-                <div class="flex items-center gap-3">
-                  <USwitch v-model="form.customer_portal_enabled" size="xs" :disabled="!isAdmin" />
-                  <span class="text-sm" :class="form.customer_portal_enabled ? 'text-green-600 font-medium' : 'text-muted'">{{ form.customer_portal_enabled ? 'Aktif' : 'Pasif' }}</span>
-                </div>
-                <p class="text-xs text-muted">Müşteri kullanıcıları Takım Yönetimi sayfasından "Müşteri (Portal)" rolüyle oluşturulur.</p>
-              </div>
+              <p class="text-xs text-muted">Müşteri kullanıcıları Takım Yönetimi sayfasından oluşturulur.</p>
             </div>
           </div>
-        </UCard>
+        </div>
+      </UCard>
 
-        <!-- Netgsm SMS Entegrasyonu -->
-        <UCard>
-          <template #header>
-            <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-message-square" class="size-4 text-green-500" />
-              <div>
-                <h3 class="font-semibold">Netgsm SMS Entegrasyonu</h3>
-                <p class="text-xs text-muted">SMS doğrulama ve bildirim göndermek için Netgsm API ayarları.</p>
-              </div>
+      <!-- ═══ Netgsm SMS ═══ -->
+      <UCard>
+        <template #header>
+          <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('sms')">
+            <h2 class="font-semibold">Netgsm SMS Entegrasyonu</h2>
+            <UIcon :name="openSections.has('sms') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
+          </button>
+        </template>
+        <div v-show="openSections.has('sms')" class="divide-y divide-default">
+          <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
+            <div class="min-w-48">
+              <p class="text-sm font-medium">SMS Durumu</p>
+              <p class="text-xs text-muted">Aktif edildiğinde SMS gönderimi yapılabilir.</p>
             </div>
-          </template>
-          <div class="divide-y divide-default">
-            <!-- Durum -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">SMS Durumu</p>
-                <p class="text-xs text-muted">Aktif edildiğinde SMS gönderimi yapılabilir.</p>
+            <div class="w-full max-w-sm space-y-2">
+              <div class="flex items-center gap-3">
+                <USwitch v-model="form.netgsm_enabled" size="xs" :disabled="!isAdmin || !form.netgsm_usercode || !form.netgsm_password" />
+                <span class="text-sm" :class="form.netgsm_enabled ? 'text-green-600 font-medium' : 'text-muted'">{{ form.netgsm_enabled ? 'Aktif' : 'Pasif' }}</span>
               </div>
-              <div class="w-full max-w-sm space-y-2">
-                <div class="flex items-center gap-3">
-                  <USwitch v-model="form.netgsm_enabled" size="xs" :disabled="!isAdmin || !form.netgsm_usercode || !form.netgsm_password" />
-                  <span class="text-sm" :class="form.netgsm_enabled ? 'text-green-600 font-medium' : 'text-muted'">{{ form.netgsm_enabled ? 'Aktif' : 'Pasif' }}</span>
-                </div>
-                <p v-if="!form.netgsm_usercode || !form.netgsm_password" class="text-xs text-amber-600">Önce API bilgilerini giriniz</p>
-              </div>
-            </div>
-            <!-- Abone No -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Abone No (Usercode)</p>
-                <p class="text-xs text-muted">Netgsm panelindeki abone numaranız.</p>
-              </div>
-              <UFormField name="netgsm_usercode" class="w-full max-w-sm">
-                <UInput v-model="form.netgsm_usercode" :disabled="!isAdmin" class="w-full" placeholder="85XXXXXXXX" />
-              </UFormField>
-            </div>
-            <!-- Şifre -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">API Şifresi</p>
-                <p class="text-xs text-muted">Netgsm hesap şifreniz.</p>
-              </div>
-              <UFormField name="netgsm_password" class="w-full max-w-sm">
-                <UInput v-model="form.netgsm_password" :disabled="!isAdmin" type="password" class="w-full" placeholder="••••••••" />
-              </UFormField>
-            </div>
-            <!-- Mesaj Başlığı -->
-            <div class="flex max-sm:flex-col justify-between items-start gap-4 py-4 last:pb-0">
-              <div class="min-w-48">
-                <p class="text-sm font-medium">Mesaj Başlığı</p>
-                <p class="text-xs text-muted">SMS gönderiminde görünecek başlık (Netgsm'den onaylı).</p>
-              </div>
-              <UFormField name="netgsm_msgheader" class="w-full max-w-sm">
-                <UInput v-model="form.netgsm_msgheader" :disabled="!isAdmin" class="w-full" placeholder="ADKVIPSIGOR" />
-              </UFormField>
+              <p v-if="!form.netgsm_usercode || !form.netgsm_password" class="text-xs text-warning-600">Önce API bilgilerini giriniz.</p>
             </div>
           </div>
-        </UCard>
+          <div class="py-4">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.netgsm_usercode" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-nuser" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-nuser:top-0 peer-focus-within/fl-nuser:-translate-y-1/2 peer-focus-within/fl-nuser:text-xs peer-focus-within/fl-nuser:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-nuser:top-0 peer-has-[input:not(:placeholder-shown)]/fl-nuser:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-nuser:text-xs peer-has-[input:not(:placeholder-shown)]/fl-nuser:text-[var(--ui-text-highlighted)]">Abone No (Usercode)</label>
+            </div>
+          </div>
+          <div class="py-4">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.netgsm_password" type="password" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-npass" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-npass:top-0 peer-focus-within/fl-npass:-translate-y-1/2 peer-focus-within/fl-npass:text-xs peer-focus-within/fl-npass:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-npass:top-0 peer-has-[input:not(:placeholder-shown)]/fl-npass:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-npass:text-xs peer-has-[input:not(:placeholder-shown)]/fl-npass:text-[var(--ui-text-highlighted)]">API Şifresi</label>
+            </div>
+          </div>
+          <div class="py-4 last:pb-0">
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.netgsm_msgheader" placeholder=" " :disabled="!isAdmin" class="w-full peer/fl-nmsg" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-nmsg:top-0 peer-focus-within/fl-nmsg:-translate-y-1/2 peer-focus-within/fl-nmsg:text-xs peer-focus-within/fl-nmsg:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-nmsg:top-0 peer-has-[input:not(:placeholder-shown)]/fl-nmsg:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-nmsg:text-xs peer-has-[input:not(:placeholder-shown)]/fl-nmsg:text-[var(--ui-text-highlighted)]">Mesaj Başlığı</label>
+            </div>
+          </div>
+        </div>
+      </UCard>
 
-        <!-- API Key Yardım Modalı -->
-        <UModal v-model:open="showApiKeyHelp" title="Gemini API Anahtarı Nasıl Alınır?" class="sm:max-w-lg">
-            <template #body>
-              <div class="space-y-4">
-                <div class="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                  <UIcon name="i-lucide-info" class="size-4 text-amber-600 shrink-0 mt-0.5" />
-                  <p class="text-sm text-amber-700 dark:text-amber-300">Gemini API ücretsiz kullanılabilir. Yüksek kullanım için ücretli plana geçiş gerekebilir.</p>
+      <!-- API Key Yardım Modalı -->
+      <UModal v-model:open="showApiKeyHelp" title="Gemini API Anahtarı Nasıl Alınır?" class="sm:max-w-lg">
+        <template #body>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-warning-50 border border-warning-200">
+              <UIcon name="i-lucide-info" class="size-4 text-warning-600 shrink-0 mt-0.5" />
+              <p class="text-sm text-warning-700">Gemini API ücretsiz kullanılabilir. Yüksek kullanım için ücretli plana geçiş gerekebilir.</p>
+            </div>
+            <ol class="space-y-3 text-sm">
+              <li v-for="(step, i) in apiKeySteps" :key="i" class="flex gap-3">
+                <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">{{ i + 1 }}</span>
+                <div>
+                  <p class="font-medium">{{ step.title }}</p>
+                  <a v-if="step.link" :href="step.link" target="_blank" class="text-primary hover:underline text-xs">{{ step.desc }}</a>
+                  <p v-else class="text-xs text-muted">{{ step.desc }}</p>
                 </div>
-
-                <ol class="space-y-3 text-sm">
-                  <li class="flex gap-3">
-                    <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">1</span>
-                    <div>
-                      <p class="font-medium">Google AI Studio'ya gidin</p>
-                      <a href="https://aistudio.google.com/apikey" target="_blank" class="text-primary hover:underline text-xs">aistudio.google.com/apikey</a>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">2</span>
-                    <div>
-                      <p class="font-medium">Google hesabınızla giriş yapın</p>
-                      <p class="text-xs text-muted">Gmail hesabınız yeterli</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">3</span>
-                    <div>
-                      <p class="font-medium">"Create API Key" butonuna tıklayın</p>
-                      <p class="text-xs text-muted">Yeni bir proje oluşturun veya mevcut projeyi seçin</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">4</span>
-                    <div>
-                      <p class="font-medium">Oluşturulan anahtarı kopyalayın</p>
-                      <p class="text-xs text-muted">Anahtar "AIza..." ile başlar</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">5</span>
-                    <div>
-                      <p class="font-medium">Yukarıdaki alana yapıştırın ve kaydedin</p>
-                      <p class="text-xs text-muted">PDF okuma özelliği otomatik aktif olur</p>
-                    </div>
-                  </li>
-                </ol>
-              </div>
-            </template>
-            <template #footer>
-              <div class="flex justify-end">
-                <UButton label="Tamam" @click="showApiKeyHelp = false" />
-              </div>
-            </template>
-          </UModal>
-      </template>
+              </li>
+            </ol>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-end">
+            <UButton label="Tamam" size="xl" class="font-semibold" @click="showApiKeyHelp = false" />
+          </div>
+        </template>
+      </UModal>
     </UForm>
   </div>
 </template>
+
+<style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
+</style>

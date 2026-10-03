@@ -575,52 +575,30 @@ async function exportToExcel() {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Müşteriler</h1>
+      <p class="text-sm text-muted mt-1">Müşteri listesi ve yönetimi.</p>
+    </div>
+
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div>
-            <h3 class="font-semibold">Müşteriler</h3>
-            <p class="text-xs text-muted">Müşteri listesi ve yönetimi</p>
-          </div>
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-1.5">
-              <UInput
-                v-model="searchInput"
-                icon="i-lucide-search"
-                placeholder="Müşteri ara..."
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px]"
-              />
-              <USelect
-                v-model="typeFilter"
-                :items="typeOptions"
-                value-key="value"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px]"
-              />
-              <USelect
-                v-model="categoryFilter"
-                :items="categoryFilterOptions"
-                value-key="value"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px]"
-              />
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative w-[220px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-csearch" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Müşteri Ara</label>
             </div>
-            <UButton
-              v-if="can('customers.export')"
-              icon="i-lucide-download"
-              color="neutral"
-              variant="outline"
-              size="xs"
-              class="hidden sm:flex shrink-0"
-              :loading="exporting"
-              @click="exportToExcel"
-              title="Excel'e Aktar"
-            />
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+              <USelect v-model="typeFilter" :items="typeOptions" value-key="value" placeholder=" " class="w-full" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Müşteri Tipi</label>
+            </div>
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[180px]">
+              <USelect v-model="categoryFilter" :items="categoryFilterOptions" value-key="value" placeholder=" " class="w-full" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Kategori</label>
+            </div>
           </div>
+          <UButton v-if="can('customers.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="font-semibold hidden sm:flex shrink-0" :loading="exporting" @click="exportToExcel" />
         </div>
       </template>
 
@@ -783,75 +761,101 @@ async function exportToExcel() {
                 </button>
               </div>
             </UFormField>
-            <UFormField :label="isIndividual ? 'Ad Soyad' : 'Firma Unvani'" name="name" required class="col-span-2">
-              <UInput :model-value="form.name" :placeholder="isIndividual ? 'Ahmet Yilmaz' : 'ABC Ltd. Sti.'" class="w-full" @update:model-value="onNameInput" />
-            </UFormField>
-            <UFormField :label="identityLabel" name="identityNo" required>
-              <UInput :model-value="form.identityNo" :placeholder="identityPlaceholder" :maxlength="identityMaxLength" class="w-full" @update:model-value="onIdentityInput" />
-            </UFormField>
-            <UFormField :label="isIndividual ? 'Doğum Tarihi' : 'Vergi Dairesi'" :name="isIndividual ? 'birthDate' : 'taxOffice'">
-              <div v-if="isIndividual" class="flex gap-2 items-center">
-                <UInput
-                  :model-value="birthDateDisplay"
-                  placeholder="GG.AA.YYYY"
-                  maxlength="10"
-                  class="flex-1"
-                  @update:model-value="onBirthDateInput($event)"
-                />
-                <UPopover v-model:open="birthDatePopoverOpen">
-                  <UButton type="button" icon="i-lucide-calendar" color="neutral" variant="outline" />
-                  <template #content>
-                    <UCalendar locale="tr-TR" v-model="birthDateCalendar" class="p-2" @update:model-value="(v: any) => { onBirthDateCalendar(v); birthDatePopoverOpen = false }" />
-                  </template>
-                </UPopover>
+            <!-- Ad Soyad / Firma Unvanı -->
+            <div class="col-span-2 relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput :model-value="form.name" placeholder=" " class="w-full peer/fl-mname" @update:model-value="onNameInput" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mname:top-0 peer-focus-within/fl-mname:-translate-y-1/2 peer-focus-within/fl-mname:text-xs peer-focus-within/fl-mname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mname:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Ad Soyad' : 'Firma Unvanı' }} <span class="text-red-500">*</span></label>
+            </div>
+            <!-- TC / VKN -->
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput :model-value="form.identityNo" placeholder=" " :maxlength="identityMaxLength" class="w-full peer/fl-mid" @update:model-value="onIdentityInput" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mid:top-0 peer-focus-within/fl-mid:-translate-y-1/2 peer-focus-within/fl-mid:text-xs peer-focus-within/fl-mid:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mid:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mid:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mid:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mid:text-[var(--ui-text-highlighted)]">{{ identityLabel }} <span class="text-red-500">*</span></label>
+            </div>
+            <!-- Doğum Tarihi / Vergi Dairesi -->
+            <div v-if="isIndividual" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput :model-value="birthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-mbdate" @update:model-value="onBirthDateInput($event)">
+                <template #trailing>
+                  <UPopover v-model:open="birthDatePopoverOpen">
+                    <UButton type="button" icon="i-lucide-calendar" color="neutral" variant="ghost" size="xs" />
+                    <template #content>
+                      <UCalendar locale="tr-TR" v-model="birthDateCalendar" class="p-2" @update:model-value="(v: any) => { onBirthDateCalendar(v); birthDatePopoverOpen = false }" />
+                    </template>
+                  </UPopover>
+                </template>
+              </UInput>
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mbdate:top-0 peer-focus-within/fl-mbdate:-translate-y-1/2 peer-focus-within/fl-mbdate:text-xs peer-focus-within/fl-mbdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mbdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mbdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mbdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mbdate:text-[var(--ui-text-highlighted)]">Doğum Tarihi</label>
+            </div>
+            <div v-else class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.taxOffice" placeholder=" " class="w-full peer/fl-mtax" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mtax:top-0 peer-focus-within/fl-mtax:-translate-y-1/2 peer-focus-within/fl-mtax:text-xs peer-focus-within/fl-mtax:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mtax:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mtax:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mtax:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mtax:text-[var(--ui-text-highlighted)]">Vergi Dairesi</label>
+            </div>
+            <!-- E-posta -->
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.email" type="email" placeholder=" " class="w-full peer/fl-memail" data-no-uppercase />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-memail:top-0 peer-focus-within/fl-memail:-translate-y-1/2 peer-focus-within/fl-memail:text-xs peer-focus-within/fl-memail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-memail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-memail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-memail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-memail:text-[var(--ui-text-highlighted)]">E-posta</label>
+            </div>
+            <!-- Meslek / Yetkili Kişi -->
+            <div v-if="isIndividual ? showField('job') : true" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-if="isIndividual" v-model="form.job" placeholder=" " class="w-full peer/fl-mjob" />
+              <UInput v-else v-model="form.contactPerson" placeholder=" " class="w-full peer/fl-mjob" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mjob:top-0 peer-focus-within/fl-mjob:-translate-y-1/2 peer-focus-within/fl-mjob:text-xs peer-focus-within/fl-mjob:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mjob:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mjob:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mjob:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mjob:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Meslek' : 'Yetkili Kişi' }}</label>
+            </div>
+            <!-- Telefon -->
+            <div>
+              <PhoneInput v-model="form.phone" required />
+            </div>
+            <div v-if="showField('phone_2')">
+              <PhoneInput v-model="form.phoneAlt" label="İkinci Telefon" />
+            </div>
+            <!-- Medeni Durum / Sektör -->
+            <div v-if="isIndividual ? showField('marital_status') : showField('sector')">
+              <div v-if="isIndividual" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelect v-model="form.maritalStatus" :items="maritalOptions" value-key="value" placeholder=" " class="w-full" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.maritalStatus ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Medeni Durum</label>
               </div>
-              <UInput v-else v-model="form.taxOffice" placeholder="Kadikoy VD" class="w-full" />
-            </UFormField>
-            <UFormField label="E-posta" name="email">
-              <UInput v-model="form.email" type="email" placeholder="örnek@email.com" class="w-full" />
-            </UFormField>
-            <UFormField v-if="isIndividual ? showField('job') : true" :label="isIndividual ? 'Meslek' : 'Yetkili Kişi'" :name="isIndividual ? 'job' : 'contactPerson'">
-              <UInput v-if="isIndividual" v-model="form.job" placeholder="Muhendis" class="w-full" />
-              <UInput v-else v-model="form.contactPerson" placeholder="Yetkili adı" class="w-full" />
-            </UFormField>
-            <UFormField label="Telefon" name="phone" required>
-              <PhoneInput v-model="form.phone" />
-            </UFormField>
-            <UFormField v-if="showField('phone_2')" label="İkinci Telefon" name="phoneAlt">
-              <PhoneInput v-model="form.phoneAlt" />
-            </UFormField>
-            <UFormField v-if="isIndividual ? showField('marital_status') : showField('sector')" :label="isIndividual ? 'Medeni Durum' : 'Sektor'" :name="isIndividual ? 'maritalStatus' : 'sector'">
-              <USelect v-if="isIndividual" v-model="form.maritalStatus" :items="maritalOptions" value-key="value" placeholder="Seçiniz..." class="w-full" />
-              <UInput v-else v-model="form.sector" placeholder="Insaat" class="w-full" />
-            </UFormField>
-            <UFormField v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" :label="isIndividual ? 'Çocuk Sayısı' : 'Calisan Sayısı'" name="dependentsCount">
-              <UInput v-model.number="form.dependentsCount" type="number" :min="0" class="w-full" />
-            </UFormField>
+              <div v-else class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <UInput v-model="form.sector" placeholder=" " class="w-full peer/fl-msec" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-msec:top-0 peer-focus-within/fl-msec:-translate-y-1/2 peer-focus-within/fl-msec:text-xs peer-focus-within/fl-msec:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-msec:top-0 peer-has-[input:not(:placeholder-shown)]/fl-msec:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-msec:text-xs peer-has-[input:not(:placeholder-shown)]/fl-msec:text-[var(--ui-text-highlighted)]">Sektör</label>
+              </div>
+            </div>
+            <!-- Çocuk / Çalışan Sayısı -->
+            <div v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model.number="form.dependentsCount" type="number" :min="0" placeholder=" " class="w-full peer/fl-mdep" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-mdep:top-0 peer-focus-within/fl-mdep:-translate-y-1/2 peer-focus-within/fl-mdep:text-xs peer-focus-within/fl-mdep:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-mdep:top-0 peer-has-[input:not(:placeholder-shown)]/fl-mdep:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-mdep:text-xs peer-has-[input:not(:placeholder-shown)]/fl-mdep:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Çocuk Sayısı' : 'Çalışan Sayısı' }}</label>
+            </div>
+            <!-- Konum -->
             <template v-if="showField('city')">
-              <UFormField label="Ulke" name="countryId">
-                <USelectMenu v-model="form.countryId" :items="countryOptions" value-key="value" label-key="label" placeholder="Ulke arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
-              </UFormField>
-              <UFormField label="Şehir" name="city">
-                <USelectMenu v-model="form.city" :items="cityOptions" value-key="value" label-key="label" placeholder="Şehir arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.countryId" class="w-full" @update:search-term="(v: string) => citySearch = v" />
-              </UFormField>
-              <UFormField label="Ilce" name="district">
-                <USelectMenu v-model="form.district" :items="districtOptions" value-key="value" label-key="label" placeholder="Ilce arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.city" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
-              </UFormField>
+              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelectMenu v-model="form.countryId" :items="countryOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.countryId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Ülke</label>
+              </div>
+              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelectMenu v-model="form.city" :items="cityOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.countryId" class="w-full" @update:search-term="(v: string) => citySearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.city ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şehir</label>
+              </div>
+              <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelectMenu v-model="form.district" :items="districtOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.city" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.district ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">İlçe</label>
+              </div>
             </template>
-            <UFormField v-if="showField('address')" label="Adres" name="address">
-              <UInput v-model="form.address" placeholder="Açık adres" class="w-full" />
-            </UFormField>
-            <UFormField v-if="showField('note')" label="Not" name="note" class="col-span-2">
-              <UTextarea v-model="form.note" :rows="2" placeholder="Ek notlar..." class="w-full" />
-            </UFormField>
+            <!-- Adres -->
+            <div v-if="showField('address')" class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="form.address" placeholder=" " class="w-full peer/fl-maddr" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-maddr:top-0 peer-focus-within/fl-maddr:-translate-y-1/2 peer-focus-within/fl-maddr:text-xs peer-focus-within/fl-maddr:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-maddr:top-0 peer-has-[input:not(:placeholder-shown)]/fl-maddr:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-maddr:text-xs peer-has-[input:not(:placeholder-shown)]/fl-maddr:text-[var(--ui-text-highlighted)]">Adres</label>
+            </div>
+            <!-- Not -->
+            <div v-if="showField('note')" class="col-span-2 relative [&_textarea]:!pt-5 [&_textarea]:!pb-2.5">
+              <UTextarea v-model="form.note" :rows="2" placeholder=" " class="w-full peer/fl-mnote" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.note ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Not</label>
+            </div>
             <button ref="submitBtnRef" type="submit" class="hidden" />
           </div>
         </UForm>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" :disabled="saving" @click="isModalOpen = false" />
-          <UButton :label="editingCustomer ? 'Güncelle' : 'Kaydet'" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="saving" @click="isModalOpen = false" />
+          <UButton :label="editingCustomer ? 'Güncelle' : 'Kaydet'" size="xl" class="font-semibold" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
         </div>
       </template>
     </UModal>
@@ -859,12 +863,12 @@ async function exportToExcel() {
     <!-- Silme Onay -->
     <UModal :dismissible="false" v-model:open="isDeleteModalOpen" title="Müşteri Sil">
       <template #body>
-        <p>Bu müşteriyi silmek istediginize emin misiniz? Müşteriye ait tum veriler de silinecektir.</p>
+        <p>Bu müşteriyi silmek istediğinize emin misiniz? Müşteriye ait tüm veriler de silinecektir.</p>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" :disabled="deletingCustomer" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" :loading="deletingCustomer" :disabled="deletingCustomer" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="deletingCustomer" @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" :loading="deletingCustomer" :disabled="deletingCustomer" @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -872,6 +876,10 @@ async function exportToExcel() {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 /* Kolon genişliklerini table-fixed ile kilitler — sayfa değiştirince yer kayması olmaz */
 :deep(.musteriler-table th:nth-child(1)) { width: 80px;  min-width: 80px;  max-width: 80px;  }
 :deep(.musteriler-table th:nth-child(2)) { width: 200px; min-width: 200px; max-width: 200px; }

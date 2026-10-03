@@ -949,9 +949,11 @@ class LeadController
         // Aktivite kaydi
         $this->logActivity($id, 0, 'DURUM', 'Webhook ile olusturuldu (' . ($webhookSource ?: 'bilinmeyen') . ')', null, 'ACIK');
 
-        // Atama bildirimi
+        // Bildirim
         if ($assignedTo) {
             $this->notifyAssignment($assignedTo, $id, trim($input['fullName'] ?? '') ?: '', $phone);
+        } else {
+            $this->notifyPool($id, $phone);
         }
 
         Response::json([

@@ -789,39 +789,41 @@ async function saveLead() {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Lead Yönetimi</h1>
+      <p class="text-sm text-muted mt-1">Gelen lead'leri takip edin ve yönetin.</p>
+    </div>
+
     <UCard>
       <template #header>
         <div class="flex items-center justify-between flex-wrap gap-2">
-          <div>
-            <h3 class="font-semibold">Lead Yönetimi</h3>
-            <p class="text-xs text-muted">Gelen lead'leri takip edin ve yönetin</p>
-          </div>
           <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
             <UButton
-              size="sm"
+              size="xl"
               :color="activeTab === 'acik' ? 'primary' : 'neutral'"
               :variant="activeTab === 'acik' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
               @click="activeTab = 'acik'"
             >
               Açık Leadler
               <UBadge v-if="tabCounts.acik" :label="String(tabCounts.acik)" size="sm" color="neutral" variant="subtle" class="ml-1" />
             </UButton>
             <UButton
-              size="sm"
+              size="xl"
               :color="activeTab === 'devam' ? 'primary' : 'neutral'"
               :variant="activeTab === 'devam' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
               @click="activeTab = 'devam'"
             >
               Devam Eden
               <UBadge v-if="tabCounts.devam" :label="String(tabCounts.devam)" size="sm" color="neutral" variant="subtle" class="ml-1" />
             </UButton>
             <UButton
-              size="sm"
+              size="xl"
               :color="activeTab === 'kapatilan' ? 'primary' : 'neutral'"
               :variant="activeTab === 'kapatilan' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
               @click="activeTab = 'kapatilan'"
             >
               Kapatılan
@@ -1110,8 +1112,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="md" class="w-32 justify-center" :disabled="savingQuick" @click="quickModalOpen = false" />
-          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" size="md" class="w-32 justify-center" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingQuick" @click="quickModalOpen = false" />
+          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
         </div>
       </template>
     </UModal>
@@ -1131,8 +1133,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="deleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1190,8 +1192,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="md" class="w-32 justify-center" :disabled="savingEdit" @click="editModalOpen = false" />
-          <UButton label="Güncelle" icon="i-lucide-check" color="primary" size="md" class="w-32 justify-center" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingEdit" @click="editModalOpen = false" />
+          <UButton label="Güncelle" icon="i-lucide-check" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
         </div>
       </template>
     </UModal>
@@ -1209,7 +1211,8 @@ async function saveLead() {
               color="primary"
               variant="soft"
               block
-              size="lg"
+              size="xl"
+              class="font-semibold"
               :loading="closingLead"
               @click="closeAsWon"
             />
@@ -1219,7 +1222,8 @@ async function saveLead() {
               color="error"
               variant="soft"
               block
-              size="lg"
+              size="xl"
+              class="font-semibold"
               :disabled="closingLead"
               @click="statusStep = 'lost_reason'"
             />
@@ -1237,8 +1241,8 @@ async function saveLead() {
             class="w-full"
           />
           <div class="flex justify-end gap-2">
-            <UButton label="Geri" color="neutral" variant="outline" size="sm" :disabled="closingLead" @click="statusStep = 'choose'" />
-            <UButton label="Kaydet" color="error" size="sm" icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
+            <UButton label="Geri" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="closingLead" @click="statusStep = 'choose'" />
+            <UButton label="Kaydet" color="error" size="xl" class="font-semibold" icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
           </div>
         </div>
       </template>
@@ -1374,8 +1378,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="md" class="w-32 justify-center" :disabled="savingLead" @click="addModalOpen = false" />
-          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" size="md" class="w-32 justify-center" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingLead" @click="addModalOpen = false" />
+          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
         </div>
       </template>
     </UModal>

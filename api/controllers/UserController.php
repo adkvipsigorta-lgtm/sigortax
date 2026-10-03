@@ -97,10 +97,13 @@ class UserController
         if (!$validator->validate($input, [
             'name' => 'required|min:2',
             'email' => 'required|email',
-            'password' => 'required|min:6',
+            'phone' => 'required|min:10',
         ])) {
             Response::error('Dogrulama hatasi', 422, $validator->getErrors());
         }
+
+        // Email normalize
+        $input['email'] = mb_strtolower(trim($input['email']), 'UTF-8');
 
         // Check email uniqueness
         $exists = Database::fetch("SELECT id FROM users WHERE email = ? AND deleted_at IS NULL", [$input['email']]);
@@ -108,27 +111,52 @@ class UserController
             Response::error('Bu e-posta adresi zaten kullaniliyor', 422);
         }
 
+        // Otomatik güvenli şifre üret (8 karakter)
+        $chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#';
+        $plainPassword = '';
+        for ($i = 0; $i < 8; $i++) {
+            $plainPassword .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+
         $roleMap = ['admin' => 1, 'kullanici' => 0, 'acente' => 2, 'musteri' => 3];
 
         $insertData = [
             'name' => $input['name'],
             'email' => $input['email'],
-            'password' => password_hash($input['password'], PASSWORD_DEFAULT),
+            'password' => password_hash($plainPassword, PASSWORD_DEFAULT),
+            'phone' => $input['phone'] ?? null,
+            'tc_no' => $input['tcNo'] ?? null,
             'is_active' => isset($input['isActive']) ? (int) $input['isActive'] : 1,
+            'is_sales_rep' => isset($input['isSalesRep']) ? (int) $input['isSalesRep'] : 1,
             'role' => $roleMap[$input['role'] ?? 'kullanici'] ?? 0,
             'branch_id' => $input['branchId'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Musteri rolunde customer_ids zorunlu
+        // Musteri rolunde customer_ids
         if (($input['role'] ?? '') === 'musteri' && !empty($input['customerIds'])) {
             $insertData['customer_ids'] = json_encode(array_map('intval', $input['customerIds']));
         }
 
         $id = Database::insert('users', $insertData);
 
-        Response::success(['id' => $id], 'Kullanici olusturuldu', 201);
+        // SMS gönder
+        $smsSent = false;
+        if (!empty($input['phone'])) {
+            require_once __DIR__ . '/../helpers/NetgsmSms.php';
+            $smsMessage = "SigortaX CRM giris bilgileriniz:\n"
+                . "E-posta: " . $input['email'] . "\n"
+                . "Sifre: " . $plainPassword . "\n"
+                . "Giris: crm.sigortax.net";
+            $smsResult = NetgsmSms::send($input['phone'], $smsMessage);
+            $smsSent = $smsResult['success'] ?? false;
+        }
+
+        Response::success([
+            'id' => $id,
+            'smsSent' => $smsSent,
+        ], $smsSent ? 'Kullanici olusturuldu ve giris bilgileri SMS ile gonderildi' : 'Kullanici olusturuldu', 201);
     }
 
     public function update(array $user, int $id, array $input): void

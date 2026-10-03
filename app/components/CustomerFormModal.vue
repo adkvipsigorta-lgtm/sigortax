@@ -526,8 +526,8 @@ async function saveCustomer() {
     </template>
     <template #footer>
       <div class="w-full flex justify-end items-center gap-3">
-        <UButton label="İptal" color="neutral" variant="outline" size="md" class="w-32 justify-center" :disabled="saving" @click="isOpen = false" />
-        <UButton :label="customer ? 'Güncelle' : 'Kaydet'" size="md" class="w-32 justify-center" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
+        <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="saving" @click="isOpen = false" />
+        <UButton :label="customer ? 'Güncelle' : 'Kaydet'" size="xl" class="w-36 justify-center font-semibold" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
       </div>
     </template>
   </UModal>

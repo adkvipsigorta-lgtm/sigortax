@@ -15,7 +15,64 @@ const { subcategories, groupedSubcategories, fetchInsurances } = useInsuranceTyp
 const { notifications, unreadCount, fetchNotifications, markAsRead, markAllRead } = useNotifications()
 const { get: apiGet } = useApi()
 const { emit: wsEmit } = useSessionStream()
-const { stop: stopSound } = useNotificationSound()
+// Bildirim sesi — DOM audio elementi kullanarak
+const notifAudioRef = ref<HTMLAudioElement | null>(null)
+let soundLooping = false
+let soundPlayCount = 0
+let soundMaxPlays = 0
+
+function getSoundPref(): string {
+  return localStorage.getItem('notif_sound_pref') || 'loop'
+}
+
+function playNotifSound() {
+  const pref = getSoundPref()
+  if (pref === 'off') {
+    console.log('[SES] Pref=off, ses kapalı')
+    return
+  }
+
+  stopNotifSound()
+  soundPlayCount = 0
+  soundLooping = true
+  soundMaxPlays = pref === 'önce' ? 1 : pref === 'twice' ? 2 : 0
+
+  console.log('[SES] playNotifSound çağrıldı, pref=' + pref)
+  doPlay()
+}
+
+function doPlay() {
+  // Test butonuyla aynı yöntem
+  const a = new Audio('/notification.mp3')
+  a.volume = 0.7
+  a.onended = onNotifAudioEnded
+  a.play().then(() => {
+    console.log('[SES] Çalıyor!')
+  }).catch((e) => {
+    console.error('[SES] HATA:', e.message)
+  })
+}
+
+function onNotifAudioEnded() {
+  soundPlayCount++
+  if (soundLooping) {
+    if (soundMaxPlays > 0 && soundPlayCount >= soundMaxPlays) {
+      soundLooping = false
+      return
+    }
+    setTimeout(() => { if (soundLooping) doPlay() }, 2000)
+  }
+}
+
+function stopNotifSound() {
+  soundLooping = false
+  soundPlayCount = 0
+  const el = notifAudioRef.value
+  if (el) {
+    el.pause()
+    el.currentTime = 0
+  }
+}
 const { loadPermissions, can } = usePermissions()
 const mobileMenuOpen = ref(false)
 
@@ -51,11 +108,10 @@ const allMenuItems = computed(() => [
   can('tools.allianz_import') && { label: 'Allianz Import', icon: 'i-lucide-file-up', to: '/araclar/allianz-import' },
   can('tools.excel_import') && { label: 'Excel Import', icon: 'i-lucide-file-spreadsheet', to: '/araclar/excel-import' },
   // Müşteriler alt sayfaları
-  can('customers.view') && { label: 'Yeni Müşteri', icon: 'i-lucide-user-plus', to: '/musteriler?action=new' },
   can('customers.view') && { label: 'Grup Yönetimi', icon: 'i-lucide-settings', to: '/musteriler/gruplar' },
   // Ayarlar
   { label: 'Profil', icon: 'i-lucide-user', to: '/settings' },
-  { label: 'Güvenlik', icon: 'i-lucide-shield-check', to: '/settings/guvenlik' },
+  { label: 'Güvenlik', icon: 'i-lucide-shield-check', to: '/settings#guvenlik' },
   { label: 'Bildirimler', icon: 'i-lucide-bell', to: '/settings/bildirimler' },
   { label: 'Oturumlar', icon: 'i-lucide-log-in', to: '/settings/oturumlar' },
   can('settings.companies') && { label: 'Sigorta Şirketleri', icon: 'i-lucide-building-2', to: '/settings/sirketler' },
@@ -63,7 +119,6 @@ const allMenuItems = computed(() => [
   can('settings.references') && { label: 'Referans Kaynakları', icon: 'i-lucide-link', to: '/settings/referans-kaynaklari' },
   can('settings.follow_up') && { label: 'Takip Aramaları', icon: 'i-lucide-phone-call', to: '/settings/takip-aramalari' },
   can('settings.users') && { label: 'Takım Yönetimi', icon: 'i-lucide-users', to: '/settings/kullanicilar' },
-  can('personnel.view') && { label: 'Personel Yönetimi', icon: 'i-lucide-id-card', to: '/personel' },
   can('settings.branches') && { label: 'Tali Acenteler', icon: 'i-lucide-handshake', to: '/settings/acenteler' },
 ].filter(Boolean) as { label: string; icon: string; to: string }[])
 
@@ -82,13 +137,14 @@ const wsNewNotif = useState<number>('ws-new-notification', () => 0)
 watch(wsNewNotif, () => {
   fetchNotifications()
   bellRinging.value = true
+  playNotifSound()
 })
 
 // Bildirimler okunursa zili ve sesi durdur
 watch(unreadCount, (val) => {
   if (val === 0) {
     bellRinging.value = false
-    stopSound()
+    stopNotifSound()
   }
 })
 
@@ -107,7 +163,7 @@ const wsNotifsRead = useState<number>('ws-notifications-read', () => 0)
 watch(wsNotifsRead, () => {
   fetchNotifications()
   bellRinging.value = false
-  stopSound()
+  stopNotifSound()
 })
 
 const allNotificationsDisabled = useState('all-notifs-disabled', () => false)
@@ -123,11 +179,15 @@ async function checkNotificationSettings() {
   } catch {}
 }
 
-onMounted(() => {
+onMounted(async () => {
   fetchAgency()
   fetchCategories()
   fetchInsurances()
-  fetchNotifications()
+  await fetchNotifications()
+  if (unreadCount.value > 0) {
+    bellRinging.value = true
+    playNotifSound()
+  }
   checkNotificationSettings()
   loadPermissions()
 })
@@ -317,8 +377,7 @@ const userInitials = computed(() => {
 const userMenuItems = computed(() => [
   [{ label: user.value?.name || '', type: 'label' as const }],
   [
-    { label: 'Profil', icon: 'i-lucide-user', to: '/settings' },
-    { label: 'Güvenlik', icon: 'i-lucide-shield-check', to: '/settings/guvenlik' }
+    { label: 'Profil', icon: 'i-lucide-user', to: '/settings' }
   ],
   [{ label: 'Çıkış Yap', icon: 'i-lucide-log-out', onSelect: () => logout() }]
 ])
@@ -389,7 +448,6 @@ const sidebarConfig = computed(() => {
           title: 'İşlemler',
           collapsible: true,
           items: [
-            { label: 'Yeni Müşteri', icon: 'i-lucide-user-plus', to: '/musteriler?action=new' },
             { label: 'Grup Yönetimi', icon: 'i-lucide-settings', to: '/musteriler/gruplar' }
           ]
         }
@@ -467,7 +525,6 @@ const sidebarConfig = computed(() => {
 
     const takimItems = [
       can('settings.users') && { label: 'Takım Yönetimi', icon: 'i-lucide-users', to: '/settings/kullanicilar' },
-      can('personnel.view') && { label: 'Personel Yönetimi', icon: 'i-lucide-id-card', to: '/personel' },
       can('settings.branches') && { label: 'Tali Acenteler', icon: 'i-lucide-handshake', to: '/settings/acenteler' },
     ].filter(Boolean)
 
@@ -480,7 +537,6 @@ const sidebarConfig = computed(() => {
           items: [
             { label: 'Profil', icon: 'i-lucide-user', to: '/settings', exact: true },
             ...((!allNotificationsDisabled.value || user.value?.role === 'admin') ? [{ label: 'Bildirimler', icon: 'i-lucide-bell', to: '/settings/bildirimler' }] : []),
-            { label: 'Güvenlik', icon: 'i-lucide-shield-check', to: '/settings/guvenlik' },
             { label: 'Oturumlar', icon: 'i-lucide-log-in', to: '/settings/oturumlar' }
           ]
         },
@@ -553,7 +609,7 @@ const breadcrumbItems = computed(() => {
     '/settings/sigorta-turleri': 'Poliçe Türleri',
     '/settings/acenteler': 'Tali Acenteler',
     '/settings/kullanicilar': 'Takım Yönetimi',
-    '/settings/guvenlik': 'Güvenlik',
+    '/settings#guvenlik': 'Güvenlik',
     '/settings/oturumlar': 'Oturumlar',
     '/settings/guncelleme': 'Güncellemeler',
     '/settings/referans-kaynaklari': 'Referans Kaynakları',
@@ -839,7 +895,7 @@ watch(() => route.path, () => {
               size="sm"
               class="relative"
               :class="{ 'bell-ringing': bellRinging }"
-              @click="bellRinging = false; stopSound()"
+              @click="bellRinging = false; stopNotifSound()"
             >
               <template #trailing>
                 <span
@@ -1117,6 +1173,8 @@ watch(() => route.path, () => {
       </template>
     </UModal>
 
+    <!-- Bildirim sesi -->
+    <audio ref="notifAudioRef" src="/notification.mp3" preload="auto" @ended="onNotifAudioEnded" />
 </template>
 
 <style scoped>

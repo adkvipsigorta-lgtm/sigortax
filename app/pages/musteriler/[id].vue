@@ -563,6 +563,64 @@ const stats = computed(() => {
   ]
 })
 
+// --- Portal Grup Şirketi ---
+const selectedGroupCustomer = ref<any>(null)
+const addingGroupMember = ref(false)
+const removingGroupMember = ref<number | null>(null)
+const groupSearchQuery = ref('')
+const groupSearchResults = ref<any[]>([])
+let groupSearchTimeout: any = null
+
+function onGroupSearch() {
+  clearTimeout(groupSearchTimeout)
+  const q = groupSearchQuery.value.trim()
+  if (q.length < 2) { groupSearchResults.value = []; return }
+  groupSearchTimeout = setTimeout(async () => {
+    try {
+      const res = await get('customers/search', { q, limit: 10 })
+      const data = res.data || res || []
+      groupSearchResults.value = data.filter((c: any) =>
+        c.id !== Number(route.params.id) &&
+        !customer.value?.portalGroupMembers?.some((m: any) => m.id === c.id)
+      )
+    } catch { groupSearchResults.value = [] }
+  }, 300)
+}
+
+function selectGroupCustomer(item: any) {
+  selectedGroupCustomer.value = item
+  groupSearchQuery.value = item.name
+  groupSearchResults.value = []
+}
+
+async function addGroupMember() {
+  if (!selectedGroupCustomer.value?.id) return
+  addingGroupMember.value = true
+  try {
+    const { post } = useApi()
+    await post(`customers/${route.params.id}/portal-group`, { customerId: selectedGroupCustomer.value.id })
+    toast.add({ title: 'Grup şirketi eklendi', color: 'success' })
+    selectedGroupCustomer.value = null
+    groupSearchQuery.value = ''
+    await fetchCustomer()
+  } catch (err: any) {
+    toast.add({ title: err?.data?.message || 'Eklenemedi', color: 'error' })
+  }
+  addingGroupMember.value = false
+}
+
+async function removeGroupMember(memberId: number) {
+  removingGroupMember.value = memberId
+  try {
+    await apiDel(`customers/${route.params.id}/portal-group/${memberId}`)
+    toast.add({ title: 'Müşteri gruptan çıkarıldı', color: 'success' })
+    await fetchCustomer()
+  } catch (err: any) {
+    toast.add({ title: err?.data?.message || 'Çıkarılamadı', color: 'error' })
+  }
+  removingGroupMember.value = null
+}
+
 // Bilgi gridi
 const infoFields = computed(() => {
   if (!customer.value) return []
@@ -851,6 +909,89 @@ async function deleteCustomer() {
           />
         </div>
       </div>
+    </UCard>
+
+    <!-- Portal Grup Şirketleri (sadece Genel Bilgiler tabında) -->
+    <UCard v-if="activeTab === 'genel'">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <UIcon name="i-lucide-building-2" class="size-4 text-primary" />
+          <h3 class="font-semibold">Grup Şirketi (Portal)</h3>
+          <span class="text-xs text-muted font-normal">Portalda birlikte görünecek firmalar</span>
+        </div>
+      </template>
+
+      <!-- Eklenen grup üyeleri -->
+      <div v-if="customer.portalGroupMembers?.length" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+        <div
+          v-for="member in customer.portalGroupMembers"
+          :key="member.id"
+          class="group flex items-center gap-3 p-3 rounded-xl border border-default bg-white dark:bg-gray-900 hover:shadow-sm transition-shadow"
+        >
+          <div class="size-9 rounded-lg flex items-center justify-center shrink-0" :class="member.customerType === 'CORPORATE' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20'">
+            <UIcon :name="member.customerType === 'CORPORATE' ? 'i-lucide-building' : 'i-lucide-user'" class="size-4" :class="member.customerType === 'CORPORATE' ? 'text-blue-500' : 'text-green-500'" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <NuxtLink :to="`/musteriler/${member.id}`" class="text-sm font-medium text-primary hover:underline block truncate">{{ member.name }}</NuxtLink>
+            <p v-if="member.identityNo" class="text-xs text-muted truncate">{{ member.identityNo }}</p>
+          </div>
+          <UButton
+            icon="i-lucide-trash-2"
+            size="2xs"
+            color="error"
+            variant="ghost"
+            title="Gruptan çıkar"
+            class="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+            :loading="removingGroupMember === member.id"
+            @click="removeGroupMember(member.id)"
+          />
+        </div>
+      </div>
+
+      <!-- Arama ve ekleme -->
+      <div class="flex gap-2 items-center">
+        <div class="flex-1 max-w-sm">
+          <UInput
+            v-model="groupSearchQuery"
+            placeholder="Firma adı veya TC/VKN yazarak ara..."
+            icon="i-lucide-search"
+            size="md"
+            @input="onGroupSearch"
+          />
+        </div>
+        <UButton
+          icon="i-lucide-plus"
+          label="Gruba Ekle"
+          size="md"
+          :disabled="!selectedGroupCustomer"
+          :loading="addingGroupMember"
+          @click="addGroupMember"
+        />
+      </div>
+      <!-- Arama sonuçları (kart dışında sabit pozisyonda değil, inline liste) -->
+      <div v-if="groupSearchResults.length" class="mt-2 max-w-sm border border-default rounded-xl bg-white dark:bg-gray-900 max-h-56 overflow-y-auto">
+        <button
+          v-for="item in groupSearchResults"
+          :key="item.id"
+          class="w-full text-left px-4 py-3 hover:bg-primary/5 dark:hover:bg-primary/10 border-b border-default last:border-0 transition-colors"
+          @click="selectGroupCustomer(item)"
+        >
+          <div class="flex items-center gap-3">
+            <div class="size-8 rounded-lg flex items-center justify-center shrink-0" :class="item.identityNo && item.identityNo.length === 11 ? 'bg-green-50 dark:bg-green-900/20' : 'bg-blue-50 dark:bg-blue-900/20'">
+              <UIcon :name="item.identityNo && item.identityNo.length === 11 ? 'i-lucide-user' : 'i-lucide-building'" class="size-3.5" :class="item.identityNo && item.identityNo.length === 11 ? 'text-green-500' : 'text-blue-500'" />
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium truncate">{{ item.name }}</p>
+              <p v-if="item.identityNo" class="text-[11px] text-muted">{{ item.identityNo }}</p>
+            </div>
+          </div>
+        </button>
+      </div>
+      <p v-if="selectedGroupCustomer" class="mt-2 text-sm text-primary flex items-center gap-1.5">
+        <UIcon name="i-lucide-check-circle" class="size-3.5" />
+        <span class="font-medium">{{ selectedGroupCustomer.name }}</span> seçildi
+      </p>
+      <p v-else-if="!customer.portalGroupMembers?.length && !groupSearchResults.length" class="mt-2 text-xs text-muted">Grup şirketi eklemek için yukarıdan müşteri arayın.</p>
     </UCard>
 
     <!-- Notlar & Aktivite Geçmişi (sadece Genel Bilgiler tabında) -->

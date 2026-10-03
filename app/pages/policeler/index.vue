@@ -642,119 +642,59 @@ function toHex(color?: string): string {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Poliçeler</h1>
+      <p class="text-sm text-muted mt-1">Poliçe listesi ve yönetimi.</p>
+    </div>
+
     <UCard :ui="{ body: 'p-4' }">
-      <!-- Header: Search + Filters + Button -->
       <template #header>
         <div class="space-y-3">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-2 w-full sm:w-auto">
-              <UInput
-                v-model="searchInput"
-                icon="i-lucide-search"
-                placeholder="Poliçe, müşteri, plaka ara..."
-                class="flex-1 sm:w-64"
-              />
+            <div class="relative w-full sm:w-72 [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-polsearch" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polsearch:top-0 peer-focus-within/fl-polsearch:-translate-y-1/2 peer-focus-within/fl-polsearch:text-xs peer-focus-within/fl-polsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri, plaka ara</label>
             </div>
-
             <div class="flex items-center gap-2">
-              <UButton
-                v-if="hasActiveFilters"
-                label="Temizle"
-                icon="i-lucide-x"
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                @click="clearFilters"
-              />
+              <UButton v-if="hasActiveFilters" label="Temizle" icon="i-lucide-x" color="neutral" variant="ghost" size="xl" class="font-semibold" @click="clearFilters" />
             </div>
           </div>
 
-          <!-- Filtreler -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            <USelectMenu
-              v-model="filterInsuranceId"
-              :items="insuranceFilterOptions"
-              value-key="value"
-              placeholder="Sigortalar"
-              searchable
-              :search-input="{ placeholder: 'Ara...' }"
-              :search-attributes="['label']"
-              class="w-full"
-              size="sm"
-            />
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelectMenu v-model="filterInsuranceId" :items="insuranceFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterInsuranceId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigortalar</label>
+            </div>
 
-            <USelectMenu
-              v-model="filterCompanyId"
-              :items="companyFilterOptions"
-              value-key="value"
-              placeholder="Sigorta Şirketleri"
-              searchable
-              :search-input="{ placeholder: 'Ara...' }"
-              :search-attributes="['label']"
-              class="w-full"
-              size="sm"
-            />
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelectMenu v-model="filterCompanyId" :items="companyFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterCompanyId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigorta Şirketleri</label>
+            </div>
 
-            <USelect
-              v-model="filterProd"
-              :items="prodFilterOptions"
-              value-key="value"
-              class="w-full"
-              size="sm"
-            />
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelect v-model="filterProd" :items="prodFilterOptions" value-key="value" placeholder=" " class="w-full" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Üretim Yeri</label>
+            </div>
 
-            <USelect
-              v-model="filterStatus"
-              :items="statusFilterOptions"
-              value-key="value"
-              class="w-full"
-              size="sm"
-            />
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelect v-model="filterStatus" :items="statusFilterOptions" value-key="value" placeholder=" " class="w-full" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
+            </div>
 
-            <USelectMenu
-              v-if="showBranchFilter"
-              v-model="filterBranchId"
-              :items="branchFilterOptions"
-              value-key="value"
-              placeholder="Acente"
-              searchable
-              :search-input="{ placeholder: 'Ara...' }"
-              :search-attributes="['label']"
-              class="w-full"
-              size="sm"
-            />
+            <div v-if="showBranchFilter" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelectMenu v-model="filterBranchId" :items="branchFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Acente</label>
+            </div>
 
             <UPopover v-model:open="filterDateRangePopoverOpen">
-              <UButton
-                :label="dateRangeLabel"
-                icon="i-lucide-calendar-range"
-                color="neutral"
-                variant="outline"
-                size="sm"
-                class="w-full justify-start"
-               
-              />
+              <UButton :label="dateRangeLabel" icon="i-lucide-calendar-range" color="neutral" variant="outline" size="xl" class="w-full justify-start font-semibold" />
               <template #content>
-                <UCalendar locale="tr-TR"
-                  v-model="filterDateRange"
-                  range
-                  :number-of-months="2"
-                  class="p-2"
-                  @update:model-value="(v: any) => { if (v?.start && v?.end) filterDateRangePopoverOpen = false }"
-                />
+                <UCalendar locale="tr-TR" v-model="filterDateRange" range :number-of-months="2" class="p-2" @update:model-value="(v: any) => { if (v?.start && v?.end) filterDateRangePopoverOpen = false }" />
               </template>
             </UPopover>
 
-            <UButton
-              v-if="can('policies.export')"
-              label="Excel"
-              icon="i-lucide-download"
-              color="neutral"
-              variant="outline"
-              size="sm"
-              class="w-full hidden sm:flex"
-              @click="exportExcel"
-            />
+            <UButton v-if="can('policies.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="w-full hidden sm:flex font-semibold" @click="exportExcel" />
           </div>
         </div>
       </template>
@@ -1099,12 +1039,12 @@ function toHex(color?: string): string {
     <!-- Delete Confirm -->
     <UModal :dismissible="false" v-model:open="isDeleteModalOpen" title="Poliçe Sil">
       <template #body>
-        <p>Bu policeyi silmek istediginize emin misiniz? Bu islem geri alinamaz.</p>
+        <p>Bu poliçeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" size="xl" class="font-semibold" @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1185,8 +1125,8 @@ function toHex(color?: string): string {
             </div>
 
             <div class="flex justify-end gap-2">
-              <UButton label="Vazgeç" color="neutral" variant="outline" :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
-              <UButton label="İptal Et" color="warning" type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
+              <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
+              <UButton label="İptal Et" color="warning" size="xl" class="font-semibold" type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
             </div>
           </div>
         </UForm>
@@ -1225,6 +1165,10 @@ function toHex(color?: string): string {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 /* Mobilde expand kolonu gizle (zeyil geçmişi mobilde gereksiz) */
 @media (max-width: 639px) {
   :deep(.policeler-table th:nth-child(1)),

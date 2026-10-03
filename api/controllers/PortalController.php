@@ -318,12 +318,23 @@ class PortalController
             Response::error('Müşteri bulunamadı', 404);
         }
 
+        // Portal grup: aynı gruptaki tüm müşteri ID'lerini topla
+        $customerIds = [$customerId];
+        $groupCheck = Database::fetch("SELECT portal_group_id FROM customers WHERE id = ? AND deleted_at IS NULL", [$customerId]);
+        if (!empty($groupCheck['portal_group_id'])) {
+            $groupMembers = Database::fetchAll(
+                "SELECT id FROM customers WHERE portal_group_id = ? AND deleted_at IS NULL",
+                [(int) $groupCheck['portal_group_id']]
+            );
+            $customerIds = array_map(fn($m) => (int) $m['id'], $groupMembers);
+        }
+
         // Token oluştur (30 dakikalık kısa oturum)
         $token = Auth::generateToken([
             'userId' => 0,
             'email' => '',
             'role' => 3,
-            'customerIds' => [$customerId],
+            'customerIds' => $customerIds,
             'smsLogin' => true,
         ], false, 1800); // 30 dakika
 

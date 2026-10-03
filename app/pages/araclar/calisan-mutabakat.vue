@@ -237,60 +237,33 @@ function exportExcel() {
 
 <template>
   <div class="space-y-4">
-    <!-- Filtre Karti -->
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Temsilci Mutabakat</h1>
+      <p class="text-sm text-muted mt-1">Aylık temsilci hakediş ve mutabakat raporu.</p>
+    </div>
+
+    <!-- Filtre Kartı -->
     <UCard>
-      <div class="flex flex-col gap-4">
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <UFormField label="Temsilci" class="col-span-2 sm:col-span-1">
-            <USelectMenu
-              v-model="selectedUserId"
-              :items="userOptions"
-              value-key="value"
-              label-key="label"
-              placeholder="Temsilci seç..."
-              searchable
-              :search-input="{ placeholder: 'Ara...' }"
-              :search-attributes="['label']"
-              class="w-full"
-            />
-          </UFormField>
-
-          <UFormField label="Yil">
-            <USelect
-              v-model="selectedYear"
-              :items="yearOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
-
-          <UFormField label="Ay">
-            <USelect
-              v-model="selectedMonth"
-              :items="monthOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
-
-          <UFormField label="Tarih Tipi">
-            <USelect
-              v-model="selectedDateType"
-              :items="dateTypeOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
-
-          <div class="flex items-end">
-            <UButton
-              label="Getir"
-              icon="i-lucide-search"
-              :loading="loading"
-              class="w-full"
-              @click="fetchReconciliation"
-            />
-          </div>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div class="col-span-2 sm:col-span-1 relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelectMenu v-model="selectedUserId" :items="userOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
+          <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', selectedUserId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Temsilci</label>
+        </div>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedYear" :items="yearOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Yıl</label>
+        </div>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Ay</label>
+        </div>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedDateType" :items="dateTypeOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
+        </div>
+        <div class="flex items-end">
+          <UButton label="Getir" icon="i-lucide-search" size="xl" class="font-semibold w-full" :loading="loading" @click="fetchReconciliation" />
         </div>
       </div>
     </UCard>
@@ -300,8 +273,8 @@ function exportExcel() {
       <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-3">
         <SkeletonCard v-for="i in 10" :key="i">
           <div class="text-center space-y-2">
-            <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-12 mx-auto" />
-            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mx-auto" />
+            <div class="h-6 bg-neutral-200 rounded w-12 mx-auto" />
+            <div class="h-3 bg-neutral-200 rounded w-16 mx-auto" />
           </div>
         </SkeletonCard>
       </div>
@@ -364,24 +337,9 @@ function exportExcel() {
             {{ data.user.name }} - {{ getMonthLabel(selectedMonth) }} {{ selectedYear }}
           </h3>
           <div class="flex items-center gap-2">
-            <span class="text-xs text-muted">{{ data.policies.length }} kayit</span>
-            <UButton
-              label="Excel Indir"
-              icon="i-lucide-download"
-              color="neutral"
-              variant="outline"
-              size="xs"
-              class="hidden sm:flex"
-              @click="exportExcel"
-            />
-            <UButton
-              v-if="data.policies.length > 0 && !isLocked"
-              label="Mutabakatı Onayla ve Kilitle"
-              icon="i-lucide-lock"
-              color="success"
-              size="xs"
-              @click="showLockConfirm = true"
-            />
+            <span class="text-xs text-muted">{{ data.policies.length }} kayıt</span>
+            <UButton label="Excel İndir" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="font-semibold hidden sm:flex" @click="exportExcel" />
+            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" @click="showLockConfirm = true" />
           </div>
         </div>
       </template>
@@ -599,32 +557,27 @@ function exportExcel() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showLockConfirm = false" />
-          <UButton
-            label="Kilitle"
-            icon="i-lucide-lock"
-            color="success"
-            :loading="locking"
-            @click="lockReconciliation"
-          />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showLockConfirm = false" />
+          <UButton label="Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" :loading="locking" @click="lockReconciliation" />
         </div>
       </template>
     </UModal>
 
-    <!-- Sifre Modali (Atanmamis policeler icin) -->
+    <!-- Şifre Modalı (Atanmamış poliçeler için) -->
     <UModal v-model:open="showSecretModal" title="Şifre Doğrulama" :ui="{ width: 'sm:max-w-sm' }">
       <template #body>
-        <div class="space-y-3">
+        <div class="space-y-4">
           <p class="text-sm text-muted">Atanmamış poliçeleri görüntülemek için özel şifreyi girin.</p>
-          <UFormField label="Şifre" :error="secretError">
-            <UInput v-model="secretInput" type="password" placeholder="Şifre girin..." class="w-full" @keyup.enter="verifySecretAndFetch" />
-          </UFormField>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="secretInput" type="password" placeholder=" " class="w-full peer/fl-secret" @keyup.enter="verifySecretAndFetch" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-secret:top-0 peer-focus-within/fl-secret:-translate-y-1/2 peer-focus-within/fl-secret:text-xs peer-focus-within/fl-secret:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-secret:top-0 peer-has-[input:not(:placeholder-shown)]/fl-secret:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-secret:text-xs peer-has-[input:not(:placeholder-shown)]/fl-secret:text-[var(--ui-text-highlighted)]">Şifre</label>
+          </div>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showSecretModal = false" />
-          <UButton label="Görüntüle" icon="i-lucide-eye" color="primary" @click="verifySecretAndFetch" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showSecretModal = false" />
+          <UButton label="Görüntüle" icon="i-lucide-eye" size="xl" class="font-semibold" @click="verifySecretAndFetch" />
         </div>
       </template>
     </UModal>
@@ -632,6 +585,10 @@ function exportExcel() {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 :deep(.calisan-mutabakat-table th:nth-child(1))  { width: 120px; min-width: 120px; max-width: 120px; }
 :deep(.calisan-mutabakat-table th:nth-child(2))  { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.calisan-mutabakat-table th:nth-child(3))  { width: 130px; min-width: 130px; max-width: 130px; }

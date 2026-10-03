@@ -7,13 +7,21 @@ class AuthMiddleware
 {
     public static function handle(): array
     {
-        $user = Auth::getCurrentUser();
+        $reason = null;
+        $user = Auth::getCurrentUser($reason);
         if (!$user) {
-            Response::error('Oturum suresi dolmus veya gecersiz token', 401);
+            $messages = [
+                'invalid_token'   => 'Gecersiz veya eksik token',
+                'session_expired' => 'Oturum suresi dolmus',
+                'session_revoked' => 'Oturum sonlandirilmis',
+                'forced_logout'   => 'Oturum suresi sona erdi',
+            ];
+            $msg = $messages[$reason ?? ''] ?? 'Oturum suresi dolmus veya gecersiz token';
+            Response::error($msg, 401, ['reason' => $reason ?? 'session_expired']);
         }
-        // Müşteri portalı kullanıcıları CRM'e erişemez
+        // Musteri portali kullanicilari CRM'e erisemez
         if ((int) $user['role'] === 3) {
-            Response::error('Bu alana erişim yetkiniz yok', 403);
+            Response::error('Bu alana erisim yetkiniz yok', 403);
         }
         return $user;
     }

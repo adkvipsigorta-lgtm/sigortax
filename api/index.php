@@ -44,10 +44,12 @@ require_once __DIR__ . '/middleware/AuthMiddleware.php';
         require_once __DIR__ . '/helpers/UpdateHelper.php';
         try {
             UpdateHelper::runMigrations();
+            // Başarılıysa lock dosyasını güncelle
+            file_put_contents($lockFile, $fileCount);
         } catch (\Throwable $e) {
-            // Migration hatası isteği engellesin — sessizce geç
+            // Hata logla — lock dosyasını GÜNCELLEME ki tekrar denesin
+            error_log('[Migration Error] ' . $e->getMessage());
         }
-        file_put_contents($lockFile, $fileCount);
     }
 })();
 
@@ -184,6 +186,20 @@ if ($resource === 'auth') {
     // 2FA verify doesn't need auth (user is logging in)
     if ($action === '2fa' && isset($segments[2]) && $segments[2] === 'verify' && $method === 'POST') {
         $controller->twoFactorVerify($input);
+        exit;
+    }
+
+    // 2FA mandatory setup (login flow, challenge token based)
+    if ($action === '2fa' && isset($segments[2]) && $segments[2] === 'setup-login' && $method === 'POST') {
+        $controller->twoFactorSetup($input);
+        exit;
+    }
+    if ($action === '2fa' && isset($segments[2]) && $segments[2] === 'enable-login' && $method === 'POST') {
+        $controller->twoFactorEnable($input);
+        exit;
+    }
+    if ($action === '2fa' && isset($segments[2]) && $segments[2] === 'confirm-setup' && $method === 'POST') {
+        $controller->twoFactorConfirmSetup($input);
         exit;
     }
 
@@ -384,6 +400,16 @@ if ($resource === 'customers') {
     }
     if ($action === 'export' && $method === 'GET') {
         $controller->export($user, $query);
+        exit;
+    }
+    // POST /api/customers/{id}/portal-group
+    if ($action === 'portal-group' && $method === 'POST' && $id) {
+        $controller->addToPortalGroup($user, (int) $id, $input);
+        exit;
+    }
+    // DELETE /api/customers/{id}/portal-group/{memberId}
+    if (($segments[1] ?? '') === 'portal-group' && isset($segments[2]) && is_numeric($segments[2]) && $method === 'DELETE' && $id) {
+        $controller->removeFromPortalGroup($user, (int) $id, (int) $segments[2]);
         exit;
     }
     if ($action === 'vehicle-status' && $method === 'GET' && $id) {

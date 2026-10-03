@@ -1392,6 +1392,12 @@ onMounted(async () => {
 
 <template>
   <div class="p-4 sm:p-6 space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Görev Yönetimi</h1>
+      <p class="text-sm text-muted mt-1">Yenileme, teklif ve takip araması görevleri.</p>
+    </div>
+
     <!-- Stats Row -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-primary/50 transition-all" @click="filterStatus = 'all'">
@@ -1468,66 +1474,32 @@ onMounted(async () => {
     <!-- Görev Tablosu -->
     <UCard>
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="font-semibold">Görev Yönetimi</h3>
-              <p class="text-xs text-muted">Yenileme, teklif ve takip araması görevleri</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
+              <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="filterPrevMonth" />
+              <span class="font-semibold text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ filterMonthLabel }}</span>
+              <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="filterNextMonth" />
             </div>
-          </div>
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-1.5">
-              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-[var(--ui-radius)] px-2 text-xs w-[180px] h-[30px]">
-                <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="filterPrevMonth" />
-                <span class="font-medium flex-1 text-center whitespace-nowrap">{{ filterMonthLabel }}</span>
-                <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="filterNextMonth" />
-              </div>
-              <USelect
-                v-if="isAdmin"
-                v-model="filterAssignedTo"
-                :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...users.map(u => ({ label: u.name, value: u.id }))]"
-                value-key="value"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px]"
-              />
-              <UInput
-                v-model="searchQuery"
-                icon="i-lucide-search"
-                placeholder="Poliçe, müşteri ara..."
-                class="w-[180px]"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-              />
-              <UButton
-                v-if="hasActiveFilters"
-                icon="i-lucide-x"
-                size="xs"
-                color="error"
-                variant="ghost"
-                @click="resetAllFilters"
-                title="Filtreleri Temizle"
-              />
+            <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
+              <USelect v-model="filterAssignedTo" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...users.map(u => ({ label: u.name, value: u.id }))]" value-key="value" placeholder=" " class="w-full" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
             </div>
-            <UButton
-              v-if="can('tasks.export')"
-              icon="i-lucide-download"
-              size="xs"
-              color="neutral"
-              variant="outline"
-              class="hidden sm:flex"
-              @click="exportExcel"
-              title="Excel'e Aktar"
-            />
+            <div class="relative w-[220px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="searchQuery" placeholder=" " class="w-full peer/fl-tsearch" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tsearch:top-0 peer-focus-within/fl-tsearch:-translate-y-1/2 peer-focus-within/fl-tsearch:text-xs peer-focus-within/fl-tsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri ara</label>
+            </div>
+            <UButton v-if="hasActiveFilters" icon="i-lucide-x" size="xl" color="error" variant="ghost" class="font-semibold" @click="resetAllFilters" title="Filtreleri Temizle" />
           </div>
+          <UButton v-if="can('tasks.export')" label="Excel" icon="i-lucide-download" size="xl" color="neutral" variant="outline" class="font-semibold hidden sm:flex" @click="exportExcel" />
         </div>
       </template>
       <!-- Bulk action bar -->
       <div v-if="isAdmin && selectedTaskIds.size > 0" class="flex flex-wrap items-center gap-2 mb-3 p-2 rounded-lg bg-primary/5 border border-primary/20">
         <span class="text-sm font-medium">{{ selectedTaskIds.size }} görev seçildi</span>
-        <UButton label="Toplu Ata" icon="i-lucide-user-plus" size="sm" color="info" variant="outline" @click="showBulkAssignModal = true" />
-        <UButton label="Toplu İptal" icon="i-lucide-x-circle" size="sm" color="error" variant="outline" @click="bulkCancel" />
-        <UButton label="Seçimi Kaldır" size="sm" color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
+        <UButton label="Toplu Ata" icon="i-lucide-user-plus" size="xl" class="font-semibold" color="info" variant="outline" @click="showBulkAssignModal = true" />
+        <UButton label="Toplu İptal" icon="i-lucide-x-circle" size="xl" class="font-semibold" color="error" variant="outline" @click="bulkCancel" />
+        <UButton label="Seçimi Kaldır" size="xl" class="font-semibold" color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
       </div>
 
       <div v-if="tableColFilterCount > 0" class="flex items-center justify-between mb-2 px-1">
@@ -2020,7 +1992,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showCreateModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showCreateModal = false" />
           <UButton
             label="Oluştur"
             icon="i-lucide-plus"
@@ -2070,7 +2042,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showAssignModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showAssignModal = false" />
           <UButton
             label="Ata"
             icon="i-lucide-user-check"
@@ -2256,7 +2228,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showCompleteModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showCompleteModal = false" />
           <UButton
             :label="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'Ertele' : 'Tamamla'"
             :icon="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'i-lucide-clock' : (isNegativeResult ? 'i-lucide-x-circle' : 'i-lucide-check-circle')"
@@ -2687,6 +2659,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 table td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Standart badge stili — tüm tablo badge'leri aynı boyutta */

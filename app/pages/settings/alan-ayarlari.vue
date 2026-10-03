@@ -4,7 +4,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-useSeoMeta({ title: 'Alan Ayarlari' })
+useSeoMeta({ title: 'Alan Ayarları' })
 
 const toast = useToast()
 const { user } = useAuth()
@@ -66,7 +66,7 @@ async function save() {
   saving.value = true
   try {
     await saveFieldSettings()
-    toast.add({ title: 'Alan ayarlari kaydedildi', color: 'success' })
+    toast.add({ title: 'Alan ayarları kaydedildi', color: 'success' })
   } catch (error: any) {
     toast.add({ title: error.message || 'Kaydedilemedi', color: 'error' })
   } finally {
@@ -79,22 +79,22 @@ onMounted(load)
 
 <template>
   <div class="space-y-4">
-    <!-- Başlık -->
-    <div class="flex items-center justify-between">
+    <!-- Sayfa Başlığı -->
+    <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h3 class="font-semibold">Alan Ayarları</h3>
-        <p class="text-xs text-muted">Müşteri ve poliçe formlarında hangi alanların görüneceğini ayarlayın.</p>
+        <h1 class="text-xl font-semibold">Alan Ayarları</h1>
+        <p class="text-sm text-muted mt-1">Müşteri ve poliçe formlarında hangi alanların görüneceğini ayarlayın.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" size="xs" :loading="saving" @click="save" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="save" />
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="space-y-4">
       <SkeletonCard v-for="i in 3" :key="i">
         <div class="space-y-3">
-          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-36" />
-          <div class="h-9 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-          <div class="h-9 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+          <div class="h-4 bg-neutral-200 rounded w-36" />
+          <div class="h-9 bg-neutral-200 rounded w-full" />
+          <div class="h-9 bg-neutral-200 rounded w-full" />
         </div>
       </SkeletonCard>
     </div>

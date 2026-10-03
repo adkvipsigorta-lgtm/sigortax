@@ -181,59 +181,37 @@ function exportCsv() {
 
 <template>
   <div class="space-y-4">
-    <!-- Filtre Karti -->
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Tali Acente Mutabakat</h1>
+      <p class="text-sm text-muted mt-1">Aylık komisyon mutabakat raporu.</p>
+    </div>
+
+    <!-- Filtre Kartı -->
     <UCard>
-      <div class="flex flex-col gap-4">
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <UFormField label="Tali Acente" class="col-span-2 sm:col-span-1">
-            <USelectMenu
-              v-model="selectedBranchId"
-              :items="branchOptions"
-              value-key="value"
-              placeholder="Acente seç..."
-              searchable
-              :search-input="{ placeholder: 'Ara...' }"
-              :search-attributes="['label']"
-              class="w-full"
-            />
-          </UFormField>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div class="col-span-2 sm:col-span-1 relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelectMenu v-model="selectedBranchId" :items="branchOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
+          <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', selectedBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Tali Acente</label>
+        </div>
 
-          <UFormField label="Yil">
-            <USelect
-              v-model="selectedYear"
-              :items="yearOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedYear" :items="yearOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Yıl</label>
+        </div>
 
-          <UFormField label="Ay">
-            <USelect
-              v-model="selectedMonth"
-              :items="monthOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Ay</label>
+        </div>
 
-          <UFormField label="Tarih Tipi">
-            <USelect
-              v-model="selectedDateType"
-              :items="dateTypeOptions"
-              value-key="value"
-              class="w-full"
-            />
-          </UFormField>
+        <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+          <USelect v-model="selectedDateType" :items="dateTypeOptions" value-key="value" placeholder=" " class="w-full" />
+          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
+        </div>
 
-          <div class="flex items-end">
-            <UButton
-              label="Getir"
-              icon="i-lucide-search"
-              :loading="loading"
-              class="w-full"
-              @click="fetchReconciliation"
-            />
-          </div>
+        <div class="flex items-end">
+          <UButton label="Getir" icon="i-lucide-search" size="xl" class="font-semibold w-full" :loading="loading" @click="fetchReconciliation" />
         </div>
       </div>
     </UCard>
@@ -251,8 +229,8 @@ function exportCsv() {
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <SkeletonCard v-for="i in 6" :key="i">
           <div class="text-center space-y-2">
-            <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-12 mx-auto" />
-            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20 mx-auto" />
+            <div class="h-6 bg-neutral-200 rounded w-12 mx-auto" />
+            <div class="h-3 bg-neutral-200 rounded w-20 mx-auto" />
           </div>
         </SkeletonCard>
       </div>
@@ -313,24 +291,9 @@ function exportCsv() {
             {{ data.branch.name }} - {{ getMonthLabel(selectedMonth) }} {{ selectedYear }}
           </h3>
           <div class="flex items-center gap-2">
-            <span class="text-xs text-muted">{{ data.policies.length }} kayit</span>
-            <UButton
-              label="Excel Indir"
-              icon="i-lucide-download"
-              color="neutral"
-              variant="outline"
-              size="xs"
-              class="hidden sm:flex"
-              @click="exportCsv"
-            />
-            <UButton
-              v-if="data.policies.length > 0 && !isLocked"
-              label="Mutabakatı Onayla ve Kilitle"
-              icon="i-lucide-lock"
-              color="success"
-              size="xs"
-              @click="showLockConfirm = true"
-            />
+            <span class="text-xs text-muted">{{ data.policies.length }} kayıt</span>
+            <UButton label="Excel İndir" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="font-semibold hidden sm:flex" @click="exportCsv" />
+            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" @click="showLockConfirm = true" />
           </div>
         </div>
       </template>
@@ -530,14 +493,8 @@ function exportCsv() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" @click="showLockConfirm = false" />
-          <UButton
-            label="Kilitle"
-            icon="i-lucide-lock"
-            color="success"
-            :loading="locking"
-            @click="lockReconciliation"
-          />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showLockConfirm = false" />
+          <UButton label="Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" :loading="locking" @click="lockReconciliation" />
         </div>
       </template>
     </UModal>
@@ -545,6 +502,10 @@ function exportCsv() {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 :deep(.mutabakat-table th:nth-child(1))  { width: 140px; min-width: 140px; max-width: 140px; }
 :deep(.mutabakat-table th:nth-child(2))  { width: 130px; min-width: 130px; max-width: 130px; }
 :deep(.mutabakat-table th:nth-child(3))  { width: 110px; min-width: 110px; max-width: 110px; }

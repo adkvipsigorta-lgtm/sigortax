@@ -42,8 +42,10 @@ export function useApi() {
     const response = await fetch(url, fetchOptions)
 
     if (response.status === 401) {
-      logout()
-      throw new Error('Oturum süresi doldu')
+      const errorData = await response.json().catch(() => ({}))
+      const reason = errorData.reason || 'session_expired'
+      logout(reason)
+      throw new Error(errorData.message || 'Oturum suresi doldu')
     }
 
     const data = await response.json()

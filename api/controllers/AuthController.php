@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../helpers/AuthCrypto.php';
+
 class AuthController
 {
     // -------------------------------------------------------
@@ -82,14 +84,25 @@ class AuthController
         return str_pad((string) $code, 6, '0', STR_PAD_LEFT);
     }
 
-    private function verifyTotpCode(string $secret, string $code, int $window = 1): bool
+    /**
+     * TOTP dogrulama. Replay korumasi icin kullanilan step'i doner.
+     * @return int|false Basarili olursa kullanilan time step, degilse false
+     */
+    private function verifyTotpCode(string $secret, string $code, int $window = 1, ?int $lastUsedStep = null)
     {
-        $currentTimeSlice = floor(time() / 30);
+        $currentTimeSlice = (int) floor(time() / 30);
 
         for ($i = -$window; $i <= $window; $i++) {
-            $calculatedCode = $this->getTotpCode($secret, $currentTimeSlice + $i);
+            $step = $currentTimeSlice + $i;
+
+            // Replay korumasi: ayni veya daha eski step kullanilmis mi
+            if ($lastUsedStep !== null && $step <= $lastUsedStep) {
+                continue;
+            }
+
+            $calculatedCode = $this->getTotpCode($secret, $step);
             if (hash_equals($calculatedCode, $code)) {
-                return true;
+                return $step;
             }
         }
 
@@ -113,13 +126,187 @@ class AuthController
         return $codes;
     }
 
+    /**
+     * Kullanicinin TOTP secret'ini oku (encrypted veya legacy plaintext).
+     */
+    private function getUserTotpSecret(array $user): ?string
+    {
+        // Encrypted secret varsa onu kullan
+        if (!empty($user['two_factor_secret_enc']) && !empty($user['two_factor_secret_iv']) && !empty($user['two_factor_secret_tag'])) {
+            try {
+                return AuthCrypto::decrypt(
+                    $user['two_factor_secret_enc'],
+                    $user['two_factor_secret_iv'],
+                    $user['two_factor_secret_tag']
+                );
+            } catch (Exception $e) {
+                // Decrypt basarisiz, plaintext'e fallback
+            }
+        }
+
+        // Legacy plaintext
+        return $user['two_factor_secret'] ?? null;
+    }
+
+    /**
+     * TOTP secret'i encrypted olarak kaydet.
+     */
+    private function saveTotpSecretEncrypted(int $userId, string $secret): void
+    {
+        $enc = AuthCrypto::encrypt($secret);
+        Database::update('users', [
+            'two_factor_secret' => null, // plaintext temizle
+            'two_factor_secret_enc' => $enc['ciphertext'],
+            'two_factor_secret_iv' => $enc['iv'],
+            'two_factor_secret_tag' => $enc['tag'],
+        ], 'id = ?', [$userId]);
+    }
+
+    // -------------------------------------------------------
+    // Challenge Token Yonetimi
+    // -------------------------------------------------------
+
+    /**
+     * Opaque challenge token olustur (userId aciga cikmaz).
+     */
+    private function createChallengeToken(int $userId, bool $requiresSetup = false): string
+    {
+        $token = bin2hex(random_bytes(48)); // 96 karakter
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (strpos($ip, ',') !== false) {
+            $ip = trim(explode(',', $ip)[0]);
+        }
+
+        // Eski expired/used challenge'lari temizle
+        Database::query(
+            "DELETE FROM auth_challenges WHERE (expires_at < NOW() OR used = 1) AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+        );
+
+        // expires_at icin MySQL NOW() kullan (PHP/MySQL timezone farki onlenir)
+        Database::query(
+            "INSERT INTO auth_challenges (token, user_id, requires_setup, attempts, max_attempts, used, ip_address, expires_at)
+             VALUES (?, ?, ?, 0, 5, 0, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))",
+            [hash('sha256', $token), $userId, $requiresSetup ? 1 : 0, $ip]
+        );
+
+        return $token;
+    }
+
+    /**
+     * Challenge token'i dogrula ve kullaniciya ait bilgileri don.
+     * Basarisizsa null doner.
+     */
+    private function validateChallengeToken(string $token): ?array
+    {
+        $tokenHash = hash('sha256', $token);
+        $challenge = Database::fetch(
+            "SELECT * FROM auth_challenges WHERE token = ? AND used = 0 AND expires_at > NOW()",
+            [$tokenHash]
+        );
+
+        if (!$challenge) {
+            return null;
+        }
+
+        // IP kontrolu
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (strpos($ip, ',') !== false) {
+            $ip = trim(explode(',', $ip)[0]);
+        }
+        if ($challenge['ip_address'] !== $ip) {
+            return null;
+        }
+
+        // Max attempt kontrolu
+        if ((int) $challenge['attempts'] >= (int) $challenge['max_attempts']) {
+            // Challenge tukendi, invalidate et
+            Database::update('auth_challenges', ['used' => 1], 'id = ?', [$challenge['id']]);
+            return null;
+        }
+
+        return $challenge;
+    }
+
+    /**
+     * Challenge attempt sayisini artir.
+     */
+    private function incrementChallengeAttempts(int $challengeId): void
+    {
+        Database::query(
+            "UPDATE auth_challenges SET attempts = attempts + 1 WHERE id = ?",
+            [$challengeId]
+        );
+    }
+
+    /**
+     * Challenge'i kullanildi olarak isaretle.
+     */
+    private function markChallengeUsed(int $challengeId): void
+    {
+        Database::update('auth_challenges', ['used' => 1], 'id = ?', [$challengeId]);
+    }
+
+    // -------------------------------------------------------
+    // Brute-force Korumasi
+    // -------------------------------------------------------
+
+    /**
+     * Kullanicinin 2FA kilidini kontrol et. Kilitliyse hata don.
+     */
+    private function checkTwoFactorLock(array $user): void
+    {
+        if (!empty($user['two_factor_locked_until'])) {
+            $lockedUntil = strtotime($user['two_factor_locked_until']);
+            if ($lockedUntil && $lockedUntil > time()) {
+                $remaining = ceil(($lockedUntil - time()) / 60);
+                Response::error(
+                    "Cok fazla basarisiz deneme. $remaining dakika sonra tekrar deneyin.",
+                    429
+                );
+            }
+            // Kilit suresi dolmussa temizle
+            Database::update('users', [
+                'two_factor_attempts' => 0,
+                'two_factor_locked_until' => null,
+            ], 'id = ?', [$user['id']]);
+        }
+    }
+
+    /**
+     * Basarisiz 2FA denemesini kaydet. 5 denemeden sonra 15 dk kilitle.
+     */
+    private function recordFailedTwoFactor(int $userId): void
+    {
+        Database::query(
+            "UPDATE users SET two_factor_attempts = two_factor_attempts + 1 WHERE id = ?",
+            [$userId]
+        );
+
+        $user = Database::fetch("SELECT two_factor_attempts FROM users WHERE id = ?", [$userId]);
+        if ($user && (int) $user['two_factor_attempts'] >= 5) {
+            Database::update('users', [
+                'two_factor_locked_until' => date('Y-m-d H:i:s', time() + 900), // 15 dakika
+            ], 'id = ?', [$userId]);
+        }
+    }
+
+    /**
+     * Basarili 2FA sonrasi attempt sayacini sifirla.
+     */
+    private function clearTwoFactorAttempts(int $userId): void
+    {
+        Database::update('users', [
+            'two_factor_attempts' => 0,
+            'two_factor_locked_until' => null,
+        ], 'id = ?', [$userId]);
+    }
+
     // -------------------------------------------------------
     // User-Agent Parser + Session Logger
     // -------------------------------------------------------
 
     private function parseUserAgent(string $ua): array
     {
-        // Browser
         $browser = 'Bilinmiyor';
         if (preg_match('/Edg[e\/](\d+)/i', $ua)) $browser = 'Edge';
         elseif (preg_match('/OPR\/(\d+)/i', $ua)) $browser = 'Opera';
@@ -128,7 +315,6 @@ class AuthController
         elseif (preg_match('/Safari\/(\d+)/i', $ua) && !preg_match('/Chrome/i', $ua)) $browser = 'Safari';
         elseif (preg_match('/MSIE|Trident/i', $ua)) $browser = 'Internet Explorer';
 
-        // OS
         $os = 'Bilinmiyor';
         if (preg_match('/Windows NT 10/i', $ua)) $os = 'Windows 10/11';
         elseif (preg_match('/Windows NT/i', $ua)) $os = 'Windows';
@@ -139,7 +325,6 @@ class AuthController
         elseif (preg_match('/iPhone OS (\d+)/i', $ua, $m)) $os = 'iOS ' . $m[1];
         elseif (preg_match('/iPad/i', $ua)) $os = 'iPadOS';
 
-        // Device
         $device = 'Masaustu';
         if (preg_match('/Mobile|Android.*Mobile|iPhone/i', $ua)) $device = 'Mobil';
         elseif (preg_match('/iPad|Android(?!.*Mobile)|Tablet/i', $ua)) $device = 'Tablet';
@@ -162,7 +347,6 @@ class AuthController
             'az' => 'Azerbaycanca', 'ka' => 'Gurcuce', 'fa' => 'Farsca', 'he' => 'Ibranice',
         ];
 
-        // Parse first language code
         $primary = explode(',', $accept)[0];
         $code = strtolower(substr(trim($primary), 0, 2));
 
@@ -173,12 +357,10 @@ class AuthController
     {
         $result = ['country' => null, 'countryCode' => null, 'city' => null];
 
-        // Skip local/private IPs
         if (in_array($ip, ['127.0.0.1', '::1', '0.0.0.0']) || preg_match('/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/', $ip)) {
             return $result;
         }
 
-        // ip-api.com free API (no key needed, 45 req/min)
         $ctx = stream_context_create(['http' => ['timeout' => 2]]);
         $json = @file_get_contents("http://ip-api.com/json/{$ip}?fields=status,country,countryCode,city", false, $ctx);
         if ($json) {
@@ -198,16 +380,14 @@ class AuthController
      */
     private static function isNotificationEnabled(string $type, int $userId): bool
     {
-        // 1. Global ayar kontrolu
         $globalRow = Database::fetch("SELECT value FROM settings WHERE `key` = 'notification_settings'");
         if ($globalRow) {
             $global = json_decode($globalRow['value'], true);
             if (is_array($global) && isset($global[$type]) && !$global[$type]) {
-                return false; // Admin kapattiysa kimseye gitmesin
+                return false;
             }
         }
 
-        // 2. Kullanici tercihi kontrolu
         $userRow = Database::fetch(
             "SELECT value FROM settings WHERE `key` = ?",
             ["notification_preferences_$userId"]
@@ -215,7 +395,7 @@ class AuthController
         if ($userRow) {
             $prefs = json_decode($userRow['value'], true);
             if (is_array($prefs) && isset($prefs[$type]) && !$prefs[$type]) {
-                return false; // Kullanici kendisi kapattiysa
+                return false;
             }
         }
 
@@ -242,6 +422,12 @@ class AuthController
             $location = $geo['country'];
         }
 
+        // Session boundary'yi kaydet
+        $tz = new DateTimeZone('Europe/Istanbul');
+        $boundaryDt = new DateTime('now', $tz);
+        $boundaryDt->setTimestamp(Auth::nextSessionBoundary());
+        $expiresAt = $boundaryDt->format('Y-m-d H:i:s');
+
         Database::insert('sessions', [
             'user_id' => $userId,
             'ip_address' => $ip,
@@ -256,10 +442,11 @@ class AuthController
             'language' => $language,
             'token_hash' => $tokenHash,
             'is_current' => 0,
+            'expires_at' => $expiresAt,
             'logged_in_at' => date('Y-m-d H:i:s'),
         ]);
 
-        // Login bildirimi - ayarlara bagli
+        // Login bildirimi
         if (self::isNotificationEnabled('login_new_device', $userId)) {
             require_once __DIR__ . '/NotificationController.php';
             $locationText = $location ? " ($location)" : '';
@@ -273,12 +460,51 @@ class AuthController
         }
     }
 
+    /**
+     * Authenticated session olustur ve response don.
+     */
+    private function createAuthenticatedSession(array $user): void
+    {
+        $token = Auth::generateToken([
+            'userId' => $user['id'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+            'branchId' => $user['branch_id'],
+        ]);
+
+        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente'];
+        $roleName = $roleMap[(int) $user['role']] ?? 'kullanici';
+
+        $this->logSession((int) $user['id'], $token);
+
+        $socketToken = Auth::generateSocketToken((int) $user['id'], $roleName);
+
+        Response::success([
+            'token' => $token,
+            'socketToken' => $socketToken,
+            'sessionExpiresAt' => Auth::sessionBoundaryISO(),
+            'user' => [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'role' => $roleName,
+                'branchId' => $user['branch_id'],
+                'twoFactorEnabled' => !empty($user['two_factor_enabled']) && (int) $user['two_factor_enabled'] === 1,
+            ],
+        ], 'Giris basarili');
+    }
+
     // -------------------------------------------------------
     // Auth Endpoints
     // -------------------------------------------------------
 
     public function login(array $input): void
     {
+        // Email normalize: trim + lowercase
+        if (isset($input['email'])) {
+            $input['email'] = mb_strtolower(trim($input['email']), 'UTF-8');
+        }
+
         $validator = new Validator();
         if (!$validator->validate($input, ['email' => 'required|email', 'password' => 'required|min:6'])) {
             Response::error('Dogrulama hatasi', 422, $validator->getErrors());
@@ -297,60 +523,52 @@ class AuthController
             Response::error('Hesabiniz devre disi birakilmis. Yonetici ile iletisime gecin.', 403);
         }
 
-        // Müşteri portalı kullanıcıları CRM'e giremez
+        // Musteri portali kullanicilari CRM'e giremez
         if ((int) $user['role'] === 3) {
-            Response::error('Bu hesap ile CRM\'e giriş yapılamaz. Müşteri portalını kullanın.', 403);
+            Response::error('Bu hesap ile CRM\'e giris yapilamaz. Musteri portalini kullanin.', 403);
         }
 
-        // Check if 2FA is enabled
-        if (!empty($user['two_factor_enabled']) && (int) $user['two_factor_enabled'] === 1) {
-            Response::success([
-                'requiresTwoFactor' => true,
-                'userId' => $user['id'],
-            ], 'Iki faktorlu dogrulama gerekli');
-            return;
-        }
+        // Brute-force kilit kontrolu
+        $this->checkTwoFactorLock($user);
 
-        $rememberMe = !empty($input['rememberMe']) && $input['rememberMe'] === true;
-        $token = Auth::generateToken([
-            'userId' => $user['id'],
-            'email' => $user['email'],
-            'role' => $user['role'],
-            'branchId' => $user['branch_id'],
-        ], $rememberMe);
+        // TOTP her zaman zorunlu — kurulmus mu kontrol et
+        $hasTotp = !empty($user['two_factor_enabled']) && (int) $user['two_factor_enabled'] === 1;
+        $requiresSetup = !$hasTotp;
 
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente'];
-        $roleName = $roleMap[(int) $user['role']] ?? 'kullanici';
-
-        $this->logSession((int) $user['id'], $token);
-
-        $socketToken = Auth::generateSocketToken((int) $user['id'], $roleName);
+        // Challenge token olustur (userId aciga cikmaz)
+        $challengeToken = $this->createChallengeToken((int) $user['id'], $requiresSetup);
 
         Response::success([
-            'token' => $token,
-            'socketToken' => $socketToken,
-            'user' => [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'role' => $roleName,
-                'branchId' => $user['branch_id'],
-                'twoFactorEnabled' => !empty($user['two_factor_enabled']) && (int) $user['two_factor_enabled'] === 1,
-            ],
-        ], 'Giris basarili');
+            'requiresTwoFactor' => true,
+            'requiresSetup' => $requiresSetup,
+            'challengeToken' => $challengeToken,
+        ], $requiresSetup ? 'Iki faktorlu dogrulama kurulumu gerekli' : 'Iki faktorlu dogrulama gerekli');
     }
 
     public function logout(): void
     {
-        // Stateless JWT - just return success
+        // Server-side session revoke
+        $token = Auth::getTokenFromHeader();
+        if ($token) {
+            $tokenHash = hash('sha256', $token);
+            $session = Database::fetch(
+                "SELECT id FROM sessions WHERE token_hash = ? AND is_revoked = 0",
+                [$tokenHash]
+            );
+            if ($session) {
+                Database::update('sessions', ['is_revoked' => 1], 'id = ?', [$session['id']]);
+            }
+        }
+
         Response::success(null, 'Cikis basarili');
     }
 
     public function me(): void
     {
-        $tokenData = Auth::getCurrentUser();
+        $reason = null;
+        $tokenData = Auth::getCurrentUser($reason);
         if (!$tokenData) {
-            Response::error('Oturum suresi dolmus', 401);
+            Response::error('Oturum suresi dolmus', 401, ['reason' => $reason ?? 'session_expired']);
         }
 
         $user = Database::fetch(
@@ -379,7 +597,7 @@ class AuthController
             'countryId' => $user['country_id'] ? (int) $user['country_id'] : null,
             'cityId' => $user['city_id'] ? (int) $user['city_id'] : null,
             'districtId' => $user['district_id'] ? (int) $user['district_id'] : null,
-            // Taze socketToken — client expired socket token'i bununla yeniler
+            'sessionExpiresAt' => Auth::sessionBoundaryISO(),
             'socketToken' => Auth::generateSocketToken((int) $user['id'], $roleName),
         ]);
     }
@@ -392,7 +610,6 @@ class AuthController
     {
         $userId = $authUser['userId'];
 
-        // Notification preferences stored in settings table as JSON
         $setting = Database::fetch(
             "SELECT value FROM settings WHERE `key` = ?",
             ['notification_preferences_' . $userId]
@@ -444,7 +661,6 @@ class AuthController
             Response::error('Kullanici bulunamadi', 404);
         }
 
-        // Map input fields to database columns (only valid users columns)
         $fieldMap = [
             'name' => 'name',
             'email' => 'email',
@@ -459,7 +675,12 @@ class AuthController
         $updateData = [];
         foreach ($fieldMap as $inputKey => $dbColumn) {
             if (array_key_exists($inputKey, $input)) {
-                $updateData[$dbColumn] = $input[$inputKey];
+                $val = $input[$inputKey];
+                // Email normalize: trim + lowercase
+                if ($dbColumn === 'email' && is_string($val)) {
+                    $val = mb_strtolower(trim($val), 'UTF-8');
+                }
+                $updateData[$dbColumn] = $val;
             }
         }
 
@@ -467,7 +688,6 @@ class AuthController
             Response::error('Guncellenecek alan bulunamadi', 422);
         }
 
-        // If email is changing, check uniqueness
         if (isset($updateData['email']) && $updateData['email'] !== $user['email']) {
             $existing = Database::fetch(
                 "SELECT id FROM users WHERE email = ? AND id != ? AND deleted_at IS NULL",
@@ -517,10 +737,6 @@ class AuthController
     }
 
     // -------------------------------------------------------
-    // Two-Factor Authentication (TOTP)
-    // -------------------------------------------------------
-
-    // -------------------------------------------------------
     // Sessions (Login History)
     // -------------------------------------------------------
 
@@ -528,7 +744,6 @@ class AuthController
     {
         $userId = $authUser['userId'];
 
-        // Get current token hash to mark active session
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
         $currentTokenHash = '';
         if (preg_match('/Bearer\s+(.+)$/i', $authHeader, $matches)) {
@@ -536,7 +751,7 @@ class AuthController
         }
 
         $sessions = Database::fetchAll(
-            "SELECT id, ip_address, device, browser, os, location, city, country, country_code, language, token_hash, logged_in_at
+            "SELECT id, ip_address, device, browser, os, location, city, country, country_code, language, token_hash, logged_in_at, expires_at
              FROM sessions
              WHERE user_id = ? AND is_revoked = 0
              ORDER BY logged_in_at DESC
@@ -558,6 +773,7 @@ class AuthController
                 'language' => $s['language'],
                 'isCurrent' => $s['token_hash'] === $currentTokenHash,
                 'loggedInAt' => $s['logged_in_at'],
+                'expiresAt' => $s['expires_at'],
             ];
         }, $sessions);
 
@@ -577,7 +793,6 @@ class AuthController
             Response::error('Oturum bulunamadi', 404);
         }
 
-        // Check if trying to delete current session
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
         if (preg_match('/Bearer\s+(.+)$/i', $authHeader, $matches)) {
             $currentTokenHash = hash('sha256', $matches[1]);
@@ -588,20 +803,148 @@ class AuthController
 
         Database::update('sessions', ['is_revoked' => 1], 'id = ? AND user_id = ?', [$sessionId, $userId]);
 
-        // Kullanicinin tum tab/cihazlari sessions-updated alir,
-        // token'i revoke edilen tab fetchMe'de basarisiz olup otomatik logout olur
         SocketEmitter::sessionsUpdated($userId);
 
         Response::success(null, 'Oturum sonlandirildi');
     }
 
     // -------------------------------------------------------
-    // Two-Factor Authentication (TOTP)
+    // Two-Factor Authentication — Login akisi (Challenge Token ile)
     // -------------------------------------------------------
 
-    public function twoFactorSetup(array $authUser): void
+    /**
+     * Login akisi icinde 2FA dogrulama.
+     * Challenge token + TOTP kodu ile calisir.
+     */
+    public function twoFactorVerify(array $input): void
     {
-        $userId = $authUser['userId'];
+        $validator = new Validator();
+        if (!$validator->validate($input, ['challengeToken' => 'required', 'code' => 'required'])) {
+            Response::error('Dogrulama hatasi', 422, $validator->getErrors());
+        }
+
+        // Challenge token dogrula
+        $challenge = $this->validateChallengeToken($input['challengeToken']);
+        if (!$challenge) {
+            Response::error('Dogrulama suresi dolmus veya gecersiz istek. Tekrar giris yapin.', 401, ['reason' => 'challenge_expired']);
+        }
+
+        $userId = (int) $challenge['user_id'];
+        $challengeId = (int) $challenge['id'];
+
+        $user = Database::fetch(
+            "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
+            [$userId]
+        );
+
+        if (!$user) {
+            $this->markChallengeUsed($challengeId);
+            Response::error('Kullanici bulunamadi', 404);
+        }
+
+        // Brute-force kilit kontrolu
+        $this->checkTwoFactorLock($user);
+
+        $secret = $this->getUserTotpSecret($user);
+        if (empty($secret)) {
+            $this->markChallengeUsed($challengeId);
+            Response::error('Iki faktorlu dogrulama yapilandirilmamis', 422);
+        }
+
+        $code = trim($input['code']);
+        $verified = false;
+        $recoveryCodeUsed = false;
+        $usedStep = null;
+
+        // TOTP kodu dene (6 haneli)
+        if (preg_match('/^\d{6}$/', $code)) {
+            $totpCode = str_pad($code, 6, '0', STR_PAD_LEFT);
+            $lastStep = $user['two_factor_last_step'] !== null ? (int) $user['two_factor_last_step'] : null;
+            $step = $this->verifyTotpCode($secret, $totpCode, 1, $lastStep);
+            if ($step !== false) {
+                $verified = true;
+                $usedStep = $step;
+            }
+        }
+
+        // TOTP basarisizsa recovery code dene
+        if (!$verified) {
+            $recoveryCodes = json_decode($user['two_factor_recovery_codes'] ?? '[]', true);
+            if (is_array($recoveryCodes)) {
+                foreach ($recoveryCodes as $idx => $storedCode) {
+                    if (AuthCrypto::verifyRecoveryCode($code, $storedCode)) {
+                        $verified = true;
+                        $recoveryCodeUsed = true;
+
+                        // Kullanilan kodu sil
+                        array_splice($recoveryCodes, $idx, 1);
+                        Database::update('users', [
+                            'two_factor_recovery_codes' => json_encode(array_values($recoveryCodes)),
+                        ], 'id = ?', [$userId]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!$verified) {
+            // Challenge attempt artir
+            $this->incrementChallengeAttempts($challengeId);
+            // User attempt artir
+            $this->recordFailedTwoFactor($userId);
+            Response::error('Gecersiz dogrulama kodu', 401);
+        }
+
+        // Basarili — challenge'i kapat
+        $this->markChallengeUsed($challengeId);
+
+        // Attempt sayaci sifirla
+        $this->clearTwoFactorAttempts($userId);
+
+        // Replay korumasi: son kullanilan step'i kaydet
+        if ($usedStep !== null) {
+            Database::update('users', [
+                'two_factor_last_step' => $usedStep,
+            ], 'id = ?', [$userId]);
+        }
+
+        // Legacy plaintext secret varsa encrypted'a tasi
+        if (!empty($user['two_factor_secret']) && empty($user['two_factor_secret_enc'])) {
+            $this->saveTotpSecretEncrypted($userId, $user['two_factor_secret']);
+        }
+
+        // Authenticated session olustur
+        $this->createAuthenticatedSession($user);
+    }
+
+    // -------------------------------------------------------
+    // Two-Factor Authentication — Kurulum (Challenge Token ile / Authenticated)
+    // -------------------------------------------------------
+
+    /**
+     * 2FA kurulumu baslat.
+     * Login akisinda challengeToken ile, CRM icinde auth ile calisir.
+     */
+    public function twoFactorSetup($authOrInput): void
+    {
+        $userId = null;
+
+        // Challenge token ile gelen istek (login akisi)
+        if (is_array($authOrInput) && isset($authOrInput['challengeToken'])) {
+            $challenge = $this->validateChallengeToken($authOrInput['challengeToken']);
+            if (!$challenge || !(int) $challenge['requires_setup']) {
+                Response::error('Gecersiz veya suresi dolmus istek', 401, ['reason' => 'challenge_expired']);
+            }
+            $userId = (int) $challenge['user_id'];
+        }
+        // Authenticated user (ayarlar sayfasindan)
+        elseif (is_array($authOrInput) && isset($authOrInput['userId'])) {
+            $userId = (int) $authOrInput['userId'];
+        }
+
+        if (!$userId) {
+            Response::error('Gecersiz istek', 400);
+        }
 
         $user = Database::fetch(
             "SELECT id, email, two_factor_enabled FROM users WHERE id = ? AND deleted_at IS NULL",
@@ -616,16 +959,18 @@ class AuthController
             Response::error('Iki faktorlu dogrulama zaten aktif', 422);
         }
 
-        // Generate a 16-character base32 secret
+        // 16 karakter base32 secret olustur
         $secret = $this->generateBase32Secret(16);
 
-        // Store secret but don't enable yet
-        Database::update('users', ['two_factor_secret' => $secret], 'id = ?', [$userId]);
+        // Secret'i encrypted olarak kaydet
+        $this->saveTotpSecretEncrypted($userId, $secret);
 
-        // Build otpauth URL
-        $otpauthUrl = 'otpauth://totp/SigortaApp:' . urlencode($user['email'])
+        // otpauth URI
+        $otpauthUrl = 'otpauth://totp/SigortaCRM:' . urlencode($user['email'])
             . '?secret=' . $secret
-            . '&issuer=SigortaApp';
+            . '&issuer=SigortaCRM'
+            . '&digits=6'
+            . '&period=30';
 
         Response::success([
             'secret' => $secret,
@@ -633,17 +978,46 @@ class AuthController
         ], 'Iki faktorlu dogrulama kurulumu hazir');
     }
 
-    public function twoFactorEnable(array $authUser, array $input): void
+    /**
+     * 2FA etkinlestir (kod dogrulama + recovery code uretimi).
+     * Login akisinda challengeToken ile, CRM icinde auth ile calisir.
+     */
+    public function twoFactorEnable($authOrInput, ?array $input = null): void
     {
+        $userId = null;
+        $challengeId = null;
+        $isLoginFlow = false;
+
+        // Input parametresini belirle
+        $actualInput = $input ?? $authOrInput;
+
+        // Challenge token ile gelen istek
+        if (isset($actualInput['challengeToken'])) {
+            $challenge = $this->validateChallengeToken($actualInput['challengeToken']);
+            if (!$challenge || !(int) $challenge['requires_setup']) {
+                Response::error('Gecersiz veya suresi dolmus istek', 401, ['reason' => 'challenge_expired']);
+            }
+            $userId = (int) $challenge['user_id'];
+            $challengeId = (int) $challenge['id'];
+            $isLoginFlow = true;
+        }
+        // Authenticated user
+        elseif (is_array($authOrInput) && isset($authOrInput['userId']) && $input !== null) {
+            $userId = (int) $authOrInput['userId'];
+            $actualInput = $input;
+        }
+
+        if (!$userId) {
+            Response::error('Gecersiz istek', 400);
+        }
+
         $validator = new Validator();
-        if (!$validator->validate($input, ['code' => 'required'])) {
+        if (!$validator->validate($actualInput, ['code' => 'required'])) {
             Response::error('Dogrulama hatasi', 422, $validator->getErrors());
         }
 
-        $userId = $authUser['userId'];
-
         $user = Database::fetch(
-            "SELECT id, two_factor_secret, two_factor_enabled FROM users WHERE id = ? AND deleted_at IS NULL",
+            "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
             [$userId]
         );
 
@@ -651,7 +1025,8 @@ class AuthController
             Response::error('Kullanici bulunamadi', 404);
         }
 
-        if (empty($user['two_factor_secret'])) {
+        $secret = $this->getUserTotpSecret($user);
+        if (empty($secret)) {
             Response::error('Once iki faktorlu dogrulama kurulumunu baslatin', 422);
         }
 
@@ -659,27 +1034,79 @@ class AuthController
             Response::error('Iki faktorlu dogrulama zaten aktif', 422);
         }
 
-        $code = str_pad(trim($input['code']), 6, '0', STR_PAD_LEFT);
+        $code = str_pad(trim($actualInput['code']), 6, '0', STR_PAD_LEFT);
 
-        if (!$this->verifyTotpCode($user['two_factor_secret'], $code)) {
+        $step = $this->verifyTotpCode($secret, $code);
+        if ($step === false) {
             Response::error('Gecersiz dogrulama kodu', 401);
         }
 
-        // Generate recovery codes
-        $recoveryCodes = $this->generateRecoveryCodes(8);
+        // Recovery code'lari uret ve hash'le
+        $plaintextCodes = $this->generateRecoveryCodes(8);
+        $hashedCodes = array_map(function ($c) {
+            return AuthCrypto::hashRecoveryCode($c);
+        }, $plaintextCodes);
 
         Database::update('users', [
             'two_factor_enabled' => 1,
-            'two_factor_recovery_codes' => json_encode($recoveryCodes),
+            'two_factor_recovery_codes' => json_encode($hashedCodes),
+            'two_factor_last_step' => $step,
         ], 'id = ?', [$userId]);
 
+        // Login akisinda challenge'i kapat ama henuz session olusturma
+        // Frontend recovery kodlari gosterdikten sonra ayri bir confirm istegi atacak
+        if ($isLoginFlow && $challengeId) {
+            // Challenge'i hala acik birak — confirm adiminda kullanilacak
+            // Ama attempts'i sifirla
+            Database::update('auth_challenges', ['attempts' => 0], 'id = ?', [$challengeId]);
+        }
+
         Response::success([
-            'recoveryCodes' => $recoveryCodes,
+            'recoveryCodes' => $plaintextCodes,
         ], 'Iki faktorlu dogrulama basariyla etkinlestirildi');
+    }
+
+    /**
+     * Login akisinda 2FA enrollment tamamlandiktan sonra session olustur.
+     */
+    public function twoFactorConfirmSetup(array $input): void
+    {
+        $validator = new Validator();
+        if (!$validator->validate($input, ['challengeToken' => 'required'])) {
+            Response::error('Dogrulama hatasi', 422, $validator->getErrors());
+        }
+
+        $challenge = $this->validateChallengeToken($input['challengeToken']);
+        if (!$challenge) {
+            Response::error('Gecersiz veya suresi dolmus istek. Tekrar giris yapin.', 401, ['reason' => 'challenge_expired']);
+        }
+
+        $userId = (int) $challenge['user_id'];
+
+        $user = Database::fetch(
+            "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL AND two_factor_enabled = 1",
+            [$userId]
+        );
+
+        if (!$user) {
+            Response::error('2FA kurulumu tamamlanmamis', 422);
+        }
+
+        // Challenge'i kapat
+        $this->markChallengeUsed((int) $challenge['id']);
+
+        // Authenticated session olustur
+        $this->createAuthenticatedSession($user);
     }
 
     public function twoFactorDisable(array $authUser, array $input): void
     {
+        // 2FA zorunlu — normal kullanıcı self-service disable yapamaz
+        // Sadece admin başka kullanıcının 2FA'sını sıfırlayabilir (ileride eklenecek)
+        if ((int) $authUser['role'] !== 1) {
+            Response::error('İki adımlı doğrulama CRM girişinde zorunludur ve devre dışı bırakılamaz.', 403);
+        }
+
         $validator = new Validator();
         if (!$validator->validate($input, ['password' => 'required'])) {
             Response::error('Dogrulama hatasi', 422, $validator->getErrors());
@@ -703,92 +1130,15 @@ class AuthController
         Database::update('users', [
             'two_factor_enabled' => 0,
             'two_factor_secret' => null,
+            'two_factor_secret_enc' => null,
+            'two_factor_secret_iv' => null,
+            'two_factor_secret_tag' => null,
             'two_factor_recovery_codes' => null,
+            'two_factor_attempts' => 0,
+            'two_factor_locked_until' => null,
+            'two_factor_last_step' => null,
         ], 'id = ?', [$userId]);
 
         Response::success(null, 'Iki faktorlu dogrulama devre disi birakildi');
-    }
-
-    public function twoFactorVerify(array $input): void
-    {
-        $validator = new Validator();
-        if (!$validator->validate($input, ['userId' => 'required', 'code' => 'required'])) {
-            Response::error('Dogrulama hatasi', 422, $validator->getErrors());
-        }
-
-        $user = Database::fetch(
-            "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
-            [$input['userId']]
-        );
-
-        if (!$user) {
-            Response::error('Kullanici bulunamadi', 404);
-        }
-
-        if (empty($user['two_factor_secret'])) {
-            Response::error('Iki faktorlu dogrulama yapilandirilmamis', 422);
-        }
-
-        $code = trim($input['code']);
-        $verified = false;
-        $recoveryCodeUsed = false;
-
-        // First try TOTP code (6 digits)
-        if (preg_match('/^\d{6}$/', $code)) {
-            $totpCode = str_pad($code, 6, '0', STR_PAD_LEFT);
-            if ($this->verifyTotpCode($user['two_factor_secret'], $totpCode)) {
-                $verified = true;
-            }
-        }
-
-        // If TOTP didn't match, try recovery codes
-        if (!$verified) {
-            $recoveryCodes = json_decode($user['two_factor_recovery_codes'] ?? '[]', true);
-            if (is_array($recoveryCodes)) {
-                $codeIndex = array_search($code, $recoveryCodes, true);
-                if ($codeIndex !== false) {
-                    $verified = true;
-                    $recoveryCodeUsed = true;
-
-                    // Remove used recovery code
-                    array_splice($recoveryCodes, $codeIndex, 1);
-                    Database::update('users', [
-                        'two_factor_recovery_codes' => json_encode(array_values($recoveryCodes)),
-                    ], 'id = ?', [$user['id']]);
-                }
-            }
-        }
-
-        if (!$verified) {
-            Response::error('Gecersiz dogrulama kodu', 401);
-        }
-
-        // Generate JWT token
-        $token = Auth::generateToken([
-            'userId' => $user['id'],
-            'email' => $user['email'],
-            'role' => $user['role'],
-            'branchId' => $user['branch_id'],
-        ]);  // 2FA sonrası rememberMe bilgisi taşınmıyor, normal süre (7 gün) kullanılır
-
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente'];
-        $roleName = $roleMap[(int) $user['role']] ?? 'kullanici';
-
-        $this->logSession((int) $user['id'], $token);
-
-        $socketToken = Auth::generateSocketToken((int) $user['id'], $roleName);
-
-        Response::success([
-            'token' => $token,
-            'socketToken' => $socketToken,
-            'user' => [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'role' => $roleName,
-                'branchId' => $user['branch_id'],
-                'twoFactorEnabled' => true,
-            ],
-        ], $recoveryCodeUsed ? 'Kurtarma kodu ile giris basarili' : 'Iki faktorlu dogrulama basarili');
     }
 }

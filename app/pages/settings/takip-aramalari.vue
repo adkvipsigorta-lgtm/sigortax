@@ -155,22 +155,22 @@ onMounted(fetchConfig)
 
 <template>
   <div class="space-y-4">
-    <!-- Başlık -->
-    <div class="flex items-center justify-between">
+    <!-- Sayfa Başlığı -->
+    <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h3 class="font-semibold">Takip Aramaları</h3>
-        <p class="text-xs text-muted">Poliçe satışı/yenilemesi sonrası otomatik müşteri arama görevi oluşturma ayarları.</p>
+        <h1 class="text-xl font-semibold">Takip Aramaları</h1>
+        <p class="text-sm text-muted mt-1">Poliçe satışı/yenilemesi sonrası otomatik müşteri arama görevi oluşturma ayarları.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" size="xs" :loading="saving" @click="saveConfig" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="saveConfig" />
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="space-y-4">
       <SkeletonCard v-for="i in 2" :key="i">
         <div class="space-y-3">
-          <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-40" />
-          <div class="h-16 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-          <div class="h-16 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+          <div class="h-5 bg-neutral-200 rounded w-40" />
+          <div class="h-16 bg-neutral-200 rounded w-full" />
+          <div class="h-16 bg-neutral-200 rounded w-full" />
         </div>
       </SkeletonCard>
     </div>
@@ -209,7 +209,7 @@ onMounted(fetchConfig)
             v-for="ds of defaultStages"
             :key="ds.key"
             class="rounded-lg border border-default p-3 transition-all"
-            :class="getStageConfig(rule, ds.key).enabled ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800/50 opacity-60'"
+            :class="getStageConfig(rule, ds.key).enabled ? 'bg-white' : 'bg-neutral-50 opacity-60'"
           >
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -220,17 +220,17 @@ onMounted(fetchConfig)
                   <p class="text-xs text-muted">{{ ds.description }}</p>
                 </div>
               </div>
-              <div class="flex items-center gap-2 shrink-0">
+              <div class="relative shrink-0 w-24 [&_input]:!pt-5 [&_input]:!pb-2.5">
                 <UInput
                   v-model.number="getStageConfig(rule, ds.key).days"
                   type="number"
                   :min="1"
                   :max="365"
+                  placeholder=" "
                   :disabled="!isAdmin || !getStageConfig(rule, ds.key).enabled"
-                  class="w-20"
-                  size="sm"
+                  class="w-full peer/fl-days"
                 />
-                <span class="text-xs text-muted whitespace-nowrap">gün</span>
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-days:top-0 peer-focus-within/fl-days:-translate-y-1/2 peer-focus-within/fl-days:text-xs peer-focus-within/fl-days:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-days:top-0 peer-has-[input:not(:placeholder-shown)]/fl-days:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-days:text-xs peer-has-[input:not(:placeholder-shown)]/fl-days:text-[var(--ui-text-highlighted)]">Gün</label>
               </div>
             </div>
           </div>
@@ -247,10 +247,10 @@ onMounted(fetchConfig)
             <h3 class="font-semibold">Görev Başlık ve İçerik Şablonları</h3>
             <p class="text-xs text-muted mt-0.5">
               Kullanılabilir değişkenler:
-              <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">{branchGroup}</code>
-              <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs ml-1">{customerName}</code>
-              <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs ml-1">{policyNo}</code>
-              <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs ml-1">{startsAt}</code>
+              <code class="bg-neutral-100 px-1 rounded text-xs">{branchGroup}</code>
+              <code class="bg-neutral-100 px-1 rounded text-xs ml-1">{customerName}</code>
+              <code class="bg-neutral-100 px-1 rounded text-xs ml-1">{policyNo}</code>
+              <code class="bg-neutral-100 px-1 rounded text-xs ml-1">{startsAt}</code>
             </p>
           </div>
         </template>
@@ -259,7 +259,7 @@ onMounted(fetchConfig)
           <div v-for="ds in defaultStages" :key="ds.key" class="border border-default rounded-lg overflow-hidden">
             <!-- Accordion başlık -->
             <button
-              class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-neutral-50 transition-colors"
               @click="expandedTemplateKey = expandedTemplateKey === ds.key ? null : ds.key"
             >
               <div class="flex items-center gap-2">
@@ -273,34 +273,17 @@ onMounted(fetchConfig)
             </button>
 
             <!-- Accordion içerik -->
-            <div v-if="expandedTemplateKey === ds.key" class="px-4 pb-4 space-y-3 border-t border-default">
-              <div class="pt-3">
-                <label class="block text-xs font-medium text-muted mb-1">Görev Başlığı</label>
-                <UInput
-                  v-model="stageTemplates[ds.key].titleTemplate"
-                  :disabled="!isAdmin"
-                  placeholder="Görev başlığı..."
-                />
+            <div v-if="expandedTemplateKey === ds.key" class="px-4 pb-4 space-y-4 border-t border-default pt-4">
+              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <UInput v-model="stageTemplates[ds.key].titleTemplate" :disabled="!isAdmin" placeholder=" " class="w-full peer/fl-ttitle" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ttitle:top-0 peer-focus-within/fl-ttitle:-translate-y-1/2 peer-focus-within/fl-ttitle:text-xs peer-focus-within/fl-ttitle:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ttitle:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ttitle:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ttitle:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ttitle:text-[var(--ui-text-highlighted)]">Görev Başlığı</label>
               </div>
-              <div>
-                <label class="block text-xs font-medium text-muted mb-1">Görev İçeriği</label>
-                <UTextarea
-                  v-model="stageTemplates[ds.key].descriptionTemplate"
-                  :disabled="!isAdmin"
-                  :rows="6"
-                  placeholder="Görev açıklaması ve rehber..."
-                />
+              <div class="relative [&_textarea]:!pt-5 [&_textarea]:!pb-2.5">
+                <UTextarea v-model="stageTemplates[ds.key].descriptionTemplate" :disabled="!isAdmin" :rows="4" placeholder=" " class="w-full peer/fl-tdesc" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', stageTemplates[ds.key].descriptionTemplate ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Görev İçeriği</label>
               </div>
               <div class="flex justify-end">
-                <UButton
-                  v-if="isAdmin"
-                  label="Varsayılana sıfırla"
-                  variant="ghost"
-                  size="xs"
-                  color="neutral"
-                  icon="i-lucide-rotate-ccw"
-                  @click="resetTemplate(ds.key)"
-                />
+                <UButton v-if="isAdmin" label="Varsayılana Sıfırla" variant="outline" size="xl" class="font-semibold" color="neutral" icon="i-lucide-rotate-ccw" @click="resetTemplate(ds.key)" />
               </div>
             </div>
           </div>

@@ -242,6 +242,12 @@ function urgencyBadge(days: number) {
 
 <template>
   <div class="p-4 sm:p-6 space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Kaçırılan Poliçeler</h1>
+      <p class="text-sm text-muted mt-1">Yenilenmeyen poliçeleri takip edin ve geri kazanım sürecini yönetin.</p>
+    </div>
+
     <!-- Özet Kartları -->
     <div class="hidden sm:grid grid-cols-2 lg:grid-cols-5 gap-3">
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-orange-400/50 transition-all" @click="tab = 'upcoming'; range = 'week'; statusFilter = 'all'">
@@ -316,30 +322,20 @@ function urgencyBadge(days: number) {
                 </button>
               </div>
               <!-- Filtreler -->
-              <UInput
-                v-model="search"
-                placeholder="Müşteri, plaka, TC..."
-                icon="i-lucide-search"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px] hidden sm:flex"
-              />
-              <USelect
-                v-model="branch"
-                :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...(stats?.branches || []).map((b: any) => ({ label: `${b.name} (${b.cnt})`, value: String(b.id) }))]"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px] hidden sm:flex"
-              />
-              <USelect
-                v-model="statusFilter"
-                :items="statusOptions"
-                size="xs"
-                :ui="{ base: 'h-[30px]' }"
-                class="w-[180px] hidden sm:flex"
-              />
+              <div class="relative hidden sm:flex w-[200px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <UInput v-model="search" placeholder=" " class="w-full peer/fl-lpsearch" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Müşteri, plaka, TC</label>
+              </div>
+              <div class="relative hidden sm:flex w-[180px] select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelect v-model="branch" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...(stats?.branches || []).map((b: any) => ({ label: `${b.name} (${b.cnt})`, value: String(b.id) }))]" placeholder=" " class="w-full" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
+              </div>
+              <div class="relative hidden sm:flex w-[160px] select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+                <USelect v-model="statusFilter" :items="statusOptions" placeholder=" " class="w-full" />
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
+              </div>
             </div>
-            <UButton v-if="can('lost_policies.view')" icon="i-lucide-download" variant="outline" size="xs" class="hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
+            <UButton v-if="can('lost_policies.view')" label="Excel" icon="i-lucide-download" variant="outline" size="xl" class="font-semibold hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
           </div>
         </div>
       </template>
@@ -498,13 +494,14 @@ function urgencyBadge(days: number) {
     <UModal :dismissible="false" v-model:open="vadeDegistirOpen" title="Vade Değiştir">
       <template #body>
         <div class="space-y-4">
-          <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div class="p-3 bg-neutral-50 rounded-lg">
             <p class="text-sm font-semibold">{{ vadeDegistirItem?.customer_name }}</p>
             <p class="text-xs text-muted mt-0.5">Mevcut bitiş tarihi: <span class="font-medium">{{ vadeDegistirItem ? formatDate(vadeDegistirItem.expires_at) : '' }}</span></p>
           </div>
-          <UFormField label="Yeni Tahmini Vade Tarihi" hint="Müşterinin poliçeyi yenileme tarihi">
-            <UInput type="date" v-model="newExpectedDate" class="w-full" />
-          </UFormField>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput type="date" v-model="newExpectedDate" placeholder=" " class="w-full peer/fl-vdate" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-vdate:top-0 peer-focus-within/fl-vdate:-translate-y-1/2 peer-focus-within/fl-vdate:text-xs peer-focus-within/fl-vdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-vdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-vdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-[var(--ui-text-highlighted)]">Yeni Tahmini Vade Tarihi</label>
+          </div>
           <p class="text-xs text-muted flex items-start gap-1.5">
             <UIcon name="i-lucide-info" class="shrink-0 mt-0.5" />
             Bu tarihe göre otomatik yenileme görevi oluşturulacak ve vadesi geldiğinde size hatırlatılacak.
@@ -513,14 +510,8 @@ function urgencyBadge(days: number) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="vadeDegistirOpen = false" />
-          <UButton
-            label="Kaydet ve Görev Oluştur"
-            icon="i-lucide-calendar-plus"
-            :loading="vadeSaving"
-            :disabled="!newExpectedDate"
-            @click="saveVadeAndCreateTask"
-          />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="vadeDegistirOpen = false" />
+          <UButton label="Kaydet ve Görev Oluştur" icon="i-lucide-calendar-plus" size="xl" class="font-semibold" :loading="vadeSaving" :disabled="!newExpectedDate" @click="saveVadeAndCreateTask" />
         </div>
       </template>
     </UModal>
@@ -545,6 +536,10 @@ function urgencyBadge(days: number) {
 </template>
 
 <style scoped>
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
+}
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 td.kp-no-clip { overflow: visible; white-space: normal; }
 

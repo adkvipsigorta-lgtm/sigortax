@@ -10,7 +10,7 @@ export function useSessionStream() {
   const config = useRuntimeConfig()
   const { user, socketToken, logout, fetchMe } = useAuth()
   const toast = useToast()
-  const { startSound, stop: stopSound } = useNotificationSound()
+  // Ses artık default.vue'da yönetiliyor
 
   const socket = useState<Socket | null>('socket-io-instance', () => null)
 
@@ -38,12 +38,10 @@ export function useSessionStream() {
 
       case 'notification':
         onNewNotification.value++
-        startSound()
         break
 
       case 'notifications-read':
         onNotificationsRead.value++
-        stopSound()
         break
     }
   }

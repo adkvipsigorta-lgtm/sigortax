@@ -47,4 +47,15 @@ select {
   animation: nav-loading 0.9s ease-in-out infinite;
 }
 
- 
+/* Tüm input/select/textarea değerleri koyu görünsün */
+input, select, textarea {
+  font-weight: 600;
+}
+
+/* Badge standardı: eşit genişlik + ortalama */
+[data-slot="badge"] {
+  min-width: 5.5rem;
+  justify-content: center;
+  text-align: center;
+}
+

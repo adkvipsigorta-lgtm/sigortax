@@ -1,66 +1,27 @@
 <script setup lang="ts">
 import { z } from 'zod'
 
-definePageMeta({
-  layout: 'default',
-  middleware: 'auth'
-})
-
+definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Referans Kaynakları' })
 
 const toast = useToast()
 const { post, put, del } = useApi()
 
-interface ReferenceSource {
-  id: number
-  name: string
-  commissionRate: number
-  businessType: 'NEW' | 'RENEWAL' | null
-  isActive: boolean
-  policyCount?: number
-  createdAt?: string
-}
+interface ReferenceSource { id: number; name: string; commissionRate: number; businessType: 'NEW' | 'RENEWAL' | null; isActive: boolean; policyCount?: number; createdAt?: string }
 
-// Server-side paginated data
-const sources = usePaginatedData<ReferenceSource>({
-  endpoint: 'reference-sources',
-  defaultLimit: 999,
-  defaultSort: 'name',
-  defaultOrder: 'asc'
-})
-
+const sources = usePaginatedData<ReferenceSource>({ endpoint: 'reference-sources', defaultLimit: 999, defaultSort: 'name', defaultOrder: 'asc' })
 onMounted(() => sources.fetchData())
 
-// Search
 const searchInput = ref('')
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(searchInput, (val) => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    sources.setSearch(val)
-  }, 400)
-})
+watch(searchInput, (val) => { if (searchTimeout) clearTimeout(searchTimeout); searchTimeout = setTimeout(() => sources.setSearch(val), 400) })
 
-// Sorting
-const sortKeyMap: Record<string, string> = {
-  name: 'name',
-  commissionRate: 'commission_rate',
-  createdAt: 'created_at'
-}
-
+const sortKeyMap: Record<string, string> = { name: 'name', commissionRate: 'commission_rate', createdAt: 'created_at' }
 const sorting = ref<{ id: string, desc: boolean }[]>([])
-watch(sorting, (val) => {
-  if (val.length) {
-    const apiKey = sortKeyMap[val[0].id] || val[0].id
-    sources.setSort(apiKey, val[0].desc ? 'desc' : 'asc')
-  } else {
-    sources.setSort('name', 'asc')
-  }
-}, { deep: true })
+watch(sorting, (val) => { if (val.length) { sources.setSort(sortKeyMap[val[0].id] || val[0].id, val[0].desc ? 'desc' : 'asc') } else { sources.setSort('name', 'asc') } }, { deep: true })
 
-// Table
 const columns = [
-  { accessorKey: 'name', header: 'Kaynak Adi', enableSorting: true, size: 250, minSize: 200 },
+  { accessorKey: 'name', header: 'Kaynak Adı', enableSorting: true, size: 250, minSize: 200 },
   { accessorKey: 'businessType', header: 'İş Türü', enableSorting: false, minSize: 100, maxSize: 120 },
   { accessorKey: 'commissionRate', header: 'Komisyon (%)', enableSorting: true, minSize: 120, maxSize: 140 },
   { accessorKey: 'policyCount', header: 'Poliçe Sayısı', enableSorting: false, minSize: 120, maxSize: 140 },
@@ -68,25 +29,18 @@ const columns = [
   { accessorKey: 'actions', header: '', enableSorting: false, minSize: 50, maxSize: 50 }
 ]
 
-// Zod schema
 const referenceSchema = z.object({
-  name: z.string().min(2, 'Kaynak adı en az 2 karakter olmalıdir'),
-  commissionRate: z.number().min(0, 'Komisyon 0\'dan kucuk olamaz').max(100, 'Komisyon 100\'den buyuk olamaz'),
+  name: z.string().min(2, 'Kaynak adı en az 2 karakter olmalıdır'),
+  commissionRate: z.number().min(0, 'Komisyon 0\'dan küçük olamaz').max(100, 'Komisyon 100\'den büyük olamaz'),
   isActive: z.boolean()
 })
 
-// Modal
 const isModalOpen = ref(false)
 const isDeleteModalOpen = ref(false)
 const editingItem = ref<ReferenceSource | null>(null)
 const deletingItemId = ref<number | null>(null)
 
-const defaultForm = {
-  name: '',
-  commissionRate: 0,
-  businessType: 'ALL' as 'NEW' | 'RENEWAL' | 'ALL',
-  isActive: true
-}
+const defaultForm = { name: '', commissionRate: 0, businessType: 'ALL' as 'NEW' | 'RENEWAL' | 'ALL', isActive: true }
 const form = ref({ ...defaultForm })
 
 const businessTypeOptions = [
@@ -95,70 +49,35 @@ const businessTypeOptions = [
   { label: 'Yenileme', value: 'RENEWAL' },
 ]
 
-function openAddModal() {
-  editingItem.value = null
-  form.value = { ...defaultForm }
-  isModalOpen.value = true
-}
-
+function openAddModal() { editingItem.value = null; form.value = { ...defaultForm }; isModalOpen.value = true }
 function openEditModal(item: ReferenceSource) {
   editingItem.value = item
-  form.value = {
-    name: item.name,
-    commissionRate: item.commissionRate,
-    businessType: (item.businessType || 'ALL') as 'NEW' | 'RENEWAL' | 'ALL',
-    isActive: item.isActive
-  }
+  form.value = { name: item.name, commissionRate: item.commissionRate, businessType: (item.businessType || 'ALL') as any, isActive: item.isActive }
   isModalOpen.value = true
 }
 
 const savingSource = ref(false)
-
 async function save() {
-  if (savingSource.value) return
-  savingSource.value = true
+  if (savingSource.value) return; savingSource.value = true
   try {
-    if (editingItem.value) {
-      await put(`reference-sources/${editingItem.value.id}`, form.value)
-      toast.add({ title: 'Referans kaynağı güncellendi', color: 'success' })
-    } else {
-      await post('reference-sources', form.value)
-      toast.add({ title: 'Yeni referans kaynagi eklendi', color: 'success' })
-    }
-    isModalOpen.value = false
-    sources.refresh()
-  } catch (error: any) {
-    toast.add({ title: error.message || 'İşlem başarısız', color: 'error' })
-  }
+    if (editingItem.value) { await put(`reference-sources/${editingItem.value.id}`, form.value); toast.add({ title: 'Referans kaynağı güncellendi', color: 'success' }) }
+    else { await post('reference-sources', form.value); toast.add({ title: 'Yeni referans kaynağı eklendi', color: 'success' }) }
+    isModalOpen.value = false; sources.refresh()
+  } catch (error: any) { toast.add({ title: error.message || 'İşlem başarısız', color: 'error' }) }
   savingSource.value = false
 }
 
-function confirmDelete(id: number) {
-  deletingItemId.value = id
-  isDeleteModalOpen.value = true
-}
-
+function confirmDelete(id: number) { deletingItemId.value = id; isDeleteModalOpen.value = true }
 async function doDelete() {
   if (!deletingItemId.value) return
-  try {
-    await del(`reference-sources/${deletingItemId.value}`)
-    toast.add({ title: 'Referans kaynağı silindi', color: 'success' })
-    sources.refresh()
-  } catch {
-    toast.add({ title: 'Silinemedi', color: 'error' })
-  }
-  isDeleteModalOpen.value = false
-  deletingItemId.value = null
+  try { await del(`reference-sources/${deletingItemId.value}`); toast.add({ title: 'Referans kaynağı silindi', color: 'success' }); sources.refresh() }
+  catch { toast.add({ title: 'Silinemedi', color: 'error' }) }
+  isDeleteModalOpen.value = false; deletingItemId.value = null
 }
 
 async function toggleActive(item: ReferenceSource) {
-  try {
-    await put(`reference-sources/${item.id}`, { isActive: !item.isActive })
-    item.isActive = !item.isActive
-    toast.add({ title: item.isActive ? 'Kaynak aktif edildi' : 'Kaynak pasif edildi', color: 'success' })
-  } catch {
-    toast.add({ title: 'Durum değiştirilemedi', color: 'error' })
-  }
+  try { await put(`reference-sources/${item.id}`, { isActive: !item.isActive }); item.isActive = !item.isActive; toast.add({ title: item.isActive ? 'Kaynak aktif edildi' : 'Kaynak pasif edildi', color: 'success' }) }
+  catch { toast.add({ title: 'Durum değiştirilemedi', color: 'error' }) }
 }
 
 function getRowActions(item: ReferenceSource) {
@@ -171,24 +90,20 @@ function getRowActions(item: ReferenceSource) {
 
 <template>
   <div class="space-y-4">
+    <!-- Sayfa Başlığı -->
+    <div class="pb-4 border-b border-default">
+      <h1 class="text-xl font-semibold">Referans Kaynakları</h1>
+      <p class="text-sm text-muted mt-1">İş kaynakları ve komisyon oranları.</p>
+    </div>
+
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-col gap-3">
-          <div>
-            <h3 class="font-semibold">Referans Kaynakları</h3>
-            <p class="text-xs text-muted">İş kaynakları ve komisyon oranları</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="relative w-full sm:w-[250px] [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-rssearch" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rssearch:top-0 peer-focus-within/fl-rssearch:-translate-y-1/2 peer-focus-within/fl-rssearch:text-xs peer-focus-within/fl-rssearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rssearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-[var(--ui-text-highlighted)]">Kaynak Ara</label>
           </div>
-          <div class="flex items-center justify-between gap-2">
-            <UInput
-              v-model="searchInput"
-              icon="i-lucide-search"
-              placeholder="Kaynak ara..."
-              size="xs"
-              :ui="{ base: 'h-[30px]' }"
-              class="w-[180px]"
-            />
-            <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xs" @click="openAddModal" />
-          </div>
+          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
         </div>
       </template>
 
@@ -200,46 +115,22 @@ function getRowActions(item: ReferenceSource) {
           :columns="columns"
           :loading="sources.loading.value && !sources.data.value.length"
           :sorting-options="{ manualSorting: true }"
-          :ui="{
-            base: 'table-fixed min-w-full',
-            thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10',
-            th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap',
-            td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis'
-          }"
+          :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis' }"
         >
-          <template #name-header="{ column }">
-            <SortableHeader label="Kaynak Adı" :column="column" />
-          </template>
-          <template #commissionRate-header="{ column }">
-            <SortableHeader label="Komisyon" :column="column" />
-          </template>
+          <template #name-header="{ column }"><SortableHeader label="Kaynak Adı" :column="column" /></template>
+          <template #commissionRate-header="{ column }"><SortableHeader label="Komisyon" :column="column" /></template>
 
-          <template #name-cell="{ row }">
-            <span class="font-semibold truncate block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span>
-          </template>
-
+          <template #name-cell="{ row }"><span class="font-semibold truncate block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span></template>
           <template #businessType-cell="{ row }">
-            <span class="badge-cell" :class="row.original.businessType === 'NEW' ? 'badge-info' : row.original.businessType === 'RENEWAL' ? 'badge-success' : 'badge-neutral'">
+            <UBadge :color="row.original.businessType === 'NEW' ? 'info' : row.original.businessType === 'RENEWAL' ? 'success' : 'neutral'" variant="subtle" size="sm">
               {{ row.original.businessType === 'NEW' ? 'Yeni İş' : row.original.businessType === 'RENEWAL' ? 'Yenileme' : 'Tümü' }}
-            </span>
+            </UBadge>
           </template>
-
-          <template #commissionRate-cell="{ row }">
-            <span class="tabular-nums font-semibold">%{{ row.original.commissionRate }}</span>
-          </template>
-
-          <template #policyCount-cell="{ row }">
-            <span class="tabular-nums font-semibold">{{ row.original.policyCount }}</span>
-          </template>
-
-          <template #isActive-cell="{ row }">
-            <USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" />
-          </template>
-
+          <template #commissionRate-cell="{ row }"><span class="tabular-nums font-semibold">%{{ row.original.commissionRate }}</span></template>
+          <template #policyCount-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.policyCount }}</span></template>
+          <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
-            <UDropdownMenu :items="getRowActions(row.original)">
-              <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" />
-            </UDropdownMenu>
+            <UDropdownMenu :items="getRowActions(row.original)"><UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" /></UDropdownMenu>
           </template>
         </UTable>
       </div>
@@ -249,22 +140,24 @@ function getRowActions(item: ReferenceSource) {
       </div>
     </UCard>
 
-    <!-- Add/Edit Modal -->
-    <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Referans Kaynagi Düzenle' : 'Yeni Referans Kaynagi'" class="sm:max-w-md">
+    <!-- Ekle/Düzenle Modal -->
+    <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Referans Kaynağı Düzenle' : 'Yeni Referans Kaynağı'" class="sm:max-w-md">
       <template #body>
         <UForm :schema="referenceSchema" :state="form" @submit="save" class="space-y-5">
-          <UFormField label="Kaynak Adi" name="name" required>
-            <UInput v-model="form.name" placeholder="Ornegin: REFERANS, ADK GELEN..." icon="i-lucide-megaphone" class="w-full" />
-          </UFormField>
+          <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+            <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-rsname" />
+            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rsname:top-0 peer-focus-within/fl-rsname:-translate-y-1/2 peer-focus-within/fl-rsname:text-xs peer-focus-within/fl-rsname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rsname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rsname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rsname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rsname:text-[var(--ui-text-highlighted)]">Kaynak Adı <span class="text-red-500">*</span></label>
+          </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <UFormField label="İş Türü" name="businessType">
-              <USelect v-model="form.businessType" :items="businessTypeOptions" class="w-full" />
-            </UFormField>
-
-            <UFormField label="Komisyon Orani (%)" name="commissionRate">
-              <UInput v-model.number="form.commissionRate" type="number" :min="0" :max="100" :step="0.01" placeholder="0" icon="i-lucide-percent" class="w-full" />
-            </UFormField>
+            <div class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5">
+              <USelect v-model="form.businessType" :items="businessTypeOptions" value-key="value" placeholder=" " class="w-full" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.businessType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">İş Türü</label>
+            </div>
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model.number="form.commissionRate" type="number" :min="0" :max="100" :step="0.01" placeholder=" " class="w-full peer/fl-rscomm" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rscomm:top-0 peer-focus-within/fl-rscomm:-translate-y-1/2 peer-focus-within/fl-rscomm:text-xs peer-focus-within/fl-rscomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rscomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rscomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rscomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rscomm:text-[var(--ui-text-highlighted)]">Komisyon (%)</label>
+            </div>
           </div>
 
           <UCheckbox v-model="form.isActive" label="Aktif" />
@@ -272,30 +165,30 @@ function getRowActions(item: ReferenceSource) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" :disabled="savingSource" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" type="submit" :loading="savingSource" :disabled="savingSource" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingSource" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingSource" :disabled="savingSource" />
           </div>
         </UForm>
       </template>
     </UModal>
 
-    <!-- Delete Confirm -->
-    <UModal :dismissible="false" v-model:open="isDeleteModalOpen" title="Referans Kaynagi Sil">
+    <!-- Silme Onayı -->
+    <UModal :dismissible="false" v-model:open="isDeleteModalOpen" title="Referans Kaynağı Sil">
       <template #body>
         <div class="flex items-start gap-3">
-          <div class="size-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
-            <UIcon name="i-lucide-triangle-alert" class="size-5 text-error" />
+          <div class="size-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+            <UIcon name="i-lucide-triangle-alert" class="size-5 text-red-500" />
           </div>
           <div>
-            <p class="font-medium">Bu referans kaynagini silmek istediginize emin misiniz?</p>
-            <p class="text-sm text-muted mt-1">Bu islem geri alinamaz.</p>
+            <p class="font-medium">Bu referans kaynağını silmek istediğinize emin misiniz?</p>
+            <p class="text-sm text-muted mt-1">Bu işlem geri alınamaz.</p>
           </div>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -303,21 +196,8 @@ function getRowActions(item: ReferenceSource) {
 </template>
 
 <style scoped>
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
+.select-fl :deep(button) {
+  min-height: 50px !important;
+  height: auto !important;
 }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>
