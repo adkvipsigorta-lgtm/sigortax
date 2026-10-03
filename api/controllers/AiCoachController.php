@@ -14,8 +14,8 @@ class AiCoachController
         $apiKey = Database::fetch("SELECT `value` FROM settings WHERE `key` = 'gemini_api_key'");
 
         Response::success([
-            'enabled' => !empty($enabled['value']) && $enabled['value'] === '1',
-            'hasApiKey' => !empty($apiKey['value']) && $apiKey['value'] !== '',
+            'enabled' => !empty($enabled['value']) && in_array($enabled['value'], ['1', 'true', true], true),
+            'hasApiKey' => !empty($apiKey['value']) && $apiKey['value'] !== '' && strpos($apiKey['value'], '***') === false,
         ]);
     }
 
