@@ -18,7 +18,7 @@ class Gamma extends GammaBase
      * @param mixed $value Float value for which we want the probability
      *                      Or can be an array of values
      *
-     * @return array<mixed>|float|string The result, or a string containing an error
+     * @return array|float|string The result, or a string containing an error
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
@@ -55,7 +55,7 @@ class Gamma extends GammaBase
      * @param mixed $cumulative Boolean value indicating if we want the cdf (true) or the pdf (false)
      *                      Or can be an array of values
      *
-     * @return array<mixed>|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
     public static function distribution(mixed $value, mixed $a, mixed $b, mixed $cumulative)
@@ -85,10 +85,6 @@ class Gamma extends GammaBase
      *
      * Returns the inverse of the Gamma distribution.
      *
-     * For a probability so far into the upper tail that the forward-CDF series
-     * approximation plateaus below it, the root cannot be bracketed; the result
-     * is capped at the alpha*beta*5 search ceiling rather than diverging.
-     *
      * @param mixed $probability Float probability at which you want to evaluate the distribution
      *                      Or can be an array of values
      * @param mixed $alpha Parameter to the distribution as a float
@@ -96,7 +92,7 @@ class Gamma extends GammaBase
      * @param mixed $beta Parameter to the distribution as a float
      *                      Or can be an array of values
      *
-     * @return array<mixed>|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
     public static function inverse(mixed $probability, mixed $alpha, mixed $beta)
@@ -128,7 +124,7 @@ class Gamma extends GammaBase
      * @param mixed $value Float Value at which you want to evaluate the distribution
      *                      Or can be an array of values
      *
-     * @return array<mixed>|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
     public static function ln(mixed $value): array|string|float
@@ -147,9 +143,6 @@ class Gamma extends GammaBase
             return ExcelError::NAN();
         }
 
-        $result = self::logGamma($value);
-
-        // logGamma returns its MAX_VALUE sentinel when the result would overflow.
-        return ($result >= self::MAX_VALUE) ? ExcelError::NAN() : $result;
+        return log(self::gammaValue($value));
     }
 }

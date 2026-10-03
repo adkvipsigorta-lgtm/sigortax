@@ -39,10 +39,6 @@ class XMLWriter extends \XMLWriter
             if (empty($this->tempFileName) || $this->openUri($this->tempFileName) === false) {
                 // Fallback to memory...
                 $this->openMemory();
-                if ($this->tempFileName != '') {
-                    @unlink($this->tempFileName);
-                }
-                $this->tempFileName = '';
             }
         }
 
@@ -64,15 +60,7 @@ class XMLWriter extends \XMLWriter
         }
     }
 
-    /**
-     * Unserialization is not allowed. This needs to be enforced
-     * in the class before Php8.6, but, with that release,
-     * this method is no longer needed and will not be executed.
-     *
-     * @see https://github.com/php/php-src/pull/21694
-     *
-     * @param mixed[] $data
-     */
+    /** @param mixed[] $data */
     public function __unserialize(array $data): void
     {
         $this->tempFileName = '';
@@ -104,6 +92,6 @@ class XMLWriter extends \XMLWriter
             $rawTextData = implode("\n", $rawTextData);
         }
 
-        return $this->text($rawTextData ?? '');
+        return $this->writeRaw(htmlspecialchars($rawTextData ?? ''));
     }
 }
