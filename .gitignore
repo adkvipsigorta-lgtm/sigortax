@@ -1,0 +1,19 @@
+node_modules
+.nuxt
+.output
+dist
+
+# API hassas dosyalar
+api/config.php
+api/.storage_key
+api/uploads/
+api/backups/
+api/composer.phar
+backups/
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+*.log
+.vscode
+.idea

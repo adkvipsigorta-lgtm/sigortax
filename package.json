@@ -1,0 +1,36 @@
+{
+  "name": "sigorta-app-v2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.95",
+    "@iconify-json/simple-icons": "^1.2.72",
+    "@internationalized/date": "^3.12.0",
+    "@nuxt/ui": "^4.5.1",
+    "@vueuse/nuxt": "^14.2.1",
+    "chart.js": "^4.5.1",
+    "intl-tel-input": "^26.8.0",
+    "nuxt": "^4.3.1",
+    "qrcode": "^1.5.4",
+    "socket.io-client": "^4.8.3",
+    "tailwindcss": "^4.2.1",
+    "vue-chartjs": "^5.3.3",
+    "xlsx": "^0.18.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.15.2",
+    "eslint": "^10.0.2",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.5"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php:*)",
+      "Bash(where php.exe)",
+      "Read(//c/xampp/**)",
+      "Bash(/c/xampp/php/php.exe:*)",
+      "Bash(tasklist:*)",
+      "Bash(wmic process:*)",
+      "Bash(netstat:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(echo:*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_today.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_count_fc.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_remig.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_1230.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_doc.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_doc2.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_1907.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_check989.php\":*)",
+      "Bash(ipconfig:*)",
+      "Bash(pnpm build:*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_agency.php\":*)",
+      "Bash(taskkill:*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_perm.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_mig.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_br.php\":*)",
+      "Bash(\"C:/Users/ADK Vip Sigorta/Desktop/sigorta_crm/api/tools/_tmp_branch_stats.php\":*)",
+      "Bash(curl:*)"
+    ]
+  }
+}
