@@ -1094,7 +1094,7 @@ async function savePolicy() {
       <!-- Kaydetme overlay -->
       <div v-if="saving" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
         <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-        <p class="text-sm font-semibold">{{ isEditMode ? 'Poliçe güncelleniyor...' : 'Poliçe kaydediliyor...' }}</p>
+        <p class="text-sm">{{ isEditMode ? 'Poliçe güncelleniyor...' : 'Poliçe kaydediliyor...' }}</p>
       </div>
       <!-- PDF okuma overlay -->
       <div v-if="pdfParsing" class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
@@ -1106,7 +1106,7 @@ async function savePolicy() {
           <span class="text-lg font-bold text-primary tabular-nums">%{{ pdfProgress }}</span>
         </div>
         <div class="text-center">
-          <p class="text-sm font-semibold">{{ pdfProgressLabel }}</p>
+          <p class="text-sm">{{ pdfProgressLabel }}</p>
         </div>
       </div>
       <UForm ref="policyFormRef" class="policy-form" :schema="policySchema" :state="form" :validate-on="['submit']" @submit="savePolicy">
@@ -1403,7 +1403,7 @@ async function savePolicy() {
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-comm:top-0 peer-focus-within/fl-comm:-translate-y-1/2 peer-focus-within/fl-comm:text-xs peer-focus-within/fl-comm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-comm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-comm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-comm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-comm:text-[var(--ui-text-highlighted)]">Komisyon Oranı (%) <span class="text-[var(--ui-error)]">*</span></label>
             </div>
             <div v-if="form.companyCommRate > 0 && form.netPremium > 0" class="mt-1 text-xs text-muted flex items-center gap-1 whitespace-nowrap">
-              Komisyon: <span class="font-semibold text-primary">
+              Komisyon: <span class="text-primary">
                 {{ formatTrCurrency(Math.round(form.netPremium * form.companyCommRate / 100 * 100) / 100) }}
               </span>
             </div>

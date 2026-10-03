@@ -113,7 +113,7 @@ onMounted(() => {
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Güncellemeler</h1>
+      <h1 class="text-xl">Güncellemeler</h1>
       <p class="text-sm text-muted mt-1">Uzaktan uygulama güncellemelerini yönetin.</p>
     </div>
 
@@ -121,14 +121,14 @@ onMounted(() => {
     <UCard class="mb-6">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 class="font-semibold">Sürüm Durumu</h2>
+          <h2 >Sürüm Durumu</h2>
           <UButton
             label="Tekrar Kontrol Et"
             icon="i-lucide-refresh-cw"
             size="xl"
             variant="outline"
             color="neutral"
-            class="font-semibold"
+            
             :loading="checking"
             @click="check"
           />
@@ -142,7 +142,7 @@ onMounted(() => {
         <div class="flex items-center justify-between p-3 bg-elevated rounded-lg">
           <div>
             <p class="text-xs text-muted">Mevcut Sürüm</p>
-            <p class="font-semibold">v{{ info.current }}</p>
+            <p >v{{ info.current }}</p>
           </div>
           <UIcon name="i-lucide-package" class="size-6 text-muted" />
         </div>
@@ -182,7 +182,7 @@ onMounted(() => {
             icon="i-lucide-download"
             color="primary"
             size="xl"
-            class="font-semibold"
+            
             :loading="applying"
             block
             @click="apply"
@@ -203,7 +203,7 @@ onMounted(() => {
     <UCard v-if="backups.length">
       <template #header>
         <div>
-          <h2 class="font-semibold">Yedekler</h2>
+          <h2 >Yedekler</h2>
           <p class="text-xs text-muted mt-0.5">Son {{ backups.length }} yedek — gerekirse geri alabilirsiniz.</p>
         </div>
       </template>
@@ -224,7 +224,7 @@ onMounted(() => {
             size="xl"
             variant="outline"
             color="warning"
-            class="font-semibold shrink-0 sm:w-auto w-full"
+            class="shrink-0 sm:w-auto w-full"
             :loading="rollingBack === b.name"
             @click="rollback(b.name)"
           />

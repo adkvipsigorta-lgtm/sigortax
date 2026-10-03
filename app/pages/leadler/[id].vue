@@ -396,10 +396,10 @@ function statusColor(s: string): string {
       <div class="flex items-center gap-3">
         <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="sm" to="/leadler" />
         <div>
-          <h2 class="text-lg font-semibold">{{ lead.fullName || 'İsimsiz Lead' }}</h2>
+          <h2 class="text-lg">{{ lead.fullName || 'İsimsiz Lead' }}</h2>
           <p class="text-xs text-muted">{{ formatPhone(lead.phone) }}</p>
         </div>
-        <span class="rounded-md px-2.5 py-1 text-xs font-semibold" :class="statusColor(lead.status)">{{ statusLabel(lead.status) }}</span>
+        <span class="rounded-md px-2.5 py-1 text-xs" :class="statusColor(lead.status)">{{ statusLabel(lead.status) }}</span>
       </div>
       <UButton
         v-if="lead.status === 'DEVAM'"
@@ -418,52 +418,52 @@ function statusColor(s: string): string {
         <UCard :ui="{ body: 'p-4' }">
           <template #header>
             <div class="flex items-center justify-between">
-              <h3 class="font-semibold text-sm">Lead Bilgileri</h3>
+              <h3 class="text-sm">Lead Bilgileri</h3>
               <UButton label="Düzenle" icon="i-lucide-pencil" size="xs" color="neutral" variant="outline" @click="openEditModal" />
             </div>
           </template>
           <div class="grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
             <div>
               <p class="text-xs text-muted">TC Kimlik No</p>
-              <p class="font-semibold tabular-nums">{{ lead.tcNo || '-' }}</p>
+              <p class="tabular-nums">{{ lead.tcNo || '-' }}</p>
             </div>
             <div>
               <p class="text-xs text-muted">Doğum Tarihi</p>
-              <p class="font-semibold tabular-nums">{{ formatDate(lead.birthDate) }}</p>
+              <p class="tabular-nums">{{ formatDate(lead.birthDate) }}</p>
             </div>
             <div>
               <p class="text-xs text-muted">Telefon</p>
-              <p class="font-semibold tabular-nums">{{ formatPhone(lead.phone) }}</p>
+              <p class="tabular-nums">{{ formatPhone(lead.phone) }}</p>
             </div>
             <div>
               <p class="text-xs text-muted">Ürün</p>
-              <span v-if="lead.productName" class="inline-block rounded-md px-2 py-0.5 text-xs font-semibold" :style="{ backgroundColor: (lead.productColor || '#8b5cf6') + '1a', color: lead.productColor || '#8b5cf6' }">{{ lead.productName }}</span>
+              <span v-if="lead.productName" class="inline-block rounded-md px-2 py-0.5 text-xs" :style="{ backgroundColor: (lead.productColor || '#8b5cf6') + '1a', color: lead.productColor || '#8b5cf6' }">{{ lead.productName }}</span>
               <p v-else class="text-muted">-</p>
             </div>
             <div>
               <p class="text-xs text-muted">Kaynak</p>
-              <span v-if="lead.sourceName" class="inline-block rounded-md px-2 py-0.5 text-xs font-semibold" :style="{ backgroundColor: (lead.sourceColor || '#6b7280') + '1a', color: lead.sourceColor || '#6b7280' }">{{ lead.sourceName }}</span>
+              <span v-if="lead.sourceName" class="inline-block rounded-md px-2 py-0.5 text-xs" :style="{ backgroundColor: (lead.sourceColor || '#6b7280') + '1a', color: lead.sourceColor || '#6b7280' }">{{ lead.sourceName }}</span>
               <p v-else class="text-muted">-</p>
             </div>
             <div>
               <p class="text-xs text-muted">Atanan</p>
-              <p class="font-semibold">{{ lead.assignedName || '-' }}</p>
+              <p >{{ lead.assignedName || '-' }}</p>
             </div>
             <div>
               <p class="text-xs text-muted">Oluşturan</p>
-              <p class="font-semibold">{{ lead.createdByName || '-' }}</p>
+              <p >{{ lead.createdByName || '-' }}</p>
             </div>
             <div>
               <p class="text-xs text-muted">Oluşturulma</p>
-              <p class="font-semibold tabular-nums">{{ formatDateTime(lead.createdAt) }}</p>
+              <p class="tabular-nums">{{ formatDateTime(lead.createdAt) }}</p>
             </div>
             <div v-if="lead.closedAt">
               <p class="text-xs text-muted">Kapanma</p>
-              <p class="font-semibold tabular-nums">{{ formatDateTime(lead.closedAt) }}</p>
+              <p class="tabular-nums">{{ formatDateTime(lead.closedAt) }}</p>
             </div>
             <div v-if="lead.lostReason" class="col-span-2">
               <p class="text-xs text-muted">Kaybedilme Nedeni</p>
-              <p class="font-semibold text-red-600">{{ lead.lostReason }}</p>
+              <p class="text-red-600">{{ lead.lostReason }}</p>
             </div>
           </div>
         </UCard>
@@ -472,7 +472,7 @@ function statusColor(s: string): string {
         <UCard :ui="{ body: 'p-4' }">
           <template #header>
             <div class="flex items-center justify-between">
-              <h3 class="font-semibold text-sm">Belgeler</h3>
+              <h3 class="text-sm">Belgeler</h3>
               <span class="text-xs text-muted">{{ files.length }} dosya</span>
             </div>
           </template>
@@ -511,7 +511,7 @@ function statusColor(s: string): string {
       <div>
         <UCard :ui="{ body: 'p-4' }">
           <template #header>
-            <h3 class="font-semibold text-sm">Aktivite Geçmişi</h3>
+            <h3 class="text-sm">Aktivite Geçmişi</h3>
           </template>
           <div v-if="lead.activities?.length" class="space-y-4">
             <div v-for="a in lead.activities" :key="a.id" class="flex gap-3">
@@ -522,7 +522,7 @@ function statusColor(s: string): string {
                 <div class="flex-1 w-px bg-gray-200 dark:bg-gray-700 mt-1" />
               </div>
               <div class="pb-4 min-w-0">
-                <p class="text-xs font-semibold">{{ activityLabel(a.type) }}</p>
+                <p class="text-xs">{{ activityLabel(a.type) }}</p>
                 <p v-if="a.content" class="text-xs text-muted mt-0.5">{{ a.content }}</p>
                 <p v-if="a.oldValue || a.newValue" class="text-xs text-muted mt-0.5">{{ a.oldValue || '—' }} → {{ a.newValue }}</p>
                 <p class="text-[11px] text-muted mt-1">{{ a.userName || 'Sistem' }} · {{ formatDateTime(a.createdAt) }}</p>
@@ -580,7 +580,7 @@ function statusColor(s: string): string {
       <template #body>
         <div v-if="savingEdit" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-          <p class="text-sm font-semibold">Güncelleniyor...</p>
+          <p class="text-sm">Güncelleniyor...</p>
         </div>
         <div class="flex flex-col gap-4 [&_input]:!font-semibold">
           <!-- TC Kimlik No -->

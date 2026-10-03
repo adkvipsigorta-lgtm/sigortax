@@ -93,7 +93,7 @@ const selectedLabels = computed(() => {
         ? 'bg-primary/15 text-primary'
         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'"
     >
-      <span class="font-semibold text-xs tracking-wide">{{ label }}</span>
+      <span class="text-xs tracking-wide">{{ label }}</span>
       <UIcon
         :name="isActive ? 'i-lucide-list-filter' : 'i-lucide-chevron-down'"
         class="size-3 transition-opacity duration-150"

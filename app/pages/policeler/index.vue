@@ -644,7 +644,7 @@ function toHex(color?: string): string {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Poliçeler</h1>
+      <h1 class="text-xl">Poliçeler</h1>
       <p class="text-sm text-muted mt-1">Poliçe listesi ve yönetimi.</p>
     </div>
 
@@ -657,7 +657,7 @@ function toHex(color?: string): string {
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polsearch:top-0 peer-focus-within/fl-polsearch:-translate-y-1/2 peer-focus-within/fl-polsearch:text-xs peer-focus-within/fl-polsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri, plaka ara</label>
             </div>
             <div class="flex items-center gap-2">
-              <UButton v-if="hasActiveFilters" label="Temizle" icon="i-lucide-x" color="neutral" variant="ghost" size="xl" class="font-semibold" @click="clearFilters" />
+              <UButton v-if="hasActiveFilters" label="Temizle" icon="i-lucide-x" color="neutral" variant="ghost" size="xl"  @click="clearFilters" />
             </div>
           </div>
 
@@ -688,13 +688,13 @@ function toHex(color?: string): string {
             </div>
 
             <UPopover v-model:open="filterDateRangePopoverOpen">
-              <UButton :label="dateRangeLabel" icon="i-lucide-calendar-range" color="neutral" variant="outline" size="xl" class="w-full justify-start font-semibold" />
+              <UButton :label="dateRangeLabel" icon="i-lucide-calendar-range" color="neutral" variant="outline" size="xl" class="w-full justify-start" />
               <template #content>
                 <UCalendar locale="tr-TR" v-model="filterDateRange" range :number-of-months="2" class="p-2" @update:model-value="(v: any) => { if (v?.start && v?.end) filterDateRangePopoverOpen = false }" />
               </template>
             </UPopover>
 
-            <UButton v-if="can('policies.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="w-full hidden sm:flex font-semibold" @click="exportExcel" />
+            <UButton v-if="can('policies.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="w-full hidden sm:flex" @click="exportExcel" />
           </div>
         </div>
       </template>
@@ -800,7 +800,7 @@ function toHex(color?: string): string {
 
         <template #policyNo-cell="{ row }">
           <div class="flex flex-col cursor-pointer" @click="openPolicyDetail(row.original.id)">
-            <span class="text-xs font-semibold" :style="{ color: toHex(row.original.companyColor) }">{{ row.original.companyName }}</span>
+            <span class="text-xs" :style="{ color: toHex(row.original.companyColor) }">{{ row.original.companyName }}</span>
             <span class="font-mono text-xs text-primary hover:underline">{{ row.original.policyNo }}</span>
           </div>
         </template>
@@ -825,7 +825,7 @@ function toHex(color?: string): string {
             <NuxtLink
               :to="`/musteriler/${row.original.customerId}`"
               :title="row.original.customerName"
-              class="font-semibold text-primary hover:underline text-xs uppercase"
+              class="text-primary hover:underline text-xs uppercase"
             >
               {{ row.original.customerName?.slice(0, 16) }}{{ (row.original.customerName?.length ?? 0) > 16 ? '…' : '' }}
             </NuxtLink>
@@ -980,7 +980,7 @@ function toHex(color?: string): string {
                   </tbody>
                   <tfoot class="border-t-2 border-default bg-gray-50 dark:bg-gray-800/50">
                     <tr>
-                      <td :colspan="5" class="px-3 py-2 text-right text-xs font-semibold">TOPLAM</td>
+                      <td :colspan="5" class="px-3 py-2 text-right text-xs">TOPLAM</td>
                       <td class="px-3 py-2 text-right font-semibold text-xs">
                         {{ getZeyilHistory(row.original.policyNo).reduce((s, z) => s + z.grossPremium, 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                       </td>
@@ -1043,8 +1043,8 @@ function toHex(color?: string): string {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1058,75 +1058,59 @@ function toHex(color?: string): string {
               Bu poliçeyi iptal edeceksiniz. İptal zeyili otomatik oluşturulacaktır.
             </div>
 
-            <UFormField label="İptal Tarihi" name="cancelDate">
-              <div class="flex gap-2 items-center">
-                <UInput
-                  v-model="cancelDateDisplay"
-                  placeholder="GG.AA.YYYY"
-                  maxlength="10"
-                />
-                <UPopover v-model:open="cancelDatePopoverOpen" :ui="{ content: 'p-0' }">
-                  <UButton type="button" icon="i-lucide-calendar" color="neutral" variant="outline" />
-                  <template #content>
-                    <UCalendar locale="tr-TR"
-                      :model-value="cancelCalendarDate"
-                      @update:model-value="onCancelCalendarChange"
-                    />
-                  </template>
-                </UPopover>
-              </div>
-            </UFormField>
+            <!-- İptal Tarihi -->
+            <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+              <UInput v-model="cancelDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-cdate">
+                <template #trailing>
+                  <UPopover v-model:open="cancelDatePopoverOpen" :ui="{ content: 'p-0' }">
+                    <UButton type="button" icon="i-lucide-calendar" color="neutral" variant="ghost" size="xs" />
+                    <template #content>
+                      <UCalendar locale="tr-TR" :model-value="cancelCalendarDate" class="p-2" @update:model-value="onCancelCalendarChange" />
+                    </template>
+                  </UPopover>
+                </template>
+              </UInput>
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cdate:top-0 peer-focus-within/fl-cdate:-translate-y-1/2 peer-focus-within/fl-cdate:text-xs peer-focus-within/fl-cdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cdate:text-[var(--ui-text-highlighted)]">İptal Tarihi</label>
+            </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <UFormField label="İade Brüt Prim" name="cancelGrossRefund">
-                <UInput
-                  :model-value="cancelGrossDisplay"
-                  placeholder="İade tutarı girin"
-                  inputmode="decimal"
-                  @update:model-value="onCancelCurrencyInput('cancelGrossRefund', $event)"
-                  @blur="onCancelCurrencyBlur('cancelGrossRefund')"
-                >
-                  <template #trailing>
-                    <span class="text-xs text-muted">TL</span>
-                  </template>
+              <!-- İade Brüt Prim -->
+              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <UInput :model-value="cancelGrossDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cgross" @update:model-value="onCancelCurrencyInput('cancelGrossRefund', $event)" @blur="onCancelCurrencyBlur('cancelGrossRefund')">
+                  <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
-              </UFormField>
-              <UFormField label="İade Net Prim" name="cancelNetRefund">
-                <UInput
-                  :model-value="cancelNetDisplay"
-                  placeholder="İade tutarı girin"
-                  inputmode="decimal"
-                  @update:model-value="onCancelCurrencyInput('cancelNetRefund', $event)"
-                  @blur="onCancelCurrencyBlur('cancelNetRefund')"
-                >
-                  <template #trailing>
-                    <span class="text-xs text-muted">TL</span>
-                  </template>
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cgross:top-0 peer-focus-within/fl-cgross:-translate-y-1/2 peer-focus-within/fl-cgross:text-xs peer-focus-within/fl-cgross:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cgross:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cgross:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-[var(--ui-text-highlighted)]">İade Brüt Prim</label>
+              </div>
+              <!-- İade Net Prim -->
+              <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
+                <UInput :model-value="cancelNetDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cnet" @update:model-value="onCancelCurrencyInput('cancelNetRefund', $event)" @blur="onCancelCurrencyBlur('cancelNetRefund')">
+                  <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
-              </UFormField>
+                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cnet:top-0 peer-focus-within/fl-cnet:-translate-y-1/2 peer-focus-within/fl-cnet:text-xs peer-focus-within/fl-cnet:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cnet:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cnet:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cnet:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cnet:text-[var(--ui-text-highlighted)]">İade Net Prim</label>
+              </div>
             </div>
             <p v-if="cancelPrimError" class="text-xs text-[var(--ui-error)] -mt-2">{{ cancelPrimError }}</p>
 
             <!-- İptal poliçesi dosya yükleme -->
-            <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3">
+            <div class="border border-dashed border-neutral-300 rounded-lg p-3">
               <div v-if="!cancelFile" class="flex items-center justify-center gap-2 cursor-pointer" @click="cancelFileInput?.click()">
-                <UIcon name="i-lucide-upload" class="size-4 text-gray-400" />
-                <span class="text-sm text-gray-500">İptal poliçesi yükleyin (PDF, JPG, PNG)</span>
+                <UIcon name="i-lucide-upload" class="size-4 text-muted" />
+                <span class="text-sm text-muted">İptal poliçesi yükleyin (PDF, JPG, PNG)</span>
                 <input ref="cancelFileInput" type="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" @change="onCancelFileChange" />
               </div>
               <div v-else class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <UIcon name="i-lucide-file-text" class="size-4 text-primary" />
                   <span class="text-sm font-medium truncate max-w-[250px]">{{ cancelFile.name }}</span>
-                  <span class="text-xs text-gray-400">{{ Math.round(cancelFile.size / 1024) }} KB</span>
+                  <span class="text-xs text-muted">{{ Math.round(cancelFile.size / 1024) }} KB</span>
                 </div>
                 <UButton icon="i-lucide-x" size="xs" color="error" variant="ghost" @click="cancelFile = null" />
               </div>
             </div>
 
             <div class="flex justify-end gap-2">
-              <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
-              <UButton label="İptal Et" color="warning" size="xl" class="font-semibold" type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
+              <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
+              <UButton label="İptal Et" color="warning" size="xl"  type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
             </div>
           </div>
         </UForm>
@@ -1137,19 +1121,19 @@ function toHex(color?: string): string {
     <UModal :dismissible="false" v-model:open="isZeyilDeleteModalOpen" title="Zeyil Sil">
       <template #body>
         <div class="flex flex-col items-center text-center gap-3">
-          <div class="flex items-center justify-center size-12 rounded-full bg-error/10">
-            <UIcon name="i-lucide-triangle-alert" class="size-6 text-error" />
+          <div class="flex items-center justify-center size-12 rounded-full bg-red-50">
+            <UIcon name="i-lucide-triangle-alert" class="size-6 text-red-500" />
           </div>
           <div>
-            <p class="font-medium">Bu zeyili silmek istediginize emin misiniz?</p>
-            <p class="text-sm text-muted mt-1">Bu islem geri alinamaz. Silinen zeyil kaydi kurtarilamaz.</p>
+            <p class="font-medium">Bu zeyili silmek istediğinize emin misiniz?</p>
+            <p class="text-sm text-muted mt-1">Bu işlem geri alınamaz. Silinen zeyil kaydı kurtarılamaz.</p>
           </div>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" @click="isZeyilDeleteModalOpen = false" />
-          <UButton label="Evet, Sil" color="error" @click="doZeyilDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isZeyilDeleteModalOpen = false" />
+          <UButton label="Evet, Sil" color="error" size="xl"  @click="doZeyilDelete" />
         </div>
       </template>
     </UModal>

@@ -144,7 +144,7 @@ onMounted(() => { loadData() })
                     {{ p.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
                   </div>
                   <div class="min-w-0">
-                    <span class="font-semibold text-primary truncate block" :title="p.name">{{ p.name }}</span>
+                    <span class="text-primary truncate block" :title="p.name">{{ p.name }}</span>
                     <p class="text-xs text-muted">{{ p.phone || p.email }}</p>
                   </div>
                 </div>

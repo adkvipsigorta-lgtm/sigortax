@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Günlük Aktivite</h1>
+      <h1 class="text-xl">Günlük Aktivite</h1>
       <p class="text-sm text-muted mt-1">Günlük poliçe takibi ve eksik alan kontrolü.</p>
     </div>
 
@@ -54,12 +54,12 @@
                 />
                 <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextDay" />
               </div>
-              <UButton size="xl" color="neutral" variant="outline" class="font-semibold" @click="goToday">Bugün</UButton>
+              <UButton size="xl" color="neutral" variant="outline"  @click="goToday">Bugün</UButton>
               <UButton
                 size="xl"
                 :color="viewMode === 'month' ? 'primary' : 'neutral'"
                 :variant="viewMode === 'month' ? 'solid' : 'outline'"
-                class="font-semibold"
+                
                 @click="toggleMonthView"
               >
                 Bu Ay
@@ -106,10 +106,10 @@
             >
               <!-- Ad/Soyad -->
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="font-semibold text-primary hover:underline truncate block" :title="p.customerName || p.insuredName">
+                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline truncate block" :title="p.customerName || p.insuredName">
                   {{ p.customerName || p.insuredName || '-' }}
                 </NuxtLink>
-                <span v-else class="font-semibold truncate block" :title="p.insuredName">{{ p.insuredName || '-' }}</span>
+                <span v-else class="truncate block" :title="p.insuredName">{{ p.insuredName || '-' }}</span>
                 <span class="text-muted truncate block">{{ p.customerIdentity }}</span>
               </td>
 

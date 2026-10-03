@@ -105,7 +105,7 @@ onMounted(async () => {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Satış Performansı</h1>
+      <h1 class="text-xl">Satış Performansı</h1>
       <p class="text-sm text-muted mt-1">Aylık poliçe üretimi ve satış detayları.</p>
     </div>
 
@@ -149,7 +149,7 @@ onMounted(async () => {
         <div class="flex flex-wrap items-center gap-2">
           <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
             <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
-            <span class="font-semibold text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ monthLabel }}</span>
+            <span class="text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ monthLabel }}</span>
             <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />
           </div>
           <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
@@ -164,7 +164,7 @@ onMounted(async () => {
             <USelect v-model="filterInsurance" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...insuranceOptions.map(n => ({ label: n, value: n }))]" placeholder=" " class="w-full" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
           </div>
-          <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="xl" color="error" variant="ghost" class="font-semibold" @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
+          <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="xl" color="error" variant="ghost"  @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
         </div>
       </template>
 
@@ -197,8 +197,8 @@ onMounted(async () => {
           <tbody>
             <tr v-for="p in filtered" :key="p.id" class="border-b border-default" :class="p.isCancelled ? 'bg-red-50/40 dark:bg-red-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors'">
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="font-semibold text-primary hover:underline truncate block" :title="p.customerName">{{ p.customerName }}</NuxtLink>
-                <span v-else class="font-semibold truncate block" :title="p.customerName">{{ p.customerName || '—' }}</span>
+                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline truncate block" :title="p.customerName">{{ p.customerName }}</NuxtLink>
+                <span v-else class="truncate block" :title="p.customerName">{{ p.customerName || '—' }}</span>
               </td>
               <td class="hidden sm:table-cell py-2 px-3">
                 <span v-if="p.insuranceName" class="badge-cell" :style="{ backgroundColor: toHex(p.insuranceColor) + '1a', color: toHex(p.insuranceColor) }">{{ p.insuranceName }}</span>

@@ -244,7 +244,7 @@ function urgencyBadge(days: number) {
   <div class="p-4 sm:p-6 space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Kaçırılan Poliçeler</h1>
+      <h1 class="text-xl">Kaçırılan Poliçeler</h1>
       <p class="text-sm text-muted mt-1">Yenilenmeyen poliçeleri takip edin ve geri kazanım sürecini yönetin.</p>
     </div>
 
@@ -288,38 +288,34 @@ function urgencyBadge(days: number) {
         <div class="flex flex-col gap-3">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="font-semibold">Kaçırılan Poliçeler</h3>
+              <h3 >Kaçırılan Poliçeler</h3>
               <p class="text-xs text-muted">Süresi dolup yenilenmeyen poliçelerin geri kazanım takibi</p>
             </div>
           </div>
           <div class="flex items-center justify-between gap-2">
             <div class="flex flex-wrap items-center gap-1.5">
               <!-- Sekmeler -->
-              <div class="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 shrink-0">
-                <button
+              <div class="flex gap-1.5 shrink-0">
+                <UButton
+                  size="xl"
+                  :color="tab === 'upcoming' ? 'primary' : 'neutral'"
+                  :variant="tab === 'upcoming' ? 'solid' : 'outline'"
+                  class="min-w-[130px] justify-center"
                   @click="tab = 'upcoming'; range = ''"
-                  :class="[
-                    'px-3.5 py-1.5 text-xs font-medium rounded-md transition-all',
-                    tab === 'upcoming'
-                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                      : 'text-muted hover:text-default'
-                  ]"
                 >
                   Aranacaklar
-                  <span v-if="stats?.thisMonth" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300">{{ stats.thisMonth }}</span>
-                </button>
-                <button
+                  <UBadge v-if="stats?.thisMonth" :label="String(stats.thisMonth)" size="xs" color="neutral" variant="subtle" class="ml-1" />
+                </UButton>
+                <UButton
+                  size="xl"
+                  :color="tab === 'overdue' ? 'error' : 'neutral'"
+                  :variant="tab === 'overdue' ? 'solid' : 'outline'"
+                  class="min-w-[130px] justify-center"
                   @click="tab = 'overdue'; range = ''"
-                  :class="[
-                    'px-3.5 py-1.5 text-xs font-medium rounded-md transition-all',
-                    tab === 'overdue'
-                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                      : 'text-muted hover:text-default'
-                  ]"
                 >
                   Vadesi Geçenler
-                  <span v-if="stats?.overdue" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300">{{ stats.overdue }}</span>
-                </button>
+                  <UBadge v-if="stats?.overdue" :label="String(stats.overdue)" size="xs" color="error" variant="subtle" class="ml-1" />
+                </UButton>
               </div>
               <!-- Filtreler -->
               <div class="relative hidden sm:flex w-[200px] [&_input]:!pt-5 [&_input]:!pb-2.5">
@@ -335,7 +331,7 @@ function urgencyBadge(days: number) {
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
               </div>
             </div>
-            <UButton v-if="can('lost_policies.view')" label="Excel" icon="i-lucide-download" variant="outline" size="xl" class="font-semibold hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
+            <UButton v-if="can('lost_policies.view')" label="Excel" icon="i-lucide-download" variant="outline" size="xl" class="hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
           </div>
         </div>
       </template>
@@ -386,7 +382,7 @@ function urgencyBadge(days: number) {
                   </UPopover>
                   <div v-else class="size-3.5 shrink-0" />
                   <div class="min-w-0">
-                    <NuxtLink :to="`/musteriler/${item.customer_id}`" class="font-semibold text-primary hover:underline truncate block" :title="item.customer_name">
+                    <NuxtLink :to="`/musteriler/${item.customer_id}`" class="text-primary hover:underline truncate block" :title="item.customer_name">
                       {{ item.customer_name }}
                     </NuxtLink>
                     <span v-if="item.customer_identity" class="text-muted truncate block">{{ item.customer_identity }}</span>
@@ -414,7 +410,7 @@ function urgencyBadge(days: number) {
               </td>
               <!-- Tahmini Vade -->
               <td class="hidden md:table-cell py-2 px-3">
-                <span class="font-semibold" :class="item.expected_date ? 'text-primary-600 dark:text-primary-400' : 'text-muted'">
+                <span  :class="item.expected_date ? 'text-primary-600 dark:text-primary-400' : 'text-muted'">
                   {{ item.expected_date ? formatDate(item.expected_date) : (item.estimated_renewal ? formatDate(item.estimated_renewal) : '-') }}
                 </span>
               </td>
@@ -431,10 +427,10 @@ function urgencyBadge(days: number) {
               <td class="hidden md:table-cell py-2 px-3 text-right whitespace-nowrap tabular-nums">
                 <template v-if="item.action_status === 'WON' && item.new_premium">
                   <div class="text-[10px] text-muted line-through">{{ formatCurrency(item.gross_premium) }}</div>
-                  <div class="font-semibold text-green-600 dark:text-green-400">{{ formatCurrency(item.new_premium) }}</div>
+                  <div class="text-green-600 dark:text-green-400">{{ formatCurrency(item.new_premium) }}</div>
                 </template>
                 <template v-else>
-                  <span class="font-semibold">{{ formatCurrency(item.gross_premium) }}</span>
+                  <span >{{ formatCurrency(item.gross_premium) }}</span>
                 </template>
               </td>
               <!-- Durum -->
@@ -495,7 +491,7 @@ function urgencyBadge(days: number) {
       <template #body>
         <div class="space-y-4">
           <div class="p-3 bg-neutral-50 rounded-lg">
-            <p class="text-sm font-semibold">{{ vadeDegistirItem?.customer_name }}</p>
+            <p class="text-sm">{{ vadeDegistirItem?.customer_name }}</p>
             <p class="text-xs text-muted mt-0.5">Mevcut bitiş tarihi: <span class="font-medium">{{ vadeDegistirItem ? formatDate(vadeDegistirItem.expires_at) : '' }}</span></p>
           </div>
           <div class="relative [&_input]:!pt-5 [&_input]:!pb-2.5">
@@ -510,8 +506,8 @@ function urgencyBadge(days: number) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="vadeDegistirOpen = false" />
-          <UButton label="Kaydet ve Görev Oluştur" icon="i-lucide-calendar-plus" size="xl" class="font-semibold" :loading="vadeSaving" :disabled="!newExpectedDate" @click="saveVadeAndCreateTask" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="vadeDegistirOpen = false" />
+          <UButton label="Kaydet ve Görev Oluştur" icon="i-lucide-calendar-plus" size="xl"  :loading="vadeSaving" :disabled="!newExpectedDate" @click="saveVadeAndCreateTask" />
         </div>
       </template>
     </UModal>
@@ -521,7 +517,7 @@ function urgencyBadge(days: number) {
       <div class="flex gap-3">
         <UIcon name="i-lucide-info" class="text-blue-500 text-base shrink-0 mt-0.5" />
         <div class="text-xs text-blue-700 dark:text-blue-400 space-y-1">
-          <p class="font-semibold text-blue-800 dark:text-blue-300">Bu sayfa nasıl çalışır?</p>
+          <p class="text-blue-800 dark:text-blue-300">Bu sayfa nasıl çalışır?</p>
           <ul class="list-disc list-inside space-y-0.5">
             <li>Vadesi geçmiş ve 45 gün içinde yenilenmeyen poliçeler bu listede otomatik olarak görünür. Sisteme yeni poliçe girildiğinde ilgili kayıt <strong>Kazanıldı</strong> olarak işaretlenir.</li>
             <li><strong>Tahmini Vade</strong> sütunu, poliçenin bitişinden 1 yıl sonrasını gösterir. Müşteri başka bir acentede yaptırmış olsa bile o tarihte tekrar vade gelmiş olacaktır. Tarihi elle de değiştirebilirsiniz.</li>

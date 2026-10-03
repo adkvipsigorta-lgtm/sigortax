@@ -232,7 +232,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
                   class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                 <td class="py-2 px-3 font-medium">{{ y.year }}</td>
                 <td class="py-2 px-3 text-right">{{ formatFullCurrency(parseInt(y.count)) }}</td>
-                <td class="py-2 px-3 text-right font-semibold">{{ formatFullCurrency(parseFloat(y.gross_premium)) }} TL</td>
+                <td class="py-2 px-3 text-right">{{ formatFullCurrency(parseFloat(y.gross_premium)) }} TL</td>
                 <td class="py-2 px-3 text-right">
                   <template v-if="getGrowthRates().find(g => g.year === parseInt(y.year))">
                     <span :class="[

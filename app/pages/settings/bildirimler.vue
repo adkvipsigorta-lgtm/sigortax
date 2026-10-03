@@ -150,7 +150,7 @@ onMounted(async () => {
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Bildirim Ayarları</h1>
+      <h1 class="text-xl">Bildirim Ayarları</h1>
       <p class="text-sm text-muted mt-1">Hangi bildirimleri almak istediğinizi seçin.</p>
     </div>
 
@@ -167,8 +167,8 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <UButton icon="i-lucide-play" size="xl" color="neutral" variant="outline" label="Test" class="font-semibold" @click="testSound" />
-          <USelect v-model="soundPref" :items="soundOptions" value-key="value" label-key="label" size="xl" class="w-44 font-semibold" @update:model-value="saveSoundPref()" />
+          <UButton icon="i-lucide-play" size="xl" color="neutral" variant="outline" label="Test"  @click="testSound" />
+          <USelect v-model="soundPref" :items="soundOptions" value-key="value" label-key="label" size="xl" class="w-44" @update:model-value="saveSoundPref()" />
         </div>
       </div>
     </UCard>
@@ -195,7 +195,7 @@ onMounted(async () => {
           :variant="activeTab === 'user' ? 'solid' : 'outline'"
           size="xl"
           icon="i-lucide-user"
-          class="font-semibold"
+          
           @click="activeTab = 'user'"
         />
         <UButton
@@ -204,7 +204,7 @@ onMounted(async () => {
           :variant="activeTab === 'admin' ? 'solid' : 'outline'"
           size="xl"
           icon="i-lucide-settings"
-          class="font-semibold"
+          
           @click="activeTab = 'admin'"
         />
       </div>
@@ -213,7 +213,7 @@ onMounted(async () => {
       <template v-if="activeTab === 'user'">
         <div class="flex items-center justify-between mb-4">
           <p class="text-sm text-muted">Almak istediğiniz bildirimleri açıp kapatabilirsiniz.</p>
-          <UButton label="Kaydet" size="xl" class="font-semibold" icon="i-lucide-check" :loading="savingUser" @click="saveUserPrefs" />
+          <UButton label="Kaydet" size="xl"  icon="i-lucide-check" :loading="savingUser" @click="saveUserPrefs" />
         </div>
 
         <div class="space-y-4">
@@ -221,7 +221,7 @@ onMounted(async () => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon :name="cat.icon" class="size-4 text-primary" />
-                <h3 class="font-semibold text-sm">{{ cat.label }}</h3>
+                <h3 class="text-sm">{{ cat.label }}</h3>
               </div>
             </template>
 
@@ -248,7 +248,7 @@ onMounted(async () => {
             <p class="text-sm text-muted">Tüm kullanıcılar için bildirimleri açıp kapatabilirsiniz.</p>
             <p class="text-xs text-warning-600 mt-0.5">Kapatılan bildirimler hiçbir kullanıcıya gönderilmez.</p>
           </div>
-          <UButton label="Kaydet" size="xl" class="font-semibold shrink-0" icon="i-lucide-check" :loading="savingAdmin" @click="saveAdminSettings" />
+          <UButton label="Kaydet" size="xl" class="shrink-0" icon="i-lucide-check" :loading="savingAdmin" @click="saveAdminSettings" />
         </div>
 
         <div class="space-y-4">
@@ -256,7 +256,7 @@ onMounted(async () => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon :name="cat.icon" class="size-4 text-primary" />
-                <h3 class="font-semibold text-sm">{{ cat.label }}</h3>
+                <h3 class="text-sm">{{ cat.label }}</h3>
               </div>
             </template>
 

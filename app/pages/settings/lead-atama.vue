@@ -134,7 +134,7 @@ function formatDate(date: string): string {
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Lead Atama Ayarları</h1>
+      <h1 class="text-xl">Lead Atama Ayarları</h1>
       <p class="text-sm text-muted mt-1">Otomatik lead atama ve yeniden atama kurallarını yönetin.</p>
     </div>
 
@@ -142,7 +142,7 @@ function formatDate(date: string): string {
       <!-- Yeniden Atama Süresi -->
       <UCard>
         <template #header>
-          <h2 class="font-semibold">Yeniden Atama Süresi</h2>
+          <h2 >Yeniden Atama Süresi</h2>
           <p class="text-xs text-muted mt-0.5">Lead atandıktan sonra sürece alınmazsa, belirtilen süre sonunda başka bir personele atanır.</p>
         </template>
 
@@ -152,11 +152,11 @@ function formatDate(date: string): string {
               <UInput v-model.number="timeout" type="number" :min="5" :max="480" placeholder=" " class="w-full peer/fl-ltimeout" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ltimeout:top-0 peer-focus-within/fl-ltimeout:-translate-y-1/2 peer-focus-within/fl-ltimeout:text-xs peer-focus-within/fl-ltimeout:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ltimeout:text-[var(--ui-text-highlighted)]">Süre (dakika)</label>
             </div>
-            <UButton label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="savingTimeout" @click="saveTimeout" />
+            <UButton label="Kaydet" icon="i-lucide-check" size="xl"  :loading="savingTimeout" @click="saveTimeout" />
           </div>
 
           <div class="bg-primary-50 rounded-lg p-3 text-xs space-y-1">
-            <p class="font-semibold text-primary-700">Çalışma Kuralları</p>
+            <p class="text-primary-700">Çalışma Kuralları</p>
             <ul class="text-primary-600 space-y-0.5 ml-3 list-disc">
               <li>Mesai saatleri: <strong>09:00 - 12:30</strong> ve <strong>13:30 - 18:00</strong></li>
               <li>Cumartesi ve Pazar günleri süre işlemez</li>
@@ -172,10 +172,10 @@ function formatDate(date: string): string {
         <template #header>
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="font-semibold">Resmî Tatiller</h2>
+              <h2 >Resmî Tatiller</h2>
               <p class="text-xs text-muted mt-0.5">Bu günlerde otomatik yeniden atama çalışmaz.</p>
             </div>
-            <UButton label="Tatil Ekle" icon="i-lucide-plus" size="xl" class="font-semibold" @click="addHolidayOpen = true" />
+            <UButton label="Tatil Ekle" icon="i-lucide-plus" size="xl"  @click="addHolidayOpen = true" />
           </div>
         </template>
 
@@ -195,7 +195,7 @@ function formatDate(date: string): string {
       <!-- Webhook Entegrasyonu -->
       <UCard>
         <template #header>
-          <h2 class="font-semibold">Webhook Entegrasyonu</h2>
+          <h2 >Webhook Entegrasyonu</h2>
           <p class="text-xs text-muted mt-0.5">Dış sitelerden otomatik lead alma ayarları.</p>
         </template>
 
@@ -208,15 +208,15 @@ function formatDate(date: string): string {
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-wkey:top-0 peer-focus-within/fl-wkey:-translate-y-1/2 peer-focus-within/fl-wkey:text-xs peer-focus-within/fl-wkey:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-wkey:top-0 peer-has-[input:not(:placeholder-shown)]/fl-wkey:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-wkey:text-xs peer-has-[input:not(:placeholder-shown)]/fl-wkey:text-[var(--ui-text-highlighted)]">Webhook API Key</label>
               </div>
               <div class="flex gap-2">
-                <UButton :icon="webhookKeyCopied ? 'i-lucide-check' : 'i-lucide-copy'" label="Kopyala" size="xl" class="font-semibold" color="neutral" variant="outline" @click="copyWebhookKey" />
-                <UButton icon="i-lucide-refresh-cw" label="Yenile" size="xl" class="font-semibold" color="error" variant="outline" @click="regenerateWebhookKey" />
+                <UButton :icon="webhookKeyCopied ? 'i-lucide-check' : 'i-lucide-copy'" label="Kopyala" size="xl"  color="neutral" variant="outline" @click="copyWebhookKey" />
+                <UButton icon="i-lucide-refresh-cw" label="Yenile" size="xl"  color="error" variant="outline" @click="regenerateWebhookKey" />
               </div>
             </div>
             <p class="text-xs text-muted mt-1">Bu anahtarı dış sitelerin form entegrasyonunda kullanın.</p>
           </div>
 
           <div class="bg-neutral-50 rounded-lg p-3 text-xs space-y-2">
-            <p class="font-semibold">Kullanım</p>
+            <p >Kullanım</p>
             <div class="bg-white rounded p-2 font-mono text-[11px] overflow-x-auto">
               <p class="text-muted">POST /api/leads/webhook</p>
               <p class="text-muted">Header: X-Webhook-Key: {{ webhookApiKey }}</p>
@@ -265,8 +265,8 @@ function formatDate(date: string): string {
           </div>
           <USeparator />
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingHoliday" @click="addHolidayOpen = false" />
-            <UButton label="Ekle" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingHoliday" :disabled="savingHoliday" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingHoliday" @click="addHolidayOpen = false" />
+            <UButton label="Ekle" icon="i-lucide-check" size="xl"  type="submit" :loading="savingHoliday" :disabled="savingHoliday" />
           </div>
         </form>
       </template>

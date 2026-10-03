@@ -354,7 +354,7 @@ function getRowActions(u: UserItem) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Takım Yönetimi</h1>
+      <h1 class="text-xl">Takım Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Kullanıcıları ve rollerini yönetin.</p>
     </div>
 
@@ -366,7 +366,7 @@ function getRowActions(u: UserItem) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-usearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-usearch:top-0 peer-focus-within/fl-usearch:-translate-y-1/2 peer-focus-within/fl-usearch:text-xs peer-focus-within/fl-usearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-usearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-usearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-[var(--ui-text-highlighted)]">Kullanıcı Ara</label>
           </div>
-          <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus" size="xl" class="font-semibold" @click="openCreate" />
+          <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus" size="xl"  @click="openCreate" />
         </div>
       </template>
 
@@ -406,7 +406,7 @@ function getRowActions(u: UserItem) {
                 {{ row.original.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
               </div>
               <div class="min-w-0">
-                <NuxtLink :to="`/settings/kullanicilar/${row.original.id}/izinler`" class="font-semibold text-primary truncate block hover:underline" :title="row.original.name">{{ row.original.name }}</NuxtLink>
+                <NuxtLink :to="`/settings/kullanicilar/${row.original.id}/izinler`" class="text-primary truncate block hover:underline" :title="row.original.name">{{ row.original.name }}</NuxtLink>
                 <p class="text-xs text-muted">{{ row.original.email }}</p>
               </div>
             </div>
@@ -525,8 +525,8 @@ function getRowActions(u: UserItem) {
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="modalOpen = false" />
-            <UButton :label="editing ? 'Güncelle' : 'Oluştur'" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" type="submit" />
+            <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="modalOpen = false" />
+            <UButton :label="editing ? 'Güncelle' : 'Oluştur'" icon="i-lucide-check" size="xl"  :loading="saving" type="submit" />
           </div>
         </UForm>
       </template>
@@ -547,8 +547,8 @@ function getRowActions(u: UserItem) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="deleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" :loading="deleting" @click="deleteUser" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  :loading="deleting" @click="deleteUser" />
         </div>
       </template>
     </UModal>

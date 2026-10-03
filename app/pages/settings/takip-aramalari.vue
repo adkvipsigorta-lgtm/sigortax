@@ -158,10 +158,10 @@ onMounted(fetchConfig)
     <!-- Sayfa Başlığı -->
     <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h1 class="text-xl font-semibold">Takip Aramaları</h1>
+        <h1 class="text-xl">Takip Aramaları</h1>
         <p class="text-sm text-muted mt-1">Poliçe satışı/yenilemesi sonrası otomatik müşteri arama görevi oluşturma ayarları.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="saveConfig" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="saveConfig" />
     </div>
 
     <!-- Loading -->
@@ -195,7 +195,7 @@ onMounted(fetchConfig)
             <div class="flex items-center gap-3">
               <USwitch v-model="rule.enabled" size="xs" :disabled="!isAdmin" />
               <div>
-                <h3 class="font-semibold">{{ rule.branchGroup }}</h3>
+                <h3 >{{ rule.branchGroup }}</h3>
                 <p class="text-xs text-muted">
                   {{ rule.enabled ? `${activeStageCount(rule)} dönem aktif` : 'Devre dışı' }}
                 </p>
@@ -244,7 +244,7 @@ onMounted(fetchConfig)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Görev Başlık ve İçerik Şablonları</h3>
+            <h3 >Görev Başlık ve İçerik Şablonları</h3>
             <p class="text-xs text-muted mt-0.5">
               Kullanılabilir değişkenler:
               <code class="bg-neutral-100 px-1 rounded text-xs">{branchGroup}</code>
@@ -283,7 +283,7 @@ onMounted(fetchConfig)
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', stageTemplates[ds.key].descriptionTemplate ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Görev İçeriği</label>
               </div>
               <div class="flex justify-end">
-                <UButton v-if="isAdmin" label="Varsayılana Sıfırla" variant="outline" size="xl" class="font-semibold" color="neutral" icon="i-lucide-rotate-ccw" @click="resetTemplate(ds.key)" />
+                <UButton v-if="isAdmin" label="Varsayılana Sıfırla" variant="outline" size="xl"  color="neutral" icon="i-lucide-rotate-ccw" @click="resetTemplate(ds.key)" />
               </div>
             </div>
           </div>
@@ -293,7 +293,7 @@ onMounted(fetchConfig)
       <!-- Nasıl Çalışır -->
       <UCard>
         <template #header>
-          <h3 class="font-semibold">Nasıl Çalışır?</h3>
+          <h3 >Nasıl Çalışır?</h3>
         </template>
 
         <div class="space-y-3 text-xs text-muted">

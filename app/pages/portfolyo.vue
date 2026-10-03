@@ -180,7 +180,7 @@ const portfolioAnalysis = computed(() => {
       .filter((m: any) => m.countChange < -20)
       .map((m: any) => `${m.month} (%${Math.abs(m.countChange).toFixed(1)})`)
     if (alarms.length > 0) {
-      insights.push(`<span class="text-red-600 font-semibold">Dikkat:</span> Poliçe adedinde ciddi düşüş yaşanan aylar: <strong>${alarms.join(', ')}</strong>. Bu aylardaki müşteri kaybı ve yenileme oranları detaylı incelenmelidir.`)
+      insights.push(`<span class="text-red-600">Dikkat:</span> Poliçe adedinde ciddi düşüş yaşanan aylar: <strong>${alarms.join(', ')}</strong>. Bu aylardaki müşteri kaybı ve yenileme oranları detaylı incelenmelidir.`)
     }
   }
 
@@ -196,11 +196,11 @@ const portfolioAnalysis = computed(() => {
     const lostComm = t.lostCommission ?? (t.currentCommission - branchComm)
     const companies: any[] = data.value.outgoingByCompany ?? []
 
-    insights.push(`<span class="font-semibold text-amber-700 dark:text-amber-400">Tali Giden Nedir?</span> Poliçeyi siz kesiyorsunuz, ancak başka bir acentenin tali şubesi olarak üretiyorsunuz. Sigorta şirketinin ödediği tam komisyon önce ana acenteye gider; ana acente anlaşılan oranda size aktarır, kalanı kendinde tutar.`)
+    insights.push(`<span class="text-amber-700 dark:text-amber-400">Tali Giden Nedir?</span> Poliçeyi siz kesiyorsunuz, ancak başka bir acentenin tali şubesi olarak üretiyorsunuz. Sigorta şirketinin ödediği tam komisyon önce ana acenteye gider; ana acente anlaşılan oranda size aktarır, kalanı kendinde tutar.`)
 
     if (branchComm > 0 && lostComm > 0) {
       const rate = Math.round(branchComm / t.currentCommission * 100)
-      insights.push(`<span class="font-semibold text-red-600">Komisyon Kaybı:</span> Sigorta şirketi toplam <strong>${formatCurrency(t.currentCommission)}</strong> komisyon ödedi. Sizin aldığınız pay <strong class="text-green-600">${formatCurrency(branchComm)}</strong> (%${rate}). Ana acenteye kalan: <strong class="text-red-600">${formatCurrency(lostComm)}</strong>. Tüm bu poliçeleri kendi adınıza kesseydiniz <strong class="text-red-600">${formatCurrency(lostComm)}</strong> daha fazla komisyon elde ederdiniz.`)
+      insights.push(`<span class="text-red-600">Komisyon Kaybı:</span> Sigorta şirketi toplam <strong>${formatCurrency(t.currentCommission)}</strong> komisyon ödedi. Sizin aldığınız pay <strong class="text-green-600">${formatCurrency(branchComm)}</strong> (%${rate}). Ana acenteye kalan: <strong class="text-red-600">${formatCurrency(lostComm)}</strong>. Tüm bu poliçeleri kendi adınıza kesseydiniz <strong class="text-red-600">${formatCurrency(lostComm)}</strong> daha fazla komisyon elde ederdiniz.`)
     }
 
     // Sirket bazli AI analiz
@@ -220,7 +220,7 @@ const portfolioAnalysis = computed(() => {
           : taliPct > 30
           ? 'Tali prim oranı ciddi seviyede — kritik şirketler için acentelik başvurusu yapılabilir.'
           : 'Tali prim oranı makul, mevcut yapı dengeli görünüyor.'
-        insights.push(`<span class="font-semibold text-blue-700 dark:text-blue-400">Prim Dağılımı:</span> Kendi acenteliğiniz (Allianz): <strong class="text-green-600">${formatCurrency(selfPremium)} (%${selfPct})</strong> — Tali gönderilen: <strong class="text-amber-600">${formatCurrency(taliPremium)} (%${taliPct})</strong>${incomingNote}. ${yorum}`)
+        insights.push(`<span class="text-blue-700 dark:text-blue-400">Prim Dağılımı:</span> Kendi acenteliğiniz (Allianz): <strong class="text-green-600">${formatCurrency(selfPremium)} (%${selfPct})</strong> — Tali gönderilen: <strong class="text-amber-600">${formatCurrency(taliPremium)} (%${taliPct})</strong>${incomingNote}. ${yorum}`)
       }
 
       // AI öneri: trend + kayıp bazlı sıralama
@@ -249,16 +249,16 @@ const portfolioAnalysis = computed(() => {
         if (yearlyLoss > 50000) {
           const extra = isGrowing ? ' Üstelik kayıp her yıl artıyor — ne kadar erken başvurursanız o kadar iyi.' :
                         isShrinking ? ' Kayıp azalıyor olsa da hâlâ yüksek; acentelik almak mantıklı.' : ''
-          recommendation = `<strong>${topLoss.company}</strong> için doğrudan acentelik almak <span class="text-green-600 font-semibold">kesinlikle tavsiye edilir</span>. Bu yıl <strong class="text-red-600">${formatCurrency(yearlyLoss)}</strong> komisyon kaybı ${trendText(topLoss)}.${extra}`
+          recommendation = `<strong>${topLoss.company}</strong> için doğrudan acentelik almak <span class="text-green-600">kesinlikle tavsiye edilir</span>. Bu yıl <strong class="text-red-600">${formatCurrency(yearlyLoss)}</strong> komisyon kaybı ${trendText(topLoss)}.${extra}`
         } else if (yearlyLoss > 15000) {
           const extra = isGrowing ? ' Kayıp büyüyor, erken harekete geçmek avantajlı olabilir.' :
                         isShrinking ? ' Kayıp düşüyor; trend devam ederse tali kalmak tercih edilebilir.' : ''
-          recommendation = `<strong>${topLoss.company}</strong> için acentelik almak <span class="text-amber-600 font-semibold">değerlendirilebilir</span>. Bu yıl <strong>${formatCurrency(yearlyLoss)}</strong> kayıp ${trendText(topLoss)}.${extra}`
+          recommendation = `<strong>${topLoss.company}</strong> için acentelik almak <span class="text-amber-600">değerlendirilebilir</span>. Bu yıl <strong>${formatCurrency(yearlyLoss)}</strong> kayıp ${trendText(topLoss)}.${extra}`
         } else {
           const extra = isGrowing ? ' Kayıp artış eğiliminde — önümüzdeki yıl tekrar değerlendirin.' : ''
           recommendation = `En yüksek kayıp <strong>${topLoss.company}</strong>'da — <strong>${formatCurrency(yearlyLoss)}</strong>/yıl ${trendText(topLoss)}. Şimdilik tali sürdürülebilir.${extra}`
         }
-        insights.push(`<span class="font-semibold text-violet-700 dark:text-violet-400">Acentelik Önceliği:</span> ${recommendation}`)
+        insights.push(`<span class="text-violet-700 dark:text-violet-400">Acentelik Önceliği:</span> ${recommendation}`)
 
         // 2. ve 3. sıra — trend özetiyle
         const others = [secondLoss, thirdLoss].filter(Boolean).filter((c: any) => c.lost > 5000)
@@ -267,7 +267,7 @@ const portfolioAnalysis = computed(() => {
             const trend = c.lostChange > 10 ? ' ↑' : c.lostChange < -10 ? ' ↓' : ''
             return `<strong>${c.company}</strong> ${formatCurrency(c.lost)}${trend}`
           }).join(' · ')
-          insights.push(`<span class="font-semibold text-muted">Diğer Takip Edilecekler:</span> ${otherText}`)
+          insights.push(`<span class="text-muted">Diğer Takip Edilecekler:</span> ${otherText}`)
         }
 
         // En fazla is yapilan sirketler — brüt prime gore sirala
@@ -282,7 +282,7 @@ const portfolioAnalysis = computed(() => {
               : ''
             return `<strong>${c.company}</strong>${rateNote}`
           }).join(', ')
-          insights.push(`<span class="font-semibold text-blue-700 dark:text-blue-400">En Fazla İş Yapılan Şirketler (brüt prime göre):</span> ${volText}. ${topByVolume[0].avgBranchRate < 60 ? `<span class="text-red-500 font-semibold">${topByVolume[0].company} en yüksek hacimli şirket olmakla birlikte komisyon payınız %${topByVolume[0].avgBranchRate} — acentelik önceliğiniz olmalı.</span>` : ''}`)
+          insights.push(`<span class="text-blue-700 dark:text-blue-400">En Fazla İş Yapılan Şirketler (brüt prime göre):</span> ${volText}. ${topByVolume[0].avgBranchRate < 60 ? `<span class="text-red-500">${topByVolume[0].company} en yüksek hacimli şirket olmakla birlikte komisyon payınız %${topByVolume[0].avgBranchRate} — acentelik önceliğiniz olmalı.</span>` : ''}`)
         }
       }
     }
@@ -365,7 +365,7 @@ const productAnalysis = computed(() => {
       if (avg > 0 && lastVal > 0) {
         const diff = ((lastVal - avg) / avg) * 100
         if (diff < -30 && shares.find(s => s.name === g)!.share >= 5) {
-          insights.push(`<span class="text-red-600 font-semibold">Uyarı:</span> <strong>${g}</strong> branşında ${lastMonthName} ayı üretimi (${formatCurrency(lastVal)}), dönem ortalamasının (${formatCurrency(avg)}) <strong class="text-red-600">%${Math.abs(diff).toFixed(0)}</strong> altındadır.`)
+          insights.push(`<span class="text-red-600">Uyarı:</span> <strong>${g}</strong> branşında ${lastMonthName} ayı üretimi (${formatCurrency(lastVal)}), dönem ortalamasının (${formatCurrency(avg)}) <strong class="text-red-600">%${Math.abs(diff).toFixed(0)}</strong> altındadır.`)
         }
       }
     }
@@ -899,7 +899,7 @@ function linearRegression(x: number[], y: number[]) {
         <template #header>
           <div class="flex flex-col gap-3">
             <div>
-              <h3 class="font-semibold">Portföyüm</h3>
+              <h3 >Portföyüm</h3>
               <p class="text-xs text-muted">Yıllık prim üretimi, komisyon geliri ve poliçe adet karşılaştırması</p>
             </div>
             <div class="flex flex-wrap items-center gap-1.5">
@@ -969,7 +969,7 @@ function linearRegression(x: number[], y: number[]) {
                 :class="prem(row,'current') === 0 && prem(row,'prev') === 0 ? 'opacity-40' : ''"
               >
                 <td class="py-2 px-3 font-medium">{{ row.month }}</td>
-                <td class="py-2 px-3 text-right tabular-nums font-semibold">{{ formatCurrency(prem(row,'current')) }}</td>
+                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(prem(row,'current')) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-muted">{{ formatCurrency(prem(row,'prev')) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
@@ -995,7 +995,7 @@ function linearRegression(x: number[], y: number[]) {
                     {{ formatPercent(row.commissionChange) }}
                   </span>
                 </td>
-                <td class="py-2 px-3 text-center tabular-nums font-semibold">{{ row.currentCount }}</td>
+                <td class="py-2 px-3 text-center tabular-nums">{{ row.currentCount }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums text-muted">{{ row.prevCount }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
@@ -1077,7 +1077,7 @@ function linearRegression(x: number[], y: number[]) {
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Ürün Bazında Aylık Üretim</h3>
+            <h3 >Ürün Bazında Aylık Üretim</h3>
             <p class="text-xs text-muted">{{ data.currentYear }} Brüt Prim</p>
           </div>
         </template>
@@ -1142,13 +1142,13 @@ function linearRegression(x: number[], y: number[]) {
                   class="py-2 px-3 text-right tabular-nums text-primary"
                 >
                   {{ formatCurrency(productPremTotal(group)) }}
-                  <div class="text-[10px] text-primary/60 font-semibold">{{ (data.productCountTotals?.[group] || 0).toLocaleString('tr-TR') }} adet</div>
-                  <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">K: {{ formatCurrency(data.productCommTotals?.[group] || 0) }}</div>
+                  <div class="text-[10px] text-primary/60">{{ (data.productCountTotals?.[group] || 0).toLocaleString('tr-TR') }} adet</div>
+                  <div class="text-[10px] text-emerald-600 dark:text-emerald-400">K: {{ formatCurrency(data.productCommTotals?.[group] || 0) }}</div>
                 </td>
                 <td class="py-2 px-3 text-right tabular-nums text-primary font-extrabold">
                   {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + productPremTotal(g), 0)) }}
-                  <div class="text-[10px] text-primary/60 font-semibold">{{ data.productGroups.reduce((sum: number, g: string) => sum + (data.productCountTotals?.[g] || 0), 0).toLocaleString('tr-TR') }} adet</div>
-                  <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">K: {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + (data.productCommTotals?.[g] || 0), 0)) }}</div>
+                  <div class="text-[10px] text-primary/60">{{ data.productGroups.reduce((sum: number, g: string) => sum + (data.productCountTotals?.[g] || 0), 0).toLocaleString('tr-TR') }} adet</div>
+                  <div class="text-[10px] text-emerald-600 dark:text-emerald-400">K: {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + (data.productCommTotals?.[g] || 0), 0)) }}</div>
                 </td>
               </tr>
             </tfoot>
@@ -1159,13 +1159,13 @@ function linearRegression(x: number[], y: number[]) {
         <div class="border-t border-default pt-5 px-1 pb-1 mt-1">
           <div class="flex items-center gap-2 mb-4 px-3">
             <UIcon name="i-lucide-pie-chart" class="size-4 text-primary" />
-            <span class="text-sm font-semibold">{{ currentYear }} Prim Dağılımı</span>
+            <span class="text-sm">{{ currentYear }} Prim Dağılımı</span>
           </div>
           <div class="space-y-3 px-3">
             <div v-for="group in data.productGroups" :key="group" class="flex items-center gap-3">
               <div class="w-16 flex items-center gap-1.5 shrink-0">
                 <span class="size-2.5 rounded-full shrink-0" :style="{ backgroundColor: productColorHex(group) }" />
-                <span class="text-sm font-semibold">{{ group }}</span>
+                <span class="text-sm">{{ group }}</span>
               </div>
 
               <div class="flex-1 h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
@@ -1182,7 +1182,7 @@ function linearRegression(x: number[], y: number[]) {
                 <span class="text-xs font-semibold tabular-nums w-12 text-right text-muted">
                   %{{ productShare(group) }}
                 </span>
-                <span class="text-xs text-emerald-600 dark:text-emerald-400 tabular-nums w-24 text-right font-semibold">
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 tabular-nums w-24 text-right">
                   K: {{ formatCurrency(data.productCommTotals?.[group] || 0) }}
                 </span>
                 <span class="text-xs text-muted tabular-nums w-16 text-right">
@@ -1215,7 +1215,7 @@ function linearRegression(x: number[], y: number[]) {
         <template #header>
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 class="font-semibold">Aylık Tahmin & Doğruluk Analizi</h3>
+              <h3 >Aylık Tahmin & Doğruluk Analizi</h3>
               <p class="text-xs text-muted">İstatistiksel tahmin ve gerçekleşen karşılaştırma</p>
             </div>
             <div class="flex items-center gap-2">
@@ -1226,7 +1226,7 @@ function linearRegression(x: number[], y: number[]) {
                 :ui="{ base: 'h-[30px]' }"
                 class="w-[180px]"
               />
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+              <span class="text-[10px] px-2 py-0.5 rounded-full"
                 :class="isPastMonth
                   ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
                   : 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300'"
@@ -1261,7 +1261,7 @@ function linearRegression(x: number[], y: number[]) {
                 </div>
                 <p class="text-xl font-bold text-blue-700 dark:text-blue-300 tabular-nums">{{ formatCurrency(actualData.premium) }}</p>
                 <p class="text-xs text-blue-600/70 mt-1">{{ actualData.count }} poliçe</p>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 font-semibold">K: {{ formatCurrency(actualData.commission) }}</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(actualData.commission) }}</p>
               </div>
 
               <!-- Tahmin Edilen (Beklenen) -->
@@ -1275,7 +1275,7 @@ function linearRegression(x: number[], y: number[]) {
                 </div>
                 <p class="text-xl font-bold text-violet-700 dark:text-violet-300 tabular-nums">{{ formatCurrency(forecast.general.expected) }}</p>
                 <p class="text-xs text-violet-600/70 mt-1">~{{ forecast.general.count }} poliçe</p>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 font-semibold">K: {{ formatCurrency(forecast.general.commission) }}</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commission) }}</p>
               </div>
 
               <!-- Sapma -->
@@ -1308,7 +1308,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-gauge" class="size-4"
                     :class="accuracy(forecast.general.expected, actualData.premium) >= 80 ? 'text-green-600' : accuracy(forecast.general.expected, actualData.premium) >= 60 ? 'text-amber-600' : 'text-red-600'"
                   />
-                  <span class="text-xs font-semibold"
+                  <span class="text-xs"
                     :class="accuracy(forecast.general.expected, actualData.premium) >= 80 ? 'text-green-700 dark:text-green-400' : accuracy(forecast.general.expected, actualData.premium) >= 60 ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400'"
                   >Doğruluk</span>
                 </div>
@@ -1338,7 +1338,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-banknote" class="size-4"
                     :class="scenarioSummary.premiumColor === 'green' ? 'text-green-600' : scenarioSummary.premiumColor === 'amber' ? 'text-amber-600' : 'text-red-600'"
                   />
-                  <span class="text-xs font-semibold"
+                  <span class="text-xs"
                     :class="scenarioSummary.premiumColor === 'green' ? 'text-green-700 dark:text-green-400' : scenarioSummary.premiumColor === 'amber' ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400'"
                   >Prim Değerlendirmesi</span>
                 </div>
@@ -1362,7 +1362,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-wallet" class="size-4"
                     :class="scenarioSummary.commissionColor === 'green' ? 'text-green-600' : scenarioSummary.commissionColor === 'amber' ? 'text-amber-600' : 'text-red-600'"
                   />
-                  <span class="text-xs font-semibold"
+                  <span class="text-xs"
                     :class="scenarioSummary.commissionColor === 'green' ? 'text-green-700 dark:text-green-400' : scenarioSummary.commissionColor === 'amber' ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400'"
                   >Komisyon Değerlendirmesi</span>
                 </div>
@@ -1382,7 +1382,7 @@ function linearRegression(x: number[], y: number[]) {
             <div class="border-t border-default pt-4">
               <div class="flex items-center gap-2 mb-3">
                 <UIcon name="i-lucide-layers" class="size-4 text-blue-600" />
-                <span class="font-semibold text-xs">{{ forecast.monthName }} - Ürün Bazlı Karşılaştırma</span>
+                <span class="text-xs">{{ forecast.monthName }} - Ürün Bazlı Karşılaştırma</span>
               </div>
               <div class="border border-default rounded-lg overflow-hidden">
                 <table class="text-xs w-full table-fixed">
@@ -1417,7 +1417,7 @@ function linearRegression(x: number[], y: number[]) {
                         {{ formatCurrency(forecast.products[group]?.expected || 0) }}
                         <div class="text-[10px] text-muted font-normal">~{{ forecast.products[group]?.count || 0 }} adet</div>
                       </td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400 font-semibold">
+                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400">
                         {{ formatCurrency(actualData.products[group]?.commission || 0) }}
                       </td>
                       <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">
@@ -1496,7 +1496,7 @@ function linearRegression(x: number[], y: number[]) {
                 </div>
                 <p class="text-lg font-bold text-red-700 dark:text-red-300 tabular-nums">{{ formatCurrency(forecast.general.pessimistic) }}</p>
                 <p class="text-xs text-red-600/70 dark:text-red-400/70 mt-1">~{{ forecast.general.countPessimistic }} poliçe</p>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 font-semibold">K: {{ formatCurrency(forecast.general.commissionPessimistic) }}</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commissionPessimistic) }}</p>
               </div>
 
               <!-- Beklenen -->
@@ -1507,7 +1507,7 @@ function linearRegression(x: number[], y: number[]) {
                 </div>
                 <p class="text-2xl font-bold text-violet-700 dark:text-violet-300 tabular-nums">{{ formatCurrency(forecast.general.expected) }}</p>
                 <p class="text-xs text-violet-600/70 dark:text-violet-400/70 mt-1">~{{ forecast.general.count }} poliçe</p>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 font-semibold">K: {{ formatCurrency(forecast.general.commission) }}</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commission) }}</p>
               </div>
 
               <!-- İyimser -->
@@ -1518,7 +1518,7 @@ function linearRegression(x: number[], y: number[]) {
                 </div>
                 <p class="text-lg font-bold text-green-700 dark:text-green-300 tabular-nums">{{ formatCurrency(forecast.general.optimistic) }}</p>
                 <p class="text-xs text-green-600/70 dark:text-green-400/70 mt-1">~{{ forecast.general.countOptimistic }} poliçe</p>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 font-semibold">K: {{ formatCurrency(forecast.general.commissionOptimistic) }}</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commissionOptimistic) }}</p>
               </div>
             </div>
 
@@ -1561,7 +1561,7 @@ function linearRegression(x: number[], y: number[]) {
             <div class="border-t border-default pt-4">
               <div class="flex items-center gap-2 mb-3">
                 <UIcon name="i-lucide-layers" class="size-4 text-violet-600" />
-                <span class="font-semibold text-xs">{{ forecast.monthName }} - Ürün Bazlı Tahmin</span>
+                <span class="text-xs">{{ forecast.monthName }} - Ürün Bazlı Tahmin</span>
               </div>
               <div class="border border-default rounded-lg overflow-hidden">
                 <table class="text-xs w-full table-fixed">
@@ -1591,7 +1591,7 @@ function linearRegression(x: number[], y: number[]) {
                       <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-red-600 dark:text-red-400">{{ formatCurrency(forecast.products[group]?.pessimistic || 0) }}</td>
                       <td class="py-2 px-3 text-right tabular-nums font-semibold text-violet-700 dark:text-violet-300">{{ formatCurrency(forecast.products[group]?.expected || 0) }}</td>
                       <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-green-600 dark:text-green-400">{{ formatCurrency(forecast.products[group]?.optimistic || 0) }}</td>
-                      <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400 font-semibold">{{ formatCurrency(forecast.products[group]?.commission || 0) }}</td>
+                      <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">{{ formatCurrency(forecast.products[group]?.commission || 0) }}</td>
                       <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums">{{ forecast.products[group]?.count || 0 }}</td>
                       <td class="py-2 px-3 text-center">
                         <span

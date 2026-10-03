@@ -521,7 +521,7 @@ const branchBarData = computed(() => {
           <template #header>
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-bar-chart-3" class="text-muted size-4" />
-              <h3 class="font-semibold">Aylık Prim Üretimi (Yıllık Karşılaştırma)</h3>
+              <h3 >Aylık Prim Üretimi (Yıllık Karşılaştırma)</h3>
             </div>
           </template>
           <div class="h-72">
@@ -535,7 +535,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-trending-up" class="text-muted size-4" />
-                <h3 class="font-semibold">Aylık Poliçe Adedi</h3>
+                <h3 >Aylık Poliçe Adedi</h3>
               </div>
             </template>
             <div class="h-56">
@@ -547,7 +547,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-pie-chart" class="text-muted size-4" />
-                <h3 class="font-semibold">Branş Grupları Dağılımı</h3>
+                <h3 >Branş Grupları Dağılımı</h3>
               </div>
             </template>
             <div class="h-56">
@@ -562,7 +562,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-factory" class="text-muted size-4" />
-                <h3 class="font-semibold">Üretim Tipi Dağılımı</h3>
+                <h3 >Üretim Tipi Dağılımı</h3>
               </div>
             </template>
             <div class="h-56">
@@ -574,7 +574,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-building-2" class="text-muted size-4" />
-                <h3 class="font-semibold">Şirket Dağılımı</h3>
+                <h3 >Şirket Dağılımı</h3>
               </div>
             </template>
             <div class="h-56">
@@ -592,7 +592,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-users" class="text-muted size-4" />
-                <h3 class="font-semibold">En Yüksek Primli Müşteriler (Top 15)</h3>
+                <h3 >En Yüksek Primli Müşteriler (Top 15)</h3>
               </div>
             </template>
             <div class="h-[28rem]">
@@ -603,7 +603,7 @@ const branchBarData = computed(() => {
           <!-- Table -->
           <UCard class="lg:col-span-2">
             <template #header>
-              <h3 class="font-semibold">Müşteri Detayları</h3>
+              <h3 >Müşteri Detayları</h3>
             </template>
             <div class="overflow-y-auto max-h-[28rem]">
               <table class="w-full text-xs">
@@ -640,7 +640,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-building-2" class="text-muted size-4" />
-                <h3 class="font-semibold">Sigorta Şirketleri - Prim Dağılımı</h3>
+                <h3 >Sigorta Şirketleri - Prim Dağılımı</h3>
               </div>
             </template>
             <div class="h-80">
@@ -651,7 +651,7 @@ const branchBarData = computed(() => {
           <!-- Company Doughnut -->
           <UCard>
             <template #header>
-              <h3 class="font-semibold">Şirket Payı</h3>
+              <h3 >Şirket Payı</h3>
             </template>
             <div class="h-80">
               <Doughnut v-if="companyChartData" :data="companyChartData" :options="doughnutOptions" />
@@ -662,7 +662,7 @@ const branchBarData = computed(() => {
         <!-- Company Table -->
         <UCard>
           <template #header>
-            <h3 class="font-semibold">Şirket Detayları</h3>
+            <h3 >Şirket Detayları</h3>
           </template>
           <div class="border border-default rounded-lg overflow-hidden">
             <table class="text-xs w-full table-fixed">
@@ -700,7 +700,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-shield" class="text-muted size-4" />
-                <h3 class="font-semibold">Branş Bazlı Prim (Top 10)</h3>
+                <h3 >Branş Bazlı Prim (Top 10)</h3>
               </div>
             </template>
             <div class="h-80">
@@ -711,7 +711,7 @@ const branchBarData = computed(() => {
           <!-- Group doughnut -->
           <UCard>
             <template #header>
-              <h3 class="font-semibold">Grup Bazlı Dağılım</h3>
+              <h3 >Grup Bazlı Dağılım</h3>
             </template>
             <div class="h-80">
               <Doughnut v-if="groupChartData" :data="groupChartData" :options="doughnutOptions" />
@@ -722,7 +722,7 @@ const branchBarData = computed(() => {
         <!-- Insurance Table -->
         <UCard>
           <template #header>
-            <h3 class="font-semibold">Branş Detayları</h3>
+            <h3 >Branş Detayları</h3>
           </template>
           <div class="border border-default rounded-lg overflow-hidden">
             <table class="text-xs w-full table-fixed">
@@ -784,7 +784,7 @@ const branchBarData = computed(() => {
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-factory" class="text-muted size-4" />
-                <h3 class="font-semibold">Üretim Tipi Dağılımı</h3>
+                <h3 >Üretim Tipi Dağılımı</h3>
               </div>
             </template>
             <div class="h-64">
@@ -798,7 +798,7 @@ const branchBarData = computed(() => {
               <div class="space-y-3">
                 <div class="flex items-center gap-2">
                   <div class="size-3 rounded-full" :style="{ backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'][idx] }" />
-                  <p class="font-semibold">{{ p.prodLabel }}</p>
+                  <p >{{ p.prodLabel }}</p>
                 </div>
                 <div class="space-y-2">
                   <div class="flex justify-between text-sm">
@@ -835,7 +835,7 @@ const branchBarData = computed(() => {
               <template #header>
                 <div class="flex items-center gap-2">
                   <UIcon name="i-lucide-store" class="text-muted size-4" />
-                  <h3 class="font-semibold">Acente Bazlı Prim</h3>
+                  <h3 >Acente Bazlı Prim</h3>
                 </div>
               </template>
               <div class="h-72">
@@ -845,7 +845,7 @@ const branchBarData = computed(() => {
 
             <UCard class="lg:col-span-2">
               <template #header>
-                <h3 class="font-semibold">Acente Detayları</h3>
+                <h3 >Acente Detayları</h3>
               </template>
               <div class="overflow-y-auto max-h-72">
                 <table class="w-full text-xs">

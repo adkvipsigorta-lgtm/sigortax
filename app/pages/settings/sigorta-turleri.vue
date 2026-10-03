@@ -90,7 +90,7 @@ function getRowActions(insurance: InsuranceType) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Poliçe Türleri</h1>
+      <h1 class="text-xl">Poliçe Türleri</h1>
       <p class="text-sm text-muted mt-1">Sigorta türleri ve komisyon ayarları.</p>
     </div>
 
@@ -101,7 +101,7 @@ function getRowActions(insurance: InsuranceType) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-itsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itsearch:top-0 peer-focus-within/fl-itsearch:-translate-y-1/2 peer-focus-within/fl-itsearch:text-xs peer-focus-within/fl-itsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-[var(--ui-text-highlighted)]">Poliçe Türü Ara</label>
           </div>
-          <UButton label="Yeni Poliçe Türü" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openCreateModal()" />
+          <UButton label="Yeni Poliçe Türü" icon="i-lucide-plus" size="xl"  @click="openCreateModal()" />
         </div>
       </template>
 
@@ -118,7 +118,7 @@ function getRowActions(insurance: InsuranceType) {
           <template #name-cell="{ row }">
             <div class="flex items-center gap-2 min-w-0">
               <div class="size-2 rounded-full shrink-0" :style="{ backgroundColor: normalizeColor(row.original.color) }" />
-              <span class="font-semibold truncate" :title="row.original.name">{{ row.original.name }}</span>
+              <span class="truncate" :title="row.original.name">{{ row.original.name }}</span>
             </div>
           </template>
           <template #branchGroup-cell="{ row }">
@@ -126,7 +126,7 @@ function getRowActions(insurance: InsuranceType) {
             <span v-else class="text-muted">-</span>
           </template>
           <template #defaultCommRate-cell="{ row }">
-            <span v-if="row.original.defaultCommRate" class="tabular-nums font-semibold">%{{ row.original.defaultCommRate }}</span>
+            <span v-if="row.original.defaultCommRate" class="tabular-nums">%{{ row.original.defaultCommRate }}</span>
             <span v-else class="text-muted">-</span>
           </template>
           <template #renewalDays-cell="{ row }"><span class="tabular-nums">{{ row.original.renewalDays }} gün</span></template>
@@ -200,8 +200,8 @@ function getRowActions(insurance: InsuranceType) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingInsurance" @click="isModalOpen = false" />
-            <UButton :label="editingInsurance ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingInsurance" :disabled="savingInsurance" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingInsurance" @click="isModalOpen = false" />
+            <UButton :label="editingInsurance ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingInsurance" :disabled="savingInsurance" />
           </div>
         </UForm>
       </template>

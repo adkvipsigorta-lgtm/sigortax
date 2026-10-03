@@ -1394,7 +1394,7 @@ onMounted(async () => {
   <div class="p-4 sm:p-6 space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Görev Yönetimi</h1>
+      <h1 class="text-xl">Görev Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Yenileme, teklif ve takip araması görevleri.</p>
     </div>
 
@@ -1478,7 +1478,7 @@ onMounted(async () => {
           <div class="flex flex-wrap items-center gap-2">
             <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[50px]">
               <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="filterPrevMonth" />
-              <span class="font-semibold text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ filterMonthLabel }}</span>
+              <span class="text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ filterMonthLabel }}</span>
               <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="filterNextMonth" />
             </div>
             <div v-if="isAdmin" class="relative select-fl [&_button]:!pt-5 [&_button]:!pb-2.5 w-[200px]">
@@ -1489,17 +1489,17 @@ onMounted(async () => {
               <UInput v-model="searchQuery" placeholder=" " class="w-full peer/fl-tsearch" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tsearch:top-0 peer-focus-within/fl-tsearch:-translate-y-1/2 peer-focus-within/fl-tsearch:text-xs peer-focus-within/fl-tsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri ara</label>
             </div>
-            <UButton v-if="hasActiveFilters" icon="i-lucide-x" size="xl" color="error" variant="ghost" class="font-semibold" @click="resetAllFilters" title="Filtreleri Temizle" />
+            <UButton v-if="hasActiveFilters" icon="i-lucide-x" size="xl" color="error" variant="ghost"  @click="resetAllFilters" title="Filtreleri Temizle" />
           </div>
-          <UButton v-if="can('tasks.export')" label="Excel" icon="i-lucide-download" size="xl" color="neutral" variant="outline" class="font-semibold hidden sm:flex" @click="exportExcel" />
+          <UButton v-if="can('tasks.export')" label="Excel" icon="i-lucide-download" size="xl" color="neutral" variant="outline" class="hidden sm:flex" @click="exportExcel" />
         </div>
       </template>
       <!-- Bulk action bar -->
       <div v-if="isAdmin && selectedTaskIds.size > 0" class="flex flex-wrap items-center gap-2 mb-3 p-2 rounded-lg bg-primary/5 border border-primary/20">
         <span class="text-sm font-medium">{{ selectedTaskIds.size }} görev seçildi</span>
-        <UButton label="Toplu Ata" icon="i-lucide-user-plus" size="xl" class="font-semibold" color="info" variant="outline" @click="showBulkAssignModal = true" />
-        <UButton label="Toplu İptal" icon="i-lucide-x-circle" size="xl" class="font-semibold" color="error" variant="outline" @click="bulkCancel" />
-        <UButton label="Seçimi Kaldır" size="xl" class="font-semibold" color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
+        <UButton label="Toplu Ata" icon="i-lucide-user-plus" size="xl"  color="info" variant="outline" @click="showBulkAssignModal = true" />
+        <UButton label="Toplu İptal" icon="i-lucide-x-circle" size="xl"  color="error" variant="outline" @click="bulkCancel" />
+        <UButton label="Seçimi Kaldır" size="xl"  color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
       </div>
 
       <div v-if="tableColFilterCount > 0" class="flex items-center justify-between mb-2 px-1">
@@ -1543,7 +1543,7 @@ onMounted(async () => {
                 <div class="flex items-center gap-2">
                   <input v-if="isAdmin" type="checkbox" :checked="selectedTaskIds.has(task.id)" @change="toggleSelect(task.id)" class="rounded shrink-0 hidden md:inline" @click.stop />
                   <div class="min-w-0">
-                    <p class="font-semibold text-primary truncate" :title="getTaskCustomerName(task)">{{ getTaskCustomerName(task) }}</p>
+                    <p class="text-primary truncate" :title="getTaskCustomerName(task)">{{ getTaskCustomerName(task) }}</p>
                     <p class="text-muted truncate">{{ getTaskCustomerIdentity(task) }}</p>
                   </div>
                 </div>
@@ -1992,7 +1992,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showCreateModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showCreateModal = false" />
           <UButton
             label="Oluştur"
             icon="i-lucide-plus"
@@ -2042,7 +2042,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showAssignModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showAssignModal = false" />
           <UButton
             label="Ata"
             icon="i-lucide-user-check"
@@ -2228,7 +2228,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showCompleteModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showCompleteModal = false" />
           <UButton
             :label="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'Ertele' : 'Tamamla'"
             :icon="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'i-lucide-clock' : (isNegativeResult ? 'i-lucide-x-circle' : 'i-lucide-check-circle')"
@@ -2248,10 +2248,10 @@ onMounted(async () => {
           <!-- Title & badges -->
           <div>
             <template v-if="selectedTask.type === 'FOLLOW_UP_CALL'">
-              <h4 class="text-base font-semibold">{{ selectedTask.customerName }}</h4>
+              <h4 class="text-base">{{ selectedTask.customerName }}</h4>
               <p class="text-sm text-muted mt-0.5">{{ selectedTask.offerData?.branchGroup }} · {{ selectedTask.offerData?.stageLabel }} Takip Araması</p>
             </template>
-            <h4 v-else class="text-base font-semibold">{{ selectedTask.title }}</h4>
+            <h4 v-else class="text-base">{{ selectedTask.title }}</h4>
             <div class="flex flex-wrap gap-1.5 mt-2">
               <UBadge :color="typeColor(selectedTask.type)" variant="solid" size="sm">
                 <UIcon :name="typeIcon(selectedTask.type)" class="size-3 mr-0.5" />
@@ -2588,7 +2588,7 @@ onMounted(async () => {
                   <tbody>
                     <tr v-for="item in smartClosePreview.details.toComplete" :key="item.id" class="border-b border-default">
                       <td class="py-1 px-3">
-                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold" :class="item.type === 'RENEWAL' ? 'bg-blue-100 text-blue-700' : 'bg-violet-100 text-violet-700'">
+                        <span class="px-1.5 py-0.5 rounded text-[10px]" :class="item.type === 'RENEWAL' ? 'bg-blue-100 text-blue-700' : 'bg-violet-100 text-violet-700'">
                           {{ item.type === 'RENEWAL' ? 'YENİLEME' : 'TEKLİF' }}
                         </span>
                       </td>
@@ -2620,7 +2620,7 @@ onMounted(async () => {
                   <tbody>
                     <tr v-for="item in smartClosePreview.details.toCancel" :key="item.id" class="border-b border-default">
                       <td class="py-1 px-3">
-                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold" :class="item.type === 'RENEWAL' ? 'bg-blue-100 text-blue-700' : 'bg-violet-100 text-violet-700'">
+                        <span class="px-1.5 py-0.5 rounded text-[10px]" :class="item.type === 'RENEWAL' ? 'bg-blue-100 text-blue-700' : 'bg-violet-100 text-violet-700'">
                           {{ item.type === 'RENEWAL' ? 'YENİLEME' : item.type === 'OFFER' ? 'TEKLİF' : item.type }}
                         </span>
                       </td>

@@ -239,7 +239,7 @@ function exportExcel() {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Temsilci Mutabakat</h1>
+      <h1 class="text-xl">Temsilci Mutabakat</h1>
       <p class="text-sm text-muted mt-1">Aylık temsilci hakediş ve mutabakat raporu.</p>
     </div>
 
@@ -263,7 +263,7 @@ function exportExcel() {
           <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
         </div>
         <div class="flex items-end">
-          <UButton label="Getir" icon="i-lucide-search" size="xl" class="font-semibold w-full" :loading="loading" @click="fetchReconciliation" />
+          <UButton label="Getir" icon="i-lucide-search" size="xl" class="w-full" :loading="loading" @click="fetchReconciliation" />
         </div>
       </div>
     </UCard>
@@ -332,14 +332,14 @@ function exportExcel() {
     <UCard v-if="data" :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold flex items-center gap-2">
+          <h3 class="flex items-center gap-2">
             <UIcon v-if="isLocked" name="i-lucide-lock" class="size-3.5 text-emerald-600" />
             {{ data.user.name }} - {{ getMonthLabel(selectedMonth) }} {{ selectedYear }}
           </h3>
           <div class="flex items-center gap-2">
             <span class="text-xs text-muted">{{ data.policies.length }} kayıt</span>
-            <UButton label="Excel İndir" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="font-semibold hidden sm:flex" @click="exportExcel" />
-            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" @click="showLockConfirm = true" />
+            <UButton label="Excel İndir" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="hidden sm:flex" @click="exportExcel" />
+            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success" size="xl"  @click="showLockConfirm = true" />
           </div>
         </div>
       </template>
@@ -472,7 +472,7 @@ function exportExcel() {
     <UCard v-if="isSummaryMode" :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold">
+          <h3 >
             Tüm Temsilciler - {{ getMonthLabel(selectedMonth) }} {{ selectedYear }} Hakediş Özeti
           </h3>
           <span class="text-xs text-muted">{{ summaryData.users.length }} temsilci</span>
@@ -510,7 +510,7 @@ function exportExcel() {
               </td>
             </tr>
           </tbody>
-          <tfoot class="bg-gray-50 dark:bg-gray-800/50 font-semibold">
+          <tfoot class="bg-gray-50 dark:bg-gray-800/50">
             <tr>
               <td class="px-3 py-2">Toplam</td>
               <td class="px-3 py-2 text-center">{{ summaryData.totals.totalPolicies }}</td>
@@ -557,8 +557,8 @@ function exportExcel() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showLockConfirm = false" />
-          <UButton label="Kilitle" icon="i-lucide-lock" color="success" size="xl" class="font-semibold" :loading="locking" @click="lockReconciliation" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showLockConfirm = false" />
+          <UButton label="Kilitle" icon="i-lucide-lock" color="success" size="xl"  :loading="locking" @click="lockReconciliation" />
         </div>
       </template>
     </UModal>
@@ -576,8 +576,8 @@ function exportExcel() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showSecretModal = false" />
-          <UButton label="Görüntüle" icon="i-lucide-eye" size="xl" class="font-semibold" @click="verifySecretAndFetch" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showSecretModal = false" />
+          <UButton label="Görüntüle" icon="i-lucide-eye" size="xl"  @click="verifySecretAndFetch" />
         </div>
       </template>
     </UModal>

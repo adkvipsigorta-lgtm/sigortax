@@ -69,7 +69,7 @@ function getRowActions(group: CustomerCategory) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Müşteri Grupları</h1>
+      <h1 class="text-xl">Müşteri Grupları</h1>
       <p class="text-sm text-muted mt-1">Müşteri grupları ve prim aralıkları.</p>
     </div>
 
@@ -80,7 +80,7 @@ function getRowActions(group: CustomerCategory) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-gsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gsearch:top-0 peer-focus-within/fl-gsearch:-translate-y-1/2 peer-focus-within/fl-gsearch:text-xs peer-focus-within/fl-gsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gsearch:text-[var(--ui-text-highlighted)]">Grup Ara</label>
           </div>
-          <UButton label="Yeni Grup" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Grup" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -167,8 +167,8 @@ function getRowActions(group: CustomerCategory) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingGroup" @click="isModalOpen = false" />
-          <UButton :label="editingGroup ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" :loading="savingGroup" :disabled="savingGroup" @click="saveGroup" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingGroup" @click="isModalOpen = false" />
+          <UButton :label="editingGroup ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  :loading="savingGroup" :disabled="savingGroup" @click="saveGroup" />
         </div>
       </template>
     </UModal>
@@ -180,8 +180,8 @@ function getRowActions(group: CustomerCategory) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

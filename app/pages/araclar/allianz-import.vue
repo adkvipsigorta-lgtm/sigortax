@@ -724,14 +724,14 @@ function onDragLeave() { isDragging.value = false }
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Allianz XML Import</h1>
+      <h1 class="text-xl">Allianz XML Import</h1>
       <p class="text-sm text-muted mt-1">Allianz sisteminden indirilen XML dosyasını içe aktarın.</p>
     </div>
 
     <!-- ─── UPLOAD EKRANI ─── -->
     <UCard v-if="!importing && !isPreviewOpen && !isProcessing && !isDone">
       <template #header>
-        <h3 class="font-semibold">XML Dosyası Yükle</h3>
+        <h3 >XML Dosyası Yükle</h3>
       </template>
       <div
         class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg transition-colors cursor-pointer"
@@ -750,7 +750,7 @@ function onDragLeave() { isDragging.value = false }
           label="Dosya Seç"
           icon="i-lucide-file-up"
           size="xl"
-          class="font-semibold"
+          
           @click.stop="fileInput?.click()"
         />
         <input ref="fileInput" type="file" accept=".xml" class="hidden" @change="handleFileUpload" />
@@ -794,7 +794,7 @@ function onDragLeave() { isDragging.value = false }
       <!-- Başlık + butonlar -->
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="font-semibold">Import Önizleme</h3>
+          <h3 >Import Önizleme</h3>
           <p class="text-xs text-muted mt-0.5">
             {{ selectedCount }}/{{ importedPolicies.length }} poliçe seçili
             <span v-if="duplicateCount > 0" class="text-error ml-1">({{ duplicateCount }} kayıtlı)</span>
@@ -806,7 +806,7 @@ function onDragLeave() { isDragging.value = false }
             color="neutral"
             variant="outline"
             size="xl"
-            class="font-semibold"
+            
             @click="resetState()"
           />
           <UButton
@@ -814,7 +814,7 @@ function onDragLeave() { isDragging.value = false }
             :label="`${duplicateCount} Poliçenin Eksik Alanlarını Güncelle`"
             icon="i-lucide-refresh-cw"
             size="xl"
-            class="font-semibold"
+            
             color="warning"
             @click="updateExisting()"
           />
@@ -823,7 +823,7 @@ function onDragLeave() { isDragging.value = false }
             :label="`${selectedCount} Poliçe Import Et`"
             icon="i-lucide-download"
             size="xl"
-            class="font-semibold"
+            
             @click="saveImport()"
           />
         </div>
@@ -929,7 +929,7 @@ function onDragLeave() { isDragging.value = false }
                     <span v-else class="text-xs text-muted">—</span>
                   </td>
                   <td class="p-2 overflow-hidden">
-                    <p class="font-semibold text-xs uppercase truncate" :title="p.customerName">{{ p.customerName }}</p>
+                    <p class="text-xs uppercase truncate" :title="p.customerName">{{ p.customerName }}</p>
                     <p class="text-xs text-muted truncate">{{ p.identityNumber }}</p>
                   </td>
                   <td class="p-2">
@@ -1046,7 +1046,7 @@ function onDragLeave() { isDragging.value = false }
         <div class="w-full max-w-sm space-y-2">
           <div class="flex justify-between text-xs text-muted">
             <span>İlerleme</span>
-            <span class="font-semibold tabular-nums">{{ progressPercent }}%</span>
+            <span class="tabular-nums">{{ progressPercent }}%</span>
           </div>
           <div class="w-full bg-neutral-200 rounded-full h-3 overflow-hidden">
             <div
@@ -1125,8 +1125,8 @@ function onDragLeave() { isDragging.value = false }
         </div>
 
         <div class="flex gap-3">
-          <UButton label="Yeni XML Yükle" icon="i-lucide-upload" size="xl" class="font-semibold" @click="resetState()" />
-          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline" size="xl" class="font-semibold" to="/policeler" />
+          <UButton label="Yeni XML Yükle" icon="i-lucide-upload" size="xl"  @click="resetState()" />
+          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline" size="xl"  to="/policeler" />
         </div>
       </div>
     </UCard>

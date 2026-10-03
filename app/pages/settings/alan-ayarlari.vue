@@ -82,10 +82,10 @@ onMounted(load)
     <!-- Sayfa Başlığı -->
     <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h1 class="text-xl font-semibold">Alan Ayarları</h1>
+        <h1 class="text-xl">Alan Ayarları</h1>
         <p class="text-sm text-muted mt-1">Müşteri ve poliçe formlarında hangi alanların görüneceğini ayarlayın.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="save" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="save" />
     </div>
 
     <!-- Loading -->
@@ -104,7 +104,7 @@ onMounted(load)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Bireysel Müşteri Alanları</h3>
+            <h3 >Bireysel Müşteri Alanları</h3>
             <p class="text-xs text-muted">Bireysel müşteri formunda görünecek opsiyonel alanları belirleyin.</p>
           </div>
         </template>
@@ -128,7 +128,7 @@ onMounted(load)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Kurumsal Müşteri Alanları</h3>
+            <h3 >Kurumsal Müşteri Alanları</h3>
             <p class="text-xs text-muted">Kurumsal müşteri formunda görünecek opsiyonel alanları belirleyin.</p>
           </div>
         </template>
@@ -152,7 +152,7 @@ onMounted(load)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Poliçe Form Alanları</h3>
+            <h3 >Poliçe Form Alanları</h3>
             <p class="text-xs text-muted">Poliçe formunda görünecek opsiyonel alanları belirleyin. Bu alanlar ilgili sigorta türüne göre gösterilir.</p>
           </div>
         </template>
@@ -176,7 +176,7 @@ onMounted(load)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Import Ayarları</h3>
+            <h3 >Import Ayarları</h3>
             <p class="text-xs text-muted">Allianz / Excel import sayfalarında görünecek opsiyonel kolonları belirleyin.</p>
           </div>
         </template>
@@ -200,7 +200,7 @@ onMounted(load)
       <UCard>
         <template #header>
           <div>
-            <h3 class="font-semibold">Görev Ayarları</h3>
+            <h3 >Görev Ayarları</h3>
             <p class="text-xs text-muted">Görev tamamlama kurallarını belirleyin.</p>
           </div>
         </template>

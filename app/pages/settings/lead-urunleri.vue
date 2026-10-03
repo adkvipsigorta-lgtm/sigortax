@@ -96,7 +96,7 @@ function getRowActions(item: LeadProduct) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Lead Ürünleri</h1>
+      <h1 class="text-xl">Lead Ürünleri</h1>
       <p class="text-sm text-muted mt-1">Lead'lerde seçilecek ürün listesini yönetin.</p>
     </div>
 
@@ -107,7 +107,7 @@ function getRowActions(item: LeadProduct) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lpsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Ürün Ara</label>
           </div>
-          <UButton label="Yeni Ürün" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Ürün" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -125,7 +125,7 @@ function getRowActions(item: LeadProduct) {
           }"
         >
           <template #name-cell="{ row }">
-            <span class="font-semibold" :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span>
+            <span  :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span>
           </template>
           <template #color-cell="{ row }">
             <span v-if="row.original.color" class="inline-block w-5 h-5 rounded" :style="{ backgroundColor: row.original.color }" />
@@ -135,7 +135,7 @@ function getRowActions(item: LeadProduct) {
             <span v-if="row.original.requiresFile" class="inline-flex items-center gap-1 text-xs font-semibold text-green-600"><UIcon name="i-lucide-check-circle" class="size-3.5" /> Açık</span>
             <span v-else class="text-xs text-muted">Kapalı</span>
           </template>
-          <template #sortOrder-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.sortOrder }}</span></template>
+          <template #sortOrder-cell="{ row }"><span class="tabular-nums">{{ row.original.sortOrder }}</span></template>
           <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)">
@@ -186,8 +186,8 @@ function getRowActions(item: LeadProduct) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="saving" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="saving" :disabled="saving" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="saving" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="saving" :disabled="saving" />
           </div>
         </UForm>
       </template>
@@ -208,8 +208,8 @@ function getRowActions(item: LeadProduct) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

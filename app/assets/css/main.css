@@ -47,9 +47,15 @@ select {
   animation: nav-loading 0.9s ease-in-out infinite;
 }
 
-/* Tüm input/select/textarea değerleri koyu görünsün */
-input, select, textarea {
+/* Kullanıcının yazdığı değer koyu, placeholder normal */
+input:not(:placeholder-shown),
+select,
+textarea:not(:placeholder-shown) {
   font-weight: 600;
+}
+input::placeholder,
+textarea::placeholder {
+  font-weight: 400;
 }
 
 /* Badge standardı: eşit genişlik + ortalama */

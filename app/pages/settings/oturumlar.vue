@@ -106,7 +106,7 @@ onMounted(fetchSessions)
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Oturumlar</h1>
+      <h1 class="text-xl">Oturumlar</h1>
       <p class="text-sm text-muted mt-1">Hesabınıza yapılan giriş geçmişini görüntüleyin ve yönetin.</p>
     </div>
 
@@ -187,7 +187,7 @@ onMounted(fetchSessions)
             color="error"
             variant="outline"
             size="xl"
-            class="font-semibold shrink-0 sm:w-auto w-full"
+            class="shrink-0 sm:w-auto w-full"
             @click="confirmDelete(session)"
           />
         </div>
@@ -211,8 +211,8 @@ onMounted(fetchSessions)
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="deleteModalOpen = false" />
-          <UButton label="Sonlandır" color="error" icon="i-lucide-log-out" size="xl" class="font-semibold" :loading="deleting" @click="deleteSession" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="deleteModalOpen = false" />
+          <UButton label="Sonlandır" color="error" icon="i-lucide-log-out" size="xl"  :loading="deleting" @click="deleteSession" />
         </div>
       </template>
     </UModal>

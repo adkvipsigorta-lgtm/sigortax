@@ -173,13 +173,13 @@ onMounted(async () => {
     <!-- Üst Bar -->
     <div class="flex items-center justify-between gap-3 pb-4 border-b border-default">
       <div class="flex items-center gap-3">
-        <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="xl" class="font-semibold" @click="navigateTo('/settings/kullanicilar')" />
+        <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="xl"  @click="navigateTo('/settings/kullanicilar')" />
         <div>
-          <h1 class="text-xl font-semibold">Kullanıcı Detay</h1>
+          <h1 class="text-xl">Kullanıcı Detay</h1>
           <p class="text-sm text-muted">{{ userInfo?.name }}</p>
         </div>
       </div>
-      <UButton label="İzinleri Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" :disabled="loading" @click="save" />
+      <UButton label="İzinleri Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" :disabled="loading" @click="save" />
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-24">
@@ -196,14 +196,14 @@ onMounted(async () => {
           <!-- Görüntüleme modu -->
           <template v-if="!editingProfile">
             <div>
-              <p class="font-semibold text-sm">{{ userInfo?.name }}</p>
+              <p class="text-sm">{{ userInfo?.name }}</p>
               <p class="text-xs text-muted mt-0.5">{{ userInfo?.email }}</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap justify-center">
               <UBadge :color="(roleColors[userInfo?.role || ''] as any)" variant="solid" size="sm">{{ roleLabels[userInfo?.role || ''] || userInfo?.role }}</UBadge>
               <UBadge :color="userInfo?.isActive ? 'success' : 'neutral'" variant="subtle" size="sm">{{ userInfo?.isActive ? 'Aktif' : 'Pasif' }}</UBadge>
             </div>
-            <UButton label="Düzenle" icon="i-lucide-pencil" size="xl" class="font-semibold w-full" variant="outline" color="neutral" @click="startEditProfile" />
+            <UButton label="Düzenle" icon="i-lucide-pencil" size="xl" class="w-full" variant="outline" color="neutral" @click="startEditProfile" />
           </template>
 
           <!-- Düzenleme modu -->
@@ -230,8 +230,8 @@ onMounted(async () => {
                 <div class="flex items-center gap-2"><USwitch v-model="profileForm.isSalesRep" size="xs" /><span class="text-xs">Satış T.</span></div>
               </div>
               <div class="flex gap-2">
-                <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold flex-1" @click="cancelEditProfile" />
-                <UButton label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold flex-1" :loading="savingProfile" @click="saveProfile" />
+                <UButton label="İptal" color="neutral" variant="outline" size="xl" class="flex-1" @click="cancelEditProfile" />
+                <UButton label="Kaydet" icon="i-lucide-check" size="xl" class="flex-1" :loading="savingProfile" @click="saveProfile" />
               </div>
             </div>
           </template>
@@ -241,7 +241,7 @@ onMounted(async () => {
         <div class="mt-4 pt-4 border-t border-default">
           <div class="flex items-center justify-between text-xs mb-2">
             <span class="text-muted">Aktif İzinler</span>
-            <span class="font-semibold">{{ activeCount }} / {{ totalCount }}</span>
+            <span >{{ activeCount }} / {{ totalCount }}</span>
           </div>
           <div class="w-full bg-neutral-100 rounded-full h-1.5">
             <div class="bg-primary rounded-full h-1.5 transition-all duration-300" :style="{ width: totalCount ? `${(activeCount / totalCount) * 100}%` : '0%' }" />
@@ -256,7 +256,7 @@ onMounted(async () => {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <div class="size-7 rounded-md bg-primary/10 text-primary flex items-center justify-center"><UIcon :name="group.icon" class="size-3.5" /></div>
-                <span class="text-sm font-semibold">{{ group.label }}</span>
+                <span class="text-sm">{{ group.label }}</span>
               </div>
               <UButton size="xs" color="neutral" variant="ghost" class="text-xs text-muted" :label="group.items.every(p => p.allowed) ? 'Tümünü Kapat' : 'Tümünü Aç'" @click="toggleGroup(group.key, !group.items.every(p => p.allowed))" />
             </div>

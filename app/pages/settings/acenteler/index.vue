@@ -138,7 +138,7 @@ function getRowActions(branch: Branch) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Tali Acenteler</h1>
+      <h1 class="text-xl">Tali Acenteler</h1>
       <p class="text-sm text-muted mt-1">Tali acente listesi ve komisyon oranları.</p>
     </div>
 
@@ -149,7 +149,7 @@ function getRowActions(branch: Branch) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-bsearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-bsearch:top-0 peer-focus-within/fl-bsearch:-translate-y-1/2 peer-focus-within/fl-bsearch:text-xs peer-focus-within/fl-bsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-bsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-bsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-bsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-bsearch:text-[var(--ui-text-highlighted)]">Acente Ara</label>
           </div>
-          <UButton label="Yeni Acente" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Acente" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -172,13 +172,13 @@ function getRowActions(branch: Branch) {
           <template #commissionRate-header="{ column }"><SortableHeader label="Komisyon" :column="column" /></template>
 
           <template #name-cell="{ row }">
-            <NuxtLink :to="`/settings/acenteler/${row.original.id}`" class="font-semibold hover:underline truncate block" :class="row.original.isActive ? 'text-primary' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</NuxtLink>
+            <NuxtLink :to="`/settings/acenteler/${row.original.id}`" class="hover:underline truncate block" :class="row.original.isActive ? 'text-primary' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</NuxtLink>
           </template>
           <template #phone-cell="{ row }">
             <a v-if="row.original.phone" :href="`tel:${row.original.phone}`" class="text-primary hover:underline">{{ row.original.phone }}</a>
             <span v-else class="text-muted">—</span>
           </template>
-          <template #commissionRate-cell="{ row }"><span class="tabular-nums font-semibold">%{{ row.original.commissionRate }}</span></template>
+          <template #commissionRate-cell="{ row }"><span class="tabular-nums">%{{ row.original.commissionRate }}</span></template>
           <template #iban-cell="{ row }">
             <span v-if="row.original.iban" class="font-mono text-muted truncate block" :title="formatIban(row.original.iban)">{{ formatIban(row.original.iban) }}</span>
             <span v-else class="text-muted">—</span>
@@ -245,15 +245,15 @@ function getRowActions(branch: Branch) {
                 <UInput v-model="newAlias" placeholder=" " class="w-full peer/fl-balias" @keydown.enter.prevent="addAlias" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-balias:top-0 peer-focus-within/fl-balias:-translate-y-1/2 peer-focus-within/fl-balias:text-xs peer-focus-within/fl-balias:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-balias:top-0 peer-has-[input:not(:placeholder-shown)]/fl-balias:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-balias:text-xs peer-has-[input:not(:placeholder-shown)]/fl-balias:text-[var(--ui-text-highlighted)]">Resmî unvan / alt şirket adı</label>
               </div>
-              <UButton label="Ekle" size="xl" class="font-semibold" color="neutral" variant="outline" :disabled="!newAlias.trim()" @click="addAlias" />
+              <UButton label="Ekle" size="xl"  color="neutral" variant="outline" :disabled="!newAlias.trim()" @click="addAlias" />
             </div>
           </div>
 
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingBranch" @click="isModalOpen = false" />
-            <UButton :label="editingBranch ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingBranch" :disabled="savingBranch" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingBranch" @click="isModalOpen = false" />
+            <UButton :label="editingBranch ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingBranch" :disabled="savingBranch" />
           </div>
         </UForm>
       </template>
@@ -274,8 +274,8 @@ function getRowActions(branch: Branch) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

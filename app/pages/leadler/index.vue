@@ -791,7 +791,7 @@ async function saveLead() {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Lead Yönetimi</h1>
+      <h1 class="text-xl">Lead Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Gelen lead'leri takip edin ve yönetin.</p>
     </div>
 
@@ -803,7 +803,7 @@ async function saveLead() {
               size="xl"
               :color="activeTab === 'acik' ? 'primary' : 'neutral'"
               :variant="activeTab === 'acik' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
               @click="activeTab = 'acik'"
             >
               Açık Leadler
@@ -813,7 +813,7 @@ async function saveLead() {
               size="xl"
               :color="activeTab === 'devam' ? 'primary' : 'neutral'"
               :variant="activeTab === 'devam' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
               @click="activeTab = 'devam'"
             >
               Devam Eden
@@ -823,7 +823,7 @@ async function saveLead() {
               size="xl"
               :color="activeTab === 'kapatilan' ? 'primary' : 'neutral'"
               :variant="activeTab === 'kapatilan' ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center font-semibold"
+              class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
               @click="activeTab = 'kapatilan'"
             >
               Kapatılan
@@ -902,7 +902,7 @@ async function saveLead() {
                   <td class="py-2 px-3 tabular-nums">{{ formatDateTime(lead.createdAt) }}</td>
 
                   <!-- Ad Soyad -->
-                  <td class="py-2 px-3 font-semibold">
+                  <td class="py-2 px-3">
                     <NuxtLink v-if="activeTab !== 'acik'" :to="`/leadler/${lead.id}`" class="hover:text-primary transition-colors cursor-pointer">{{ lead.fullName || 'İsimsiz' }}</NuxtLink>
                     <span v-else>{{ lead.fullName || '' }}</span>
                   </td>
@@ -1020,7 +1020,7 @@ async function saveLead() {
                         >
                           <div class="px-3 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-b border-default flex items-center justify-between">
                             <span class="text-xs">
-                              Notu Ekleyen: <span class="font-semibold text-primary">{{ note.createdByName }}</span>
+                              Notu Ekleyen: <span class="text-primary">{{ note.createdByName }}</span>
                               <span class="mx-1 text-muted">/</span>
                               <span class="text-muted">{{ formatNoteDate(note.createdAt) }}</span>
                             </span>
@@ -1070,7 +1070,7 @@ async function saveLead() {
       <template #body>
         <div v-if="savingQuick" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-          <p class="text-sm font-semibold">Kaydediliyor...</p>
+          <p class="text-sm">Kaydediliyor...</p>
         </div>
         <div class="flex flex-col gap-4">
           <!-- Ruhsat Yükleme -->
@@ -1112,8 +1112,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingQuick" @click="quickModalOpen = false" />
-          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingQuick" @click="quickModalOpen = false" />
+          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" size="xl" class="w-36 justify-center" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
         </div>
       </template>
     </UModal>
@@ -1133,8 +1133,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="deleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1144,7 +1144,7 @@ async function saveLead() {
       <template #body>
         <div v-if="savingEdit" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-          <p class="text-sm font-semibold">Güncelleniyor...</p>
+          <p class="text-sm">Güncelleniyor...</p>
         </div>
         <div class="flex flex-col gap-4 [&_input]:!font-semibold">
           <!-- TC Kimlik No -->
@@ -1192,8 +1192,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingEdit" @click="editModalOpen = false" />
-          <UButton label="Güncelle" icon="i-lucide-check" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingEdit" @click="editModalOpen = false" />
+          <UButton label="Güncelle" icon="i-lucide-check" color="primary" size="xl" class="w-36 justify-center" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
         </div>
       </template>
     </UModal>
@@ -1212,7 +1212,7 @@ async function saveLead() {
               variant="soft"
               block
               size="xl"
-              class="font-semibold"
+              
               :loading="closingLead"
               @click="closeAsWon"
             />
@@ -1223,7 +1223,7 @@ async function saveLead() {
               variant="soft"
               block
               size="xl"
-              class="font-semibold"
+              
               :disabled="closingLead"
               @click="statusStep = 'lost_reason'"
             />
@@ -1241,8 +1241,8 @@ async function saveLead() {
             class="w-full"
           />
           <div class="flex justify-end gap-2">
-            <UButton label="Geri" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="closingLead" @click="statusStep = 'choose'" />
-            <UButton label="Kaydet" color="error" size="xl" class="font-semibold" icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
+            <UButton label="Geri" color="neutral" variant="outline" size="xl"  :disabled="closingLead" @click="statusStep = 'choose'" />
+            <UButton label="Kaydet" color="error" size="xl"  icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
           </div>
         </div>
       </template>
@@ -1253,7 +1253,7 @@ async function saveLead() {
       <template #body>
         <div v-if="savingLead" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-          <p class="text-sm font-semibold">Kaydediliyor...</p>
+          <p class="text-sm">Kaydediliyor...</p>
         </div>
         <div class="flex flex-col gap-4 [&_input]:!font-semibold">
 
@@ -1378,8 +1378,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center font-semibold" :disabled="savingLead" @click="addModalOpen = false" />
-          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" size="xl" class="w-36 justify-center font-semibold" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingLead" @click="addModalOpen = false" />
+          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" size="xl" class="w-36 justify-center" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
         </div>
       </template>
     </UModal>

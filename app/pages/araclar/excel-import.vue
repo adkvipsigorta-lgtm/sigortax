@@ -488,7 +488,7 @@ function removeMappingCol(key: string, col: string) {
       <template #header>
         <div class="flex items-center justify-between">
           <div>
-            <p class="font-semibold">Excel İçe Aktarım</p>
+            <p >Excel İçe Aktarım</p>
             <p class="text-xs text-muted mt-0.5">XLSX/XLS dosyasını yükle, kolonları CRM alanlarına eşleştir, şablon kaydet — bir daha tek tıkla uygulanır.</p>
           </div>
           <div v-if="fileName" class="flex items-center gap-2">
@@ -595,7 +595,7 @@ function removeMappingCol(key: string, col: string) {
       <template #header>
         <div class="flex items-center justify-between">
           <div>
-            <p class="font-semibold">Değer Eşleştirme</p>
+            <p >Değer Eşleştirme</p>
             <p class="text-xs text-muted mt-0.5">Excel'deki metin değerlerini CRM kayıtlarına eşle. Boş kalanlar import sırasında atlanır.</p>
           </div>
           <div class="flex items-center gap-2">
@@ -673,7 +673,7 @@ function removeMappingCol(key: string, col: string) {
     <UCard v-if="mappedPolicies.length">
       <template #header>
         <div class="flex items-center justify-between">
-          <p class="font-semibold">Ön İzleme ({{ mappedPolicies.length }} satır)</p>
+          <p >Ön İzleme ({{ mappedPolicies.length }} satır)</p>
           <UButton
             :loading="saving"
             :disabled="!requiredOk"

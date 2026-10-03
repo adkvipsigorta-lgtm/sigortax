@@ -99,7 +99,7 @@ onUnmounted(() => {
             <UIcon name="i-lucide-rocket" class="size-5 text-primary" />
           </div>
           <div class="flex-1 min-w-0">
-            <p class="font-semibold text-base">
+            <p class="text-base">
               {{ info?.release?.title || ('Sürüm ' + (info?.latest || '')) }}
             </p>
             <p class="text-sm text-muted mt-0.5">

@@ -828,7 +828,7 @@ async function deleteCustomer() {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-folder" class="size-4 text-primary" />
-          <h3 class="font-semibold">Müşteri Dosyaları</h3>
+          <h3 >Müşteri Dosyaları</h3>
         </div>
       </template>
       <DocumentsSection :customer-id="Number(route.params.id)" />
@@ -839,7 +839,7 @@ async function deleteCustomer() {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-info" class="size-4 text-primary" />
-          <h3 class="font-semibold">{{ isIndividual ? 'Kişisel Bilgiler' : 'Firma Bilgileri' }}</h3>
+          <h3 >{{ isIndividual ? 'Kişisel Bilgiler' : 'Firma Bilgileri' }}</h3>
         </div>
       </template>
 
@@ -916,7 +916,7 @@ async function deleteCustomer() {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-building-2" class="size-4 text-primary" />
-          <h3 class="font-semibold">Grup Şirketi (Portal)</h3>
+          <h3 >Grup Şirketi (Portal)</h3>
           <span class="text-xs text-muted font-normal">Portalda birlikte görünecek firmalar</span>
         </div>
       </template>
@@ -1193,7 +1193,7 @@ async function deleteCustomer() {
           <div class="space-y-3">
             <!-- Ust: Poliçe No + Plaka -->
             <div class="flex items-center justify-between">
-              <span class="font-semibold text-sm">{{ p.policyNo }}</span>
+              <span class="text-sm">{{ p.policyNo }}</span>
               <span
                 v-if="p.plateNo && (p.branchGroup === 'TRAFİK' || p.branchGroup === 'KASKO')"
                 class="inline-flex items-center justify-center min-w-[120px] px-2.5 py-1 rounded border-2 font-mono font-bold text-sm tracking-wide whitespace-nowrap shrink-0"
@@ -1229,7 +1229,7 @@ async function deleteCustomer() {
                   :color="p.status === 'CANCELLED' ? 'error' : getRemainingColor(getRemainingDays(p.effectiveExpiresAt || p.expiresAt)!)"
                   variant="solid"
                   size="md"
-                  class="font-semibold"
+                  
                 >
                   {{ p.status === 'CANCELLED' ? 'Bitti' : (getRemainingDays(p.effectiveExpiresAt || p.expiresAt)! > 0 ? getRemainingDays(p.effectiveExpiresAt || p.expiresAt) + ' gün' : 'Bitti') }}
                 </UBadge>
@@ -1487,7 +1487,7 @@ async function deleteCustomer() {
                         :class="['border-b border-default last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors', tab === 'past' ? 'opacity-70' : '']"
                         @click="openOfferDetail(offer)"
                       >
-                        <td class="py-2 px-3 font-semibold">
+                        <td class="py-2 px-3">
                           <div class="flex items-center gap-1.5">
                             <span v-if="offer.type === 'RENEWAL'" class="badge-cell badge-info">Yenileme</span>
                             {{ getOfferInsuranceName(offer) || '-' }}
@@ -1534,7 +1534,7 @@ async function deleteCustomer() {
     <USlideover v-model:open="isOfferDetailOpen" :title="selectedOffer?.title || 'Teklif Detay'" class="sm:max-w-lg">
       <template #header>
         <div class="flex items-center justify-between w-full">
-          <span class="font-semibold">{{ selectedOffer?.title || 'Teklif Detay' }}</span>
+          <span >{{ selectedOffer?.title || 'Teklif Detay' }}</span>
           <div class="flex items-center gap-1.5">
             <UButton
               v-if="selectedOffer && selectedOffer.status !== 'COMPLETED' && selectedOffer.status !== 'CANCELLED'"

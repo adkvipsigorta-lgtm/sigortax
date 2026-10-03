@@ -79,7 +79,7 @@ function getRowActions(item: LeadSource) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Lead Kaynakları</h1>
+      <h1 class="text-xl">Lead Kaynakları</h1>
       <p class="text-sm text-muted mt-1">Lead'lerin geldiği kaynakları yönetin.</p>
     </div>
 
@@ -90,7 +90,7 @@ function getRowActions(item: LeadSource) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lssearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lssearch:top-0 peer-focus-within/fl-lssearch:-translate-y-1/2 peer-focus-within/fl-lssearch:text-xs peer-focus-within/fl-lssearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lssearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lssearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lssearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lssearch:text-[var(--ui-text-highlighted)]">Kaynak Ara</label>
           </div>
-          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -102,7 +102,7 @@ function getRowActions(item: LeadSource) {
           :loading="sources.loading.value && !sources.data.value.length"
           :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis' }"
         >
-          <template #name-cell="{ row }"><span class="font-semibold" :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span></template>
+          <template #name-cell="{ row }"><span  :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span></template>
           <template #color-cell="{ row }">
             <span v-if="row.original.color" class="inline-block w-5 h-5 rounded" :style="{ backgroundColor: row.original.color }" />
             <span v-else class="text-muted">-</span>
@@ -153,8 +153,8 @@ function getRowActions(item: LeadSource) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="saving" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="saving" :disabled="saving" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="saving" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="saving" :disabled="saving" />
           </div>
         </UForm>
       </template>
@@ -175,8 +175,8 @@ function getRowActions(item: LeadSource) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

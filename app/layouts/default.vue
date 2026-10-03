@@ -744,7 +744,7 @@ watch(() => route.path, () => {
             <div v-else class="size-10 rounded-lg bg-green-500 flex items-center justify-center shrink-0">
               <UIcon name="i-lucide-building" class="size-5 text-white" />
             </div>
-            <span class="font-semibold text-sm">{{ agency.name }}</span>
+            <span class="text-sm">{{ agency.name }}</span>
           </div>
         </div>
 
@@ -805,7 +805,7 @@ watch(() => route.path, () => {
             <button class="size-5 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800" @click="prevMonth">
               <UIcon name="i-lucide-chevron-left" class="size-3 text-muted" />
             </button>
-            <span class="text-[11px] font-semibold">{{ calendarMonthLabel }}</span>
+            <span class="text-[11px]">{{ calendarMonthLabel }}</span>
             <button class="size-5 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800" @click="nextMonth">
               <UIcon name="i-lucide-chevron-right" class="size-3 text-muted" />
             </button>
@@ -838,7 +838,7 @@ watch(() => route.path, () => {
                     />
                     <span
                       v-if="taskCountsByDate[cell.date] > 3"
-                      class="text-[8px] leading-none text-gray-500 dark:text-gray-400 font-semibold"
+                      class="text-[8px] leading-none text-gray-500 dark:text-gray-400"
                     >+{{ taskCountsByDate[cell.date] - 3 }}</span>
                   </div>
                 </div>
@@ -909,7 +909,7 @@ watch(() => route.path, () => {
             <template #content>
               <div class="w-80 max-h-96 flex flex-col">
                 <div class="flex items-center justify-between px-4 py-3 border-b border-default">
-                  <h4 class="font-semibold text-sm">Bildirimler</h4>
+                  <h4 class="text-sm">Bildirimler</h4>
                   <UButton
                     v-if="unreadCount > 0"
                     label="Tümünü oku"
@@ -1145,7 +1145,7 @@ watch(() => route.path, () => {
             <UIcon name="i-lucide-bot" class="size-8 text-primary" />
           </div>
           <div class="space-y-2">
-            <h3 class="text-lg font-semibold">AI Satış Koçu Aktif Değil</h3>
+            <h3 class="text-lg">AI Satış Koçu Aktif Değil</h3>
             <p class="text-sm text-muted">
               Bu özellik, yapay zeka destekli satış önerileri sunarak ekibinizin performansını artırır.
               Hangi müşteriyi aramanız gerektiğini, ne söylemeniz gerektiğini ve önceliklendirmeyi sizin için yapar.

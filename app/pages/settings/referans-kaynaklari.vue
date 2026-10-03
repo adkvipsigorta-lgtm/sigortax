@@ -92,7 +92,7 @@ function getRowActions(item: ReferenceSource) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Referans Kaynakları</h1>
+      <h1 class="text-xl">Referans Kaynakları</h1>
       <p class="text-sm text-muted mt-1">İş kaynakları ve komisyon oranları.</p>
     </div>
 
@@ -103,7 +103,7 @@ function getRowActions(item: ReferenceSource) {
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-rssearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rssearch:top-0 peer-focus-within/fl-rssearch:-translate-y-1/2 peer-focus-within/fl-rssearch:text-xs peer-focus-within/fl-rssearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rssearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-[var(--ui-text-highlighted)]">Kaynak Ara</label>
           </div>
-          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -120,14 +120,14 @@ function getRowActions(item: ReferenceSource) {
           <template #name-header="{ column }"><SortableHeader label="Kaynak Adı" :column="column" /></template>
           <template #commissionRate-header="{ column }"><SortableHeader label="Komisyon" :column="column" /></template>
 
-          <template #name-cell="{ row }"><span class="font-semibold truncate block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span></template>
+          <template #name-cell="{ row }"><span class="truncate block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span></template>
           <template #businessType-cell="{ row }">
             <UBadge :color="row.original.businessType === 'NEW' ? 'info' : row.original.businessType === 'RENEWAL' ? 'success' : 'neutral'" variant="subtle" size="sm">
               {{ row.original.businessType === 'NEW' ? 'Yeni İş' : row.original.businessType === 'RENEWAL' ? 'Yenileme' : 'Tümü' }}
             </UBadge>
           </template>
-          <template #commissionRate-cell="{ row }"><span class="tabular-nums font-semibold">%{{ row.original.commissionRate }}</span></template>
-          <template #policyCount-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.policyCount }}</span></template>
+          <template #commissionRate-cell="{ row }"><span class="tabular-nums">%{{ row.original.commissionRate }}</span></template>
+          <template #policyCount-cell="{ row }"><span class="tabular-nums">{{ row.original.policyCount }}</span></template>
           <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)"><UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" /></UDropdownMenu>
@@ -165,8 +165,8 @@ function getRowActions(item: ReferenceSource) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingSource" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingSource" :disabled="savingSource" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingSource" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingSource" :disabled="savingSource" />
           </div>
         </UForm>
       </template>
@@ -187,8 +187,8 @@ function getRowActions(item: ReferenceSource) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

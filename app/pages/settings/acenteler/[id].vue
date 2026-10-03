@@ -219,7 +219,7 @@ const stats = computed(() => {
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="font-semibold">{{ branch.name }}</h3>
+                <h3 >{{ branch.name }}</h3>
                 <UBadge :color="branch.isActive ? 'success' : 'neutral'" variant="solid" size="xs">
                   {{ branch.isActive ? 'Aktif' : 'Pasif' }}
                 </UBadge>
@@ -266,7 +266,7 @@ const stats = computed(() => {
           <button class="w-full flex items-center justify-between cursor-pointer" @click="aiOpen = !aiOpen">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-bar-chart-3" class="size-4 text-amber-500" />
-              <h3 class="font-semibold">Performans Analizi</h3>
+              <h3 >Performans Analizi</h3>
             </div>
             <UIcon
               :name="aiOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
@@ -293,7 +293,7 @@ const stats = computed(() => {
         <!-- Ürün Dağılımı -->
         <UCard v-if="productChartData">
           <template #header>
-            <h3 class="font-semibold">Ürün Dağılımı</h3>
+            <h3 >Ürün Dağılımı</h3>
           </template>
           <div class="flex gap-6">
             <div class="w-40 h-40 shrink-0">
@@ -312,7 +312,7 @@ const stats = computed(() => {
         <!-- Aylık Üretim -->
         <UCard v-if="monthlyChartData">
           <template #header>
-            <h3 class="font-semibold">Aylık Üretim (Son 12 Ay)</h3>
+            <h3 >Aylık Üretim (Son 12 Ay)</h3>
           </template>
           <div class="h-48">
             <Bar :data="monthlyChartData" :options="barOptions" />
@@ -323,7 +323,7 @@ const stats = computed(() => {
       <!-- Ürün Kırılımı Tablo -->
       <UCard v-if="branch.byProduct?.length">
         <template #header>
-          <h3 class="font-semibold">Ürün Kırılımı</h3>
+          <h3 >Ürün Kırılımı</h3>
         </template>
         <div class="border border-default rounded-lg overflow-hidden">
           <table class="text-xs w-full table-fixed">
@@ -343,7 +343,7 @@ const stats = computed(() => {
                 <td class="py-2 px-3">
                   <div class="flex items-center gap-2">
                     <span class="size-2.5 rounded-full shrink-0" :style="{ backgroundColor: toHex(p.color) }" />
-                    <span class="font-semibold">{{ p.name }}</span>
+                    <span >{{ p.name }}</span>
                   </div>
                 </td>
                 <td class="py-2 px-3 text-right tabular-nums">{{ p.count }}</td>
@@ -374,7 +374,7 @@ const stats = computed(() => {
       <!-- Yıllık Üretim (Son 5 Yıl) -->
       <UCard v-if="branch.yearly?.length">
         <template #header>
-          <h3 class="font-semibold">Yıllık Üretim (Son 5 Yıl)</h3>
+          <h3 >Yıllık Üretim (Son 5 Yıl)</h3>
         </template>
         <div class="border border-default rounded-lg overflow-hidden">
           <table class="text-xs w-full table-fixed">
@@ -390,7 +390,7 @@ const stats = computed(() => {
             </thead>
             <tbody>
               <tr v-for="y in branch.yearly" :key="y.year" class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                <td class="py-2 px-3 font-semibold">{{ y.year }}</td>
+                <td class="py-2 px-3">{{ y.year }}</td>
                 <td class="py-2 px-3 text-right tabular-nums">{{ y.count }}</td>
                 <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(y.gross) }} ₺</td>
                 <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(y.net) }} ₺</td>
@@ -406,7 +406,7 @@ const stats = computed(() => {
       <UCard>
         <template #header>
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h3 class="font-semibold">Poliçeler</h3>
+            <h3 >Poliçeler</h3>
             <div class="flex items-center gap-3">
               <USelect v-model="policyDateType" :items="[{ label: 'Tanzim Tarihi', value: 'issued_at' }, { label: 'Başlangıç Tarihi', value: 'starts_at' }]" size="xs" class="w-[180px] h-[30px]" />
               <div class="flex items-center gap-1 border border-gray-300 dark:border-gray-700 rounded-lg px-2 h-[30px]">
@@ -426,7 +426,7 @@ const stats = computed(() => {
             <span class="text-muted">{{ policiesTotals.count }} poliçe</span>
             <span>Brüt: <strong>{{ formatCurrency(policiesTotals.gross) }} ₺</strong></span>
             <span>Komisyon: <strong>{{ formatCurrency(policiesTotals.commission) }} ₺</strong></span>
-            <span class="text-success font-semibold">Hak Ediş: {{ formatCurrency(policiesTotals.earning) }} ₺</span>
+            <span class="text-success">Hak Ediş: {{ formatCurrency(policiesTotals.earning) }} ₺</span>
           </div>
 
           <div class="border border-default rounded-lg overflow-hidden">
@@ -451,7 +451,7 @@ const stats = computed(() => {
                   class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
                   :class="p.isCancelled ? 'bg-red-50/50 dark:bg-red-900/10' : ''"
                 >
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis"><span class="font-semibold text-primary truncate block" :title="p.customerName">{{ p.customerName }}</span></td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis"><span class="text-primary truncate block" :title="p.customerName">{{ p.customerName }}</span></td>
                   <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis font-mono text-muted">{{ p.policyNo }}</td>
                   <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
                     <span class="inline-block rounded px-1.5 py-0.5 text-xs font-medium" :style="{ backgroundColor: toHex(p.insuranceColor) + '1a', color: toHex(p.insuranceColor) }">

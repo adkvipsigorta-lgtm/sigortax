@@ -393,7 +393,7 @@ function resetToCredentials() {
           size="xl"
           :loading="loginLoading"
           :disabled="!isLoginFormValid"
-          class="font-semibold"
+          
         >
           Giriş Yap
         </UButton>
@@ -435,7 +435,7 @@ function resetToCredentials() {
           size="xl"
           :loading="totpLoading"
           :disabled="!totpState.code || totpState.code.length < 6"
-          class="font-semibold"
+          
         >
           Doğrula
         </UButton>
@@ -474,7 +474,7 @@ function resetToCredentials() {
           label="Kodu Taradım, Devam Et"
           block
           size="xl"
-          class="font-semibold"
+          
           @click="step = 'setup-verify'"
         />
 
@@ -484,7 +484,7 @@ function resetToCredentials() {
           size="xl"
           color="neutral"
           variant="outline"
-          class="font-semibold"
+          
           @click="resetToCredentials"
         />
       </div>
@@ -519,7 +519,7 @@ function resetToCredentials() {
           size="xl"
           :loading="setupEnableLoading"
           :disabled="!setupVerifyCode || setupVerifyCode.length !== 6"
-          class="font-semibold"
+          
           @click="handleSetupVerify"
         />
 
@@ -529,7 +529,7 @@ function resetToCredentials() {
           size="xl"
           color="neutral"
           variant="outline"
-          class="font-semibold"
+          
           @click="step = 'setup-qr'"
         />
       </div>
@@ -567,7 +567,7 @@ function resetToCredentials() {
           color="neutral"
           variant="outline"
           icon="i-lucide-copy"
-          class="font-semibold"
+          
           @click="copyRecoveryCodes"
         />
 
@@ -582,7 +582,7 @@ function resetToCredentials() {
           size="xl"
           :loading="confirmLoading"
           :disabled="!recoveryConfirmed"
-          class="font-semibold"
+          
           @click="handleConfirmSetup"
         />
       </div>

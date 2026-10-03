@@ -232,10 +232,10 @@ onMounted(fetchOptions)
     <div class="mb-6 pb-4 border-b border-default">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-xl font-semibold">Acente Bilgileri</h1>
+          <h1 class="text-xl">Acente Bilgileri</h1>
           <p class="text-sm text-muted mt-1">Acentenizin genel bilgilerini ve entegrasyon ayarlarını yönetin.</p>
         </div>
-        <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl" class="font-semibold" :loading="saving" @click="saveOptions" />
+        <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="saveOptions" />
       </div>
     </div>
 
@@ -256,7 +256,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('genel')">
-            <h2 class="font-semibold">Genel Bilgiler</h2>
+            <h2 >Genel Bilgiler</h2>
             <UIcon :name="openSections.has('genel') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -274,10 +274,10 @@ onMounted(fetchOptions)
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="cursor-pointer">
-                  <UButton :label="form.agency_logo ? 'Değiştir' : 'Yükle'" icon="i-lucide-upload" color="neutral" variant="outline" size="xl" class="font-semibold" :loading="uploadingLogo" as="span" />
+                  <UButton :label="form.agency_logo ? 'Değiştir' : 'Yükle'" icon="i-lucide-upload" color="neutral" variant="outline" size="xl"  :loading="uploadingLogo" as="span" />
                   <input type="file" accept="image/*" class="hidden" :disabled="!isAdmin" @change="handleLogoUpload">
                 </label>
-                <UButton v-if="form.agency_logo" label="Kaldır" icon="i-lucide-trash-2" color="error" variant="ghost" size="xl" class="font-semibold" @click="removeLogo" />
+                <UButton v-if="form.agency_logo" label="Kaldır" icon="i-lucide-trash-2" color="error" variant="ghost" size="xl"  @click="removeLogo" />
               </div>
             </div>
           </div>
@@ -302,7 +302,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('iletisim')">
-            <h2 class="font-semibold">İletişim Bilgileri</h2>
+            <h2 >İletişim Bilgileri</h2>
             <UIcon :name="openSections.has('iletisim') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -329,7 +329,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('resmi')">
-            <h2 class="font-semibold">Resmi Bilgiler</h2>
+            <h2 >Resmi Bilgiler</h2>
             <UIcon :name="openSections.has('resmi') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -357,7 +357,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('ai')">
-            <h2 class="font-semibold">AI Entegrasyonu</h2>
+            <h2 >AI Entegrasyonu</h2>
             <UIcon :name="openSections.has('ai') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -408,7 +408,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('portal')">
-            <h2 class="font-semibold">Müşteri Portalı</h2>
+            <h2 >Müşteri Portalı</h2>
             <UIcon :name="openSections.has('portal') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -433,7 +433,7 @@ onMounted(fetchOptions)
       <UCard>
         <template #header>
           <button type="button" class="w-full flex items-center justify-between cursor-pointer" @click="toggleSection('sms')">
-            <h2 class="font-semibold">Netgsm SMS Entegrasyonu</h2>
+            <h2 >Netgsm SMS Entegrasyonu</h2>
             <UIcon :name="openSections.has('sms') ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" class="size-5 text-muted" />
           </button>
         </template>
@@ -494,7 +494,7 @@ onMounted(fetchOptions)
         </template>
         <template #footer>
           <div class="flex justify-end">
-            <UButton label="Tamam" size="xl" class="font-semibold" @click="showApiKeyHelp = false" />
+            <UButton label="Tamam" size="xl"  @click="showApiKeyHelp = false" />
           </div>
         </template>
       </UModal>

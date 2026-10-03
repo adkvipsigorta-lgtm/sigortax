@@ -82,7 +82,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Çapraz Satış Analizi</h1>
+      <h1 class="text-xl">Çapraz Satış Analizi</h1>
       <p class="text-sm text-muted mt-1">Bir sigorta türüne sahip olan ancak başka bir sigorta türüne sahip olmayan müşterileri bulun.</p>
     </div>
 
@@ -103,7 +103,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
           <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', notType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sahip Olmadığı Tür</label>
         </div>
 
-        <UButton label="Ara" icon="i-lucide-search" size="xl" class="font-semibold" :loading="crossSell.loading.value" :disabled="!hasType || !notType || hasType === notType" @click="doSearch" />
+        <UButton label="Ara" icon="i-lucide-search" size="xl"  :loading="crossSell.loading.value" :disabled="!hasType || !notType || hasType === notType" @click="doSearch" />
       </div>
 
       <p v-if="hasType && notType && hasType === notType" class="text-sm text-red-500 mt-3">Aynı sigorta türünü seçemezsiniz.</p>
@@ -113,7 +113,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
     <UCard v-if="searched" :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 class="font-semibold">
+          <h3 >
             Sonuçlar
             <span class="text-xs font-normal text-muted ml-2">({{ crossSell.total.value }} müşteri)</span>
           </h3>
@@ -136,7 +136,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
 
           <template #customerName-cell="{ row }">
             <div class="flex flex-col">
-              <NuxtLink :to="`/musteriler/${row.original.customerId}`" class="font-semibold text-primary hover:underline uppercase">{{ row.original.customerName }}</NuxtLink>
+              <NuxtLink :to="`/musteriler/${row.original.customerId}`" class="text-primary hover:underline uppercase">{{ row.original.customerName }}</NuxtLink>
               <span v-if="row.original.identityNo" class="text-xs text-muted">{{ row.original.identityNo }}</span>
             </div>
           </template>
@@ -144,7 +144,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
           <template #plateNo-cell="{ row }"><span>{{ row.original.plateNo || '-' }}</span></template>
           <template #registrationNo-cell="{ row }"><span>{{ row.original.registrationNo || '-' }}</span></template>
           <template #insuranceName-cell="{ row }">
-            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold" :style="{ backgroundColor: toHex(row.original.insuranceColor) + '1a', color: toHex(row.original.insuranceColor) }">{{ row.original.insuranceName }}</span>
+            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" :style="{ backgroundColor: toHex(row.original.insuranceColor) + '1a', color: toHex(row.original.insuranceColor) }">{{ row.original.insuranceName }}</span>
           </template>
           <template #companyName-cell="{ row }"><span>{{ row.original.companyName || '-' }}</span></template>
           <template #expiresAt-cell="{ row }"><span class="tabular-nums">{{ formatDate(row.original.expiresAt) }}</span></template>
@@ -201,8 +201,8 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" @click="showAssignModal = false" />
-          <UButton label="Oluştur" icon="i-lucide-plus" size="xl" class="font-semibold" :loading="savingTask" @click="createTask" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showAssignModal = false" />
+          <UButton label="Oluştur" icon="i-lucide-plus" size="xl"  :loading="savingTask" @click="createTask" />
         </div>
       </template>
     </UModal>

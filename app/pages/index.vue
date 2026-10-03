@@ -1465,20 +1465,23 @@ function toggleDashboardTab(tab: string) {
     <!-- Grafikler Tab İçeriği -->
     <div v-if="user?.role === 'admin' && dashboardTab === 'charts'">
     <div class="flex items-center justify-end gap-2 mb-4">
-      <button
+      <UButton
         v-for="opt in [{ label: 'Tümü', value: 'all' }, { label: 'Acentem', value: 'self' }, { label: 'Tali Giden', value: 'outgoing' }]"
         :key="opt.value"
-        class="px-3 py-1.5 text-xs font-medium rounded-full border transition-colors"
-        :class="chartView === opt.value ? 'bg-primary text-white border-primary' : 'border-default text-muted hover:text-foreground'"
+        :label="opt.label"
+        size="xl"
+        :color="chartView === opt.value ? 'primary' : 'neutral'"
+        :variant="chartView === opt.value ? 'solid' : 'outline'"
+        class="min-w-[110px] justify-center"
         @click="chartView = opt.value as 'all' | 'self' | 'outgoing'"
-      >{{ opt.label }}</button>
+      />
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <UCard class="xl:col-span-2">
           <template #header>
             <div class="flex items-center justify-between flex-wrap gap-2">
               <div>
-                <h3 class="font-semibold">Prim Gelişimi</h3>
+                <h3 >Prim Gelişimi</h3>
               </div>
               <div class="flex items-center gap-4 text-xs">
                 <span class="flex items-center gap-1.5">
@@ -1562,7 +1565,7 @@ function toggleDashboardTab(tab: string) {
       <!-- Insurance Group Distribution -->
       <UCard>
         <template #header>
-          <h3 class="font-semibold">Sigorta Dağılımı</h3>
+          <h3 >Sigorta Dağılımı</h3>
           <p class="text-xs text-muted">Aktif Poliçeler - Grup Bazlı Prim Dağılımı</p>
         </template>
         <div v-if="!loading && groupDistribution.length" class="h-72 overflow-y-auto flex flex-col space-y-4 pr-1 py-1">
@@ -1629,32 +1632,32 @@ function toggleDashboardTab(tab: string) {
       <template #header>
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h3 class="font-semibold">Görev Takibi</h3>
+            <h3 >Görev Takibi</h3>
             <p class="text-xs text-muted">{{ showFollowUpCalls ? 'Müşteri takip araması görevleri' : 'Yenileme ve teklif görevleri' }}</p>
           </div>
           <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
             <UButton
               label="Bekleyen"
-              size="xs"
+              size="xl"
               :color="!showFollowUpCalls && renewalStatuses.includes('PENDING') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('PENDING') ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[80px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
               @click="selectStatus('PENDING')"
             />
             <UButton
               label="Devam Eden"
-              size="xs"
+              size="xl"
               :color="!showFollowUpCalls && renewalStatuses.includes('IN_PROGRESS') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('IN_PROGRESS') ? 'solid' : 'outline'"
-              class="flex-1 sm:flex-none sm:min-w-[80px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
               @click="selectStatus('IN_PROGRESS')"
             />
             <UButton
-              size="xs"
+              size="xl"
               :color="showFollowUpCalls ? 'info' : 'neutral'"
               :variant="showFollowUpCalls ? 'solid' : 'outline'"
               icon="i-lucide-phone-call"
-              class="flex-1 sm:flex-none sm:min-w-[80px] justify-center"
+              class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
               @click="showFollowUpCalls ? (showFollowUpCalls = false) : (showFollowUpCalls = true)"
             >
               Takip Aramaları
@@ -1663,10 +1666,10 @@ function toggleDashboardTab(tab: string) {
             <UButton
               v-if="isAdmin"
               label="Süresi Geçen"
-              size="xs"
+              size="xl"
               :color="!showFollowUpCalls && renewalStatuses.includes('EXPIRED') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('EXPIRED') ? 'solid' : 'outline'"
-              class="hidden sm:inline-flex sm:min-w-[80px] justify-center"
+              class="hidden sm:inline-flex sm:min-w-[110px] justify-center"
               @click="selectStatus('EXPIRED')"
             />
           </div>
@@ -1687,7 +1690,7 @@ function toggleDashboardTab(tab: string) {
         <template v-for="group in groupedRenewals" :key="'m-'+group.label">
           <div class="flex items-center gap-2 px-2 py-1.5">
             <UIcon :name="group.icon" :class="[group.color, 'size-4']" />
-            <span class="text-sm font-semibold" :class="group.color">{{ group.label }}</span>
+            <span class="text-sm" :class="group.color">{{ group.label }}</span>
             <span class="text-xs text-muted">({{ group.totalWithCompleted }})</span>
           </div>
           <div
@@ -1756,7 +1759,7 @@ function toggleDashboardTab(tab: string) {
               <td colspan="9" class="py-2 px-3 bg-gray-100/80 dark:bg-gray-800/80 border-b border-default">
                 <div class="flex items-center gap-2 flex-wrap">
                   <UIcon :name="group.icon" :class="[group.color, 'size-4']" />
-                  <span class="text-sm font-semibold" :class="group.color">{{ group.label }}</span>
+                  <span class="text-sm" :class="group.color">{{ group.label }}</span>
                   <span class="text-xs text-muted">({{ group.totalWithCompleted }})</span>
                   <template v-if="group.totalWithCompleted > 0">
                     <span class="text-xs text-muted ml-1">—</span>
@@ -1808,7 +1811,7 @@ function toggleDashboardTab(tab: string) {
                     <NuxtLink v-if="r.customerId" :to="`/musteriler/${r.customerId}`" class="text-primary font-semibold hover:underline truncate block" :title="r.customerName">
                       {{ r.customerName }}
                     </NuxtLink>
-                    <span v-else class="font-semibold truncate block" :title="r.customerName">{{ r.customerName || '-' }}</span>
+                    <span v-else class="truncate block" :title="r.customerName">{{ r.customerName || '-' }}</span>
                     <span v-if="r.customerIdentity" class="text-muted truncate block hidden sm:block">{{ r.customerIdentity }}</span>
                   </div>
                 </div>
@@ -2017,7 +2020,7 @@ function toggleDashboardTab(tab: string) {
                     >
                       <div class="px-3 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-b border-default flex items-center justify-between">
                         <span class="text-xs">
-                          Notu Ekleyen: <span class="font-semibold text-primary">{{ note.createdByName }}</span>
+                          Notu Ekleyen: <span class="text-primary">{{ note.createdByName }}</span>
                           <span class="mx-1 text-muted">/</span>
                           <span class="text-muted">{{ formatNoteDate(note.createdAt) }}</span>
                         </span>
@@ -2389,7 +2392,7 @@ function toggleDashboardTab(tab: string) {
               <div class="px-4 py-3 space-y-3">
                 <!-- Müşteri + Öncelik + Kalan gün -->
                 <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-semibold">{{ aiCoachData.topAction.customerName }}</span>
+                  <span >{{ aiCoachData.topAction.customerName }}</span>
                   <UBadge :color="aiPriorityColor(aiCoachData.topAction.priority)" variant="solid" size="sm">{{ aiCoachData.topAction.priority }}</UBadge>
                   <span v-if="aiCoachData.topAction.daysLeft != null" class="text-xs text-muted">
                     <template v-if="aiCoachData.topAction.daysLeft < 0">{{ Math.abs(aiCoachData.topAction.daysLeft) }} gün geçmiş</template>
@@ -2466,7 +2469,7 @@ function toggleDashboardTab(tab: string) {
                   >
                     <div class="flex items-center gap-2">
                       <UBadge :color="aiPriorityColor(t.priority)" variant="solid" size="sm" class="w-16 justify-center shrink-0">{{ t.priority }}</UBadge>
-                      <span class="font-semibold text-sm truncate">{{ t.customerName }}</span>
+                      <span class="text-sm truncate">{{ t.customerName }}</span>
                       <span v-if="t.daysLeft != null" class="ml-auto text-xs text-muted shrink-0">
                         <template v-if="t.daysLeft < 0">{{ Math.abs(t.daysLeft) }} gün geçmiş</template>
                         <template v-else-if="t.daysLeft === 0">Bugün</template>
@@ -2565,7 +2568,7 @@ function toggleDashboardTab(tab: string) {
               <!-- Başlık -->
               <div class="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-900/20">
                 <UBadge color="error" variant="subtle" size="sm">{{ t.typeLabel }}</UBadge>
-                <span class="font-semibold text-sm">{{ t.customerName || '-' }}</span>
+                <span class="text-sm">{{ t.customerName || '-' }}</span>
                 <span v-if="t.daysLeft != null" class="ml-auto text-xs font-medium text-red-600 dark:text-red-400">
                   {{ Math.abs(t.daysLeft) }} gün geçmiş
                 </span>

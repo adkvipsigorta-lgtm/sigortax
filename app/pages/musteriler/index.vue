@@ -577,7 +577,7 @@ async function exportToExcel() {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Müşteriler</h1>
+      <h1 class="text-xl">Müşteriler</h1>
       <p class="text-sm text-muted mt-1">Müşteri listesi ve yönetimi.</p>
     </div>
 
@@ -598,7 +598,7 @@ async function exportToExcel() {
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Kategori</label>
             </div>
           </div>
-          <UButton v-if="can('customers.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="font-semibold hidden sm:flex shrink-0" :loading="exporting" @click="exportToExcel" />
+          <UButton v-if="can('customers.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="hidden sm:flex shrink-0" :loading="exporting" @click="exportToExcel" />
         </div>
       </template>
 
@@ -644,7 +644,7 @@ async function exportToExcel() {
           <div class="min-w-0">
             <NuxtLink
               :to="`/musteriler/${row.original.id}`"
-              class="font-semibold text-primary hover:underline truncate block"
+              class="text-primary hover:underline truncate block"
               :title="row.original.name"
             >
               {{ row.original.name }}
@@ -854,8 +854,8 @@ async function exportToExcel() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="saving" @click="isModalOpen = false" />
-          <UButton :label="editingCustomer ? 'Güncelle' : 'Kaydet'" size="xl" class="font-semibold" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
+          <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="saving" @click="isModalOpen = false" />
+          <UButton :label="editingCustomer ? 'Güncelle' : 'Kaydet'" size="xl"  :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
         </div>
       </template>
     </UModal>
@@ -867,8 +867,8 @@ async function exportToExcel() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="deletingCustomer" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" :loading="deletingCustomer" :disabled="deletingCustomer" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  :disabled="deletingCustomer" @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  :loading="deletingCustomer" :disabled="deletingCustomer" @click="doDelete" />
         </div>
       </template>
     </UModal>

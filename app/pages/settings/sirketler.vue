@@ -104,7 +104,7 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Sigorta Şirketleri</h1>
+      <h1 class="text-xl">Sigorta Şirketleri</h1>
       <p class="text-sm text-muted mt-1">Şirket listesi ve yönetimi.</p>
     </div>
 
@@ -115,7 +115,7 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
             <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-csearch" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Şirket Ara</label>
           </div>
-          <UButton label="Yeni Şirket" icon="i-lucide-plus" size="xl" class="font-semibold" @click="openAddModal" />
+          <UButton label="Yeni Şirket" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
         </div>
       </template>
 
@@ -131,14 +131,14 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
             <img v-if="row.original.logo" :src="row.original.logo" :alt="row.original.name" class="size-8 rounded object-contain bg-white p-0.5" @error="($event.target as HTMLImageElement).style.display = 'none'">
             <div v-else class="size-8 rounded bg-neutral-100 flex items-center justify-center text-xs font-bold text-muted">{{ row.original.name.charAt(0) }}</div>
           </template>
-          <template #name-cell="{ row }"><span class="font-semibold truncate block" :title="row.original.name">{{ row.original.name }}</span></template>
+          <template #name-cell="{ row }"><span class="truncate block" :title="row.original.name">{{ row.original.name }}</span></template>
           <template #color-cell="{ row }"><div class="size-5 rounded-full border border-default" :style="{ backgroundColor: row.original.color || '#3b82f6' }" /></template>
           <template #website-cell="{ row }">
             <a v-if="row.original.website" :href="row.original.website" target="_blank" rel="noopener" class="text-primary hover:underline flex items-center gap-1"><UIcon name="i-lucide-external-link" class="size-3.5" />{{ getDomain(row.original.website) }}</a>
             <span v-else class="text-muted">-</span>
           </template>
-          <template #activePolicyCount-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.activePolicyCount ?? 0 }}</span></template>
-          <template #policyCount-cell="{ row }"><span class="tabular-nums font-semibold">{{ row.original.policyCount ?? 0 }}</span></template>
+          <template #activePolicyCount-cell="{ row }"><span class="tabular-nums">{{ row.original.activePolicyCount ?? 0 }}</span></template>
+          <template #policyCount-cell="{ row }"><span class="tabular-nums">{{ row.original.policyCount ?? 0 }}</span></template>
           <template #createdAt-cell="{ row }"><span class="tabular-nums text-muted">{{ formatDate(row.original.createdAt) }}</span></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)"><UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" /></UDropdownMenu>
@@ -205,8 +205,8 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl" class="font-semibold" :disabled="savingCompany" @click="isModalOpen = false" />
-            <UButton :label="editingCompany ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl" class="font-semibold" type="submit" :loading="savingCompany" :disabled="savingCompany" />
+            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingCompany" @click="isModalOpen = false" />
+            <UButton :label="editingCompany ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingCompany" :disabled="savingCompany" />
           </div>
         </UForm>
       </template>
@@ -227,8 +227,8 @@ function getDomain(url?: string | null) { if (!url) return null; try { return ne
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="font-semibold" @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl" class="font-semibold" @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
         </div>
       </template>
     </UModal>

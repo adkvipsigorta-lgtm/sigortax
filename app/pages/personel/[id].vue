@@ -229,7 +229,7 @@ const tabs = [
           {{ person.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
         </div>
         <div>
-          <h3 class="font-semibold">{{ person.name }}</h3>
+          <h3 >{{ person.name }}</h3>
           <div class="flex items-center gap-2 text-xs text-muted">
             <span>{{ person.position || 'Pozisyon belirtilmemiş' }}</span>
             <span>·</span>
@@ -275,7 +275,7 @@ const tabs = [
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-user" class="size-4 text-primary" />
-                <h3 class="font-semibold">Kişisel Bilgiler</h3>
+                <h3 >Kişisel Bilgiler</h3>
               </div>
             </template>
             <div class="space-y-3">
@@ -310,7 +310,7 @@ const tabs = [
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-briefcase" class="size-4 text-primary" />
-                <h3 class="font-semibold">İş Bilgileri</h3>
+                <h3 >İş Bilgileri</h3>
               </div>
             </template>
             <div class="space-y-3">
@@ -346,7 +346,7 @@ const tabs = [
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-heart-pulse" class="size-4 text-error" />
-                <h3 class="font-semibold">Acil Durum İletişim</h3>
+                <h3 >Acil Durum İletişim</h3>
               </div>
             </template>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -378,7 +378,7 @@ const tabs = [
       </div>
       <template v-else>
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold">İzin Bakiyeleri ({{ new Date().getFullYear() }})</h3>
+          <h3 >İzin Bakiyeleri ({{ new Date().getFullYear() }})</h3>
           <UButton label="İzin Talebi Oluştur" icon="i-lucide-plus" size="xs" @click="leaveModalOpen = true" />
         </div>
 
@@ -420,7 +420,7 @@ const tabs = [
           </UCard>
         </div>
 
-        <h3 class="font-semibold mt-6">İzin Geçmişi</h3>
+        <h3 class="mt-6">İzin Geçmişi</h3>
         <div v-if="leaveRequests.length === 0" class="text-center text-muted py-8 text-xs">
           Henüz izin talebi yok
         </div>
@@ -503,7 +503,7 @@ const tabs = [
     <!-- PERFORMANS TAB -->
     <div v-if="activeTab === 'performans'" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h3 class="font-semibold">Performans Özeti</h3>
+        <h3 >Performans Özeti</h3>
         <USelect
           v-model="perfYear"
           :items="[
@@ -544,7 +544,7 @@ const tabs = [
 
         <UCard>
           <template #header>
-            <h3 class="font-semibold">Aylık Kırılım</h3>
+            <h3 >Aylık Kırılım</h3>
           </template>
           <div v-if="performance.monthlyData.length === 0" class="text-center text-muted py-6 text-xs">
             Bu yıl için veri yok

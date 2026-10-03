@@ -297,7 +297,7 @@ onMounted(() => {
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl font-semibold">Profil ve Güvenlik</h1>
+      <h1 class="text-xl">Profil ve Güvenlik</h1>
       <p class="text-sm text-muted mt-1">Kişisel bilgilerinizi ve hesap güvenliği ayarlarınızı yönetin.</p>
     </div>
 
@@ -305,14 +305,14 @@ onMounted(() => {
     <UCard>
       <template #header>
         <div class="flex items-center justify-between">
-          <h2 class="font-semibold">Profil Bilgileri</h2>
+          <h2 >Profil Bilgileri</h2>
           <UButton
             label="Kaydet"
             icon="i-lucide-check"
             size="xl"
             :loading="saving"
             :disabled="!isProfileDirty"
-            class="font-semibold"
+            
             @click="saveProfile"
           />
         </div>
@@ -381,7 +381,7 @@ onMounted(() => {
     <section ref="securitySection" id="guvenlik" class="mt-6">
       <UCard>
         <template #header>
-          <h2 class="font-semibold">Güvenlik</h2>
+          <h2 >Güvenlik</h2>
           <p class="text-xs text-muted mt-0.5">Şifre ve iki adımlı doğrulama ayarlarınızı yönetin.</p>
         </template>
 
@@ -428,7 +428,7 @@ onMounted(() => {
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm top-1/2 -translate-y-1/2', 'peer-focus-within/fl-confpw:top-0 peer-focus-within/fl-confpw:-translate-y-1/2 peer-focus-within/fl-confpw:text-xs', 'peer-has-[input:not(:placeholder-shown)]/fl-confpw:top-0 peer-has-[input:not(:placeholder-shown)]/fl-confpw:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-confpw:text-xs', confirmPwTouched && confirmPwError ? 'text-red-500' : 'text-[var(--ui-text-muted)] peer-focus-within/fl-confpw:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-confpw:text-[var(--ui-text-highlighted)]']">Yeni Şifre (Tekrar)</label>
             </div>
 
-            <UButton label="Şifreyi Değiştir" icon="i-lucide-lock" block size="xl" class="font-semibold" :loading="changingPassword" @click="changePassword" />
+            <UButton label="Şifreyi Değiştir" icon="i-lucide-lock" block size="xl"  :loading="changingPassword" @click="changePassword" />
           </div>
         </div>
 
@@ -451,7 +451,7 @@ onMounted(() => {
             <p class="text-xs text-muted mb-4">
               İki adımlı doğrulama, hesabınıza giriş yaparken şifrenize ek olarak doğrulama uygulamasından (Google Authenticator, Authy vb.) bir kod girmenizi gerektirir.
             </p>
-            <UButton label="2FA Etkinleştir" icon="i-lucide-shield-check" size="xl" class="font-semibold" :loading="settingUp2FA" @click="startSetup" />
+            <UButton label="2FA Etkinleştir" icon="i-lucide-shield-check" size="xl"  :loading="settingUp2FA" @click="startSetup" />
           </div>
 
           <!-- QR Kurulum -->
@@ -472,8 +472,8 @@ onMounted(() => {
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-2facode:top-0 peer-focus-within/fl-2facode:-translate-y-1/2 peer-focus-within/fl-2facode:text-xs peer-focus-within/fl-2facode:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-2facode:top-0 peer-has-[input:not(:placeholder-shown)]/fl-2facode:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-2facode:text-xs peer-has-[input:not(:placeholder-shown)]/fl-2facode:text-[var(--ui-text-highlighted)]">Doğrulama Kodu</label>
               </div>
               <div class="flex gap-2">
-                <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="flex-1 font-semibold" @click="cancelSetup" />
-                <UButton label="Doğrula ve Etkinleştir" icon="i-lucide-check" size="xl" class="flex-1 font-semibold" :loading="enabling2FA" @click="verifyAndEnable" />
+                <UButton label="Vazgeç" color="neutral" variant="outline" size="xl" class="flex-1" @click="cancelSetup" />
+                <UButton label="Doğrula ve Etkinleştir" icon="i-lucide-check" size="xl" class="flex-1" :loading="enabling2FA" @click="verifyAndEnable" />
               </div>
             </div>
           </div>
@@ -493,8 +493,8 @@ onMounted(() => {
               <code v-for="code in recoveryCodes" :key="code" class="text-sm font-mono bg-neutral-100 px-3 py-2 rounded text-center">{{ code }}</code>
             </div>
             <div class="flex gap-2">
-              <UButton label="Kodları Kopyala" icon="i-lucide-copy" color="neutral" variant="outline" size="xl" class="font-semibold" @click="copyRecoveryCodes" />
-              <UButton label="Anladım, Kaydettim" icon="i-lucide-check" size="xl" class="font-semibold" @click="closeRecovery" />
+              <UButton label="Kodları Kopyala" icon="i-lucide-copy" color="neutral" variant="outline" size="xl"  @click="copyRecoveryCodes" />
+              <UButton label="Anladım, Kaydettim" icon="i-lucide-check" size="xl"  @click="closeRecovery" />
             </div>
           </div>
         </div>

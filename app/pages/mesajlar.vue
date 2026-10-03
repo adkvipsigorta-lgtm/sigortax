@@ -291,7 +291,7 @@ function getStatusColor(s: string) {
         <div class="flex flex-col gap-3">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="font-semibold">Mesajlar</h3>
+              <h3 >Mesajlar</h3>
               <p class="text-xs text-muted">SMS, WhatsApp ve e-posta mesajları</p>
             </div>
           </div>
@@ -355,7 +355,7 @@ function getStatusColor(s: string) {
                 </span>
               </td>
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <p v-if="msg.customerName" class="font-semibold truncate">{{ msg.customerName }}</p>
+                <p v-if="msg.customerName" class="truncate">{{ msg.customerName }}</p>
                 <span class="text-muted truncate block">{{ msg.recipient }}</span>
               </td>
               <td class="hidden md:table-cell py-2 px-3 overflow-hidden" style="max-width:0">
@@ -397,7 +397,7 @@ function getStatusColor(s: string) {
       <UCard class="lg:col-span-1">
         <template #header>
           <div class="flex items-center justify-between">
-            <h3 class="font-semibold">Müşteriler</h3>
+            <h3 >Müşteriler</h3>
             <UBadge v-if="composeForm.selectedCustomers.length" color="primary" variant="solid" size="sm">
               {{ composeForm.selectedCustomers.length }} seçili
             </UBadge>
@@ -448,7 +448,7 @@ function getStatusColor(s: string) {
       <!-- Message Compose -->
       <UCard class="lg:col-span-2">
         <template #header>
-          <h3 class="font-semibold">Mesaj Oluştur</h3>
+          <h3 >Mesaj Oluştur</h3>
         </template>
         <div class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
@@ -540,7 +540,7 @@ function getStatusColor(s: string) {
     <UCard v-if="activeTab === 'templates' && isAdmin">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="font-semibold">Mesaj Şablonları</h3>
+          <h3 >Mesaj Şablonları</h3>
           <UButton label="Yeni Sablon" icon="i-lucide-plus" size="sm" @click="openTemplateAdd" />
         </div>
       </template>

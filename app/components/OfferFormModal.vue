@@ -243,7 +243,7 @@ function resetForm() {
       <!-- Kaydetme overlay -->
       <div v-if="saving" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-white/85 dark:bg-gray-900/85 rounded-xl backdrop-blur-sm">
         <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
-        <p class="text-sm font-semibold">Teklif oluşturuluyor...</p>
+        <p class="text-sm">Teklif oluşturuluyor...</p>
       </div>
 
       <div class="flex flex-col gap-4 [&_input]:!font-semibold">
