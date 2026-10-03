@@ -1653,16 +1653,13 @@ function toggleDashboardTab(tab: string) {
               @click="selectStatus('IN_PROGRESS')"
             />
             <UButton
+              label="Takip Aramaları"
               size="xl"
               :color="showFollowUpCalls ? 'info' : 'neutral'"
               :variant="showFollowUpCalls ? 'solid' : 'outline'"
-              icon="i-lucide-phone-call"
               class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
               @click="showFollowUpCalls ? (showFollowUpCalls = false) : (showFollowUpCalls = true)"
-            >
-              Takip Aramaları
-              <UBadge v-if="followUpCount > 0" :label="String(followUpCount)" size="xs" color="neutral" variant="solid" class="ml-1" />
-            </UButton>
+            />
             <UButton
               v-if="isAdmin"
               label="Süresi Geçen"

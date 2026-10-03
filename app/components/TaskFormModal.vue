@@ -61,9 +61,9 @@ async function loadData() {
   } catch {}
 }
 
-watch(isOpen, (val) => {
+watch(isOpen, async (val) => {
   if (val) {
-    loadData()
+    await loadData()
     fetchFieldSettings()
     if (props.task) populateFromTask(props.task)
   }
