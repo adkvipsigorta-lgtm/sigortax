@@ -19,7 +19,6 @@ class UpdateHelper
         'api/VERSION.json',  // versiyon dosyasi sadece controller tarafindan yazilir
         'backups',           // kendi backup klasorumuzu silmeyelim
         'node_modules',
-        '.output',
         '.git',
         '.env',
     ];
