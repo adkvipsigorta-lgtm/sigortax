@@ -76,24 +76,7 @@ function fmtDate(d: string) {
   if (!d) return '—'
   try { return new Date(d).toLocaleDateString('tr-TR') } catch { return d }
 }
-function shortName(fullName?: string): string {
-  if (!fullName) return '—'
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const first = parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const lastInitial = parts[parts.length - 1].charAt(0).toLocaleUpperCase('tr')
-  return first + ' ' + lastInitial + '.'
-}
 
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6', error: '#ef4444', success: '#22c55e',
-  warning: '#f59e0b', info: '#8b5cf6', neutral: '#6b7280'
-}
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
 
 onMounted(async () => {
   try { const r = await get<any>('users?dropdown=1'); users.value = r.data || [] } catch {}
@@ -105,7 +88,7 @@ onMounted(async () => {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Satış Performansı</h1>
+      <h1 class="text-2xl font-semibold">Satış Performansı</h1>
       <p class="text-sm text-muted mt-1">Aylık poliçe üretimi ve satış detayları.</p>
     </div>
 
@@ -113,31 +96,31 @@ onMounted(async () => {
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold">{{ stats.total }}</p>
+          <p class="kpi-value">{{ stats.total }}</p>
           <p class="text-xs text-muted mt-1">Toplam Poliçe</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold text-primary">{{ stats.new }}</p>
+          <p class="kpi-value text-primary">{{ stats.new }}</p>
           <p class="text-xs text-muted mt-1">Yeni İş</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.renewal }}</p>
+          <p class="kpi-value text-green-600 dark:text-green-400">{{ stats.renewal }}</p>
           <p class="text-xs text-muted mt-1">Yenileme</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ fmt(stats.totalGross) }}</p>
+          <p class="kpi-value text-purple-600 dark:text-purple-400">{{ fmt(stats.totalGross) }}</p>
           <p class="text-xs text-muted mt-1">Brüt Prim</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.cancelled }}</p>
+          <p class="kpi-value text-red-600 dark:text-red-400">{{ stats.cancelled }}</p>
           <p class="text-xs text-muted mt-1">İptal</p>
         </div>
       </UCard>
@@ -146,25 +129,16 @@ onMounted(async () => {
     <!-- Tablo Kartı -->
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-wrap items-center gap-2">
-          <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[38px]">
+        <div class="filter-toolbar">
+          <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[var(--height-filter)]">
             <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
             <span class="text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ monthLabel }}</span>
             <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />
           </div>
-          <div v-if="isAdmin" class="relative fl-select  w-[200px]">
-            <USelect v-model="filterSoldBy" :items="userOptions" placeholder=" " class="w-full" @update:model-value="onSoldByChange" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
-          </div>
-          <div class="relative fl-select  w-[180px]">
-            <USelect v-model="filterType" :items="[{ label: 'Tüm İş Türleri', value: 'all' }, { label: 'YENİ İŞ', value: 'NEW' }, { label: 'YENİLEME', value: 'RENEWAL' }, { label: 'İPTAL', value: 'CANCELLED' }]" placeholder=" " class="w-full" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">İş Türü</label>
-          </div>
-          <div v-if="insuranceOptions.length" class="relative fl-select  w-[180px]">
-            <USelect v-model="filterInsurance" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...insuranceOptions.map(n => ({ label: n, value: n }))]" placeholder=" " class="w-full" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
-          </div>
-          <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="xl" color="error" variant="ghost"  @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
+          <USelect v-if="isAdmin" v-model="filterSoldBy" :items="userOptions" placeholder="Temsilci" class="filter-w-md" @update:model-value="onSoldByChange" />
+          <USelect v-model="filterType" :ui="filterDropdownUi" :items="[{ label: 'Tüm İş Türleri', value: 'all' }, { label: 'YENİ İŞ', value: 'NEW' }, { label: 'YENİLEME', value: 'RENEWAL' }, { label: 'İPTAL', value: 'CANCELLED' }]" placeholder="İş Türü" class="filter-w-md" />
+          <USelect v-if="insuranceOptions.length" v-model="filterInsurance" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...insuranceOptions.map(n => ({ label: n, value: n }))]" placeholder="Branş" class="filter-w-md" />
+          <UButton v-if="filterType !== 'all' || filterInsurance !== 'all' || filterSoldBy !== 'all'" icon="i-lucide-x" size="sm" color="error" variant="ghost" @click="filterType = 'all'; filterInsurance = 'all'; filterSoldBy = 'all'; onSoldByChange()" />
         </div>
       </template>
 
@@ -197,24 +171,24 @@ onMounted(async () => {
           <tbody>
             <tr v-for="p in filtered" :key="p.id" class="border-b border-default" :class="p.isCancelled ? 'bg-red-50/40 dark:bg-red-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors'">
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline truncate block" :title="p.customerName">{{ p.customerName }}</NuxtLink>
-                <span v-else class="truncate block" :title="p.customerName">{{ p.customerName || '—' }}</span>
+                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline overflow-hidden whitespace-nowrap block" :title="p.customerName">{{ formatPersonName(p.customerName || '', 'compact') }}</NuxtLink>
+                <span v-else class="overflow-hidden whitespace-nowrap block" :title="p.customerName">{{ formatPersonName(p.customerName || '', 'compact') || '—' }}</span>
               </td>
               <td class="hidden sm:table-cell py-2 px-3">
-                <span v-if="p.insuranceName" class="badge-cell" :style="{ backgroundColor: toHex(p.insuranceColor) + '1a', color: toHex(p.insuranceColor) }">{{ p.insuranceName }}</span>
+                <span v-if="p.insuranceName" class="badge-cell" :style="insuranceBadgeStyle(p.insuranceColor)">{{ insuranceShortLabel(p.insuranceName) }}</span>
                 <span v-else class="text-muted">—</span>
               </td>
-              <td class="hidden lg:table-cell py-2 px-3 text-muted truncate" :title="p.policyNo">{{ p.policyNo || '—' }}</td>
-              <td class="hidden md:table-cell py-2 px-3 truncate">{{ p.plateNo || '—' }}</td>
+              <td class="hidden lg:table-cell py-2 px-3 text-muted overflow-hidden whitespace-nowrap" :title="p.policyNo">{{ p.policyNo || '—' }}</td>
+              <td class="hidden md:table-cell py-2 px-3 overflow-hidden whitespace-nowrap">{{ p.plateNo || '—' }}</td>
               <td class="py-2 px-3">
                 <span v-if="p.isCancelled" class="badge-cell badge-error">İptal</span>
                 <span v-else-if="p.businessType" class="badge-cell" :class="p.businessType === 'NEW' ? 'badge-info' : 'badge-success'">{{ p.businessType === 'NEW' ? 'Yeni İş' : 'Yenileme' }}</span>
                 <span v-else class="text-muted">—</span>
               </td>
-              <td class="hidden lg:table-cell py-2 px-3 text-muted truncate">{{ p.referenceSourceName || '—' }}</td>
-              <td class="py-2 px-3 text-right tabular-nums font-bold" :class="p.isCancelled ? 'text-red-500' : ''">{{ fmt(p.grossPremium) }}</td>
-              <td class="hidden sm:table-cell py-2 px-3 truncate" :title="p.soldByName">{{ shortName(p.soldByName) }}</td>
-              <td class="hidden md:table-cell py-2 px-3 text-muted tabular-nums">{{ fmtDate(p.issuedAt) }}</td>
+              <td class="hidden lg:table-cell py-2 px-3 text-muted overflow-hidden whitespace-nowrap">{{ p.referenceSourceName || '—' }}</td>
+              <td class="py-2 px-3 table-money" :class="p.isCancelled ? 'text-red-500' : ''">{{ fmt(p.grossPremium) }}</td>
+              <td class="hidden sm:table-cell py-2 px-3 overflow-hidden whitespace-nowrap" :title="p.soldByName">{{ shortName(p.soldByName) }}</td>
+              <td class="hidden md:table-cell py-2 px-3 text-muted table-date">{{ fmtDate(p.issuedAt) }}</td>
             </tr>
           </tbody>
         </table>
@@ -223,7 +197,7 @@ onMounted(async () => {
       <!-- Alt Özet -->
       <div v-if="filtered.length" class="flex items-center justify-between mt-4 pt-3 border-t border-default">
         <p class="text-xs text-muted">{{ filtered.length }} poliçe</p>
-        <p class="text-sm font-bold tabular-nums">{{ fmt(filteredGross) }} ₺</p>
+        <p class="text-sm table-money">{{ fmt(filteredGross) }} ₺</p>
       </div>
     </UCard>
   </div>
@@ -232,23 +206,4 @@ onMounted(async () => {
 <style scoped>
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

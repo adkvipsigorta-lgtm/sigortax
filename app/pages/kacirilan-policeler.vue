@@ -21,7 +21,6 @@ const pagination = ref<any>(null)
 const tab = ref<'upcoming' | 'overdue'>('upcoming')
 const range = ref('')
 const branch = ref('all')
-const search = ref('')
 const statusFilter = ref('all')
 const page = ref(1)
 
@@ -91,7 +90,6 @@ async function fetchItems() {
     }
     if (range.value) params.range = range.value
     if (branch.value && branch.value !== 'all') params.branch = branch.value
-    if (search.value) params.search = search.value
     if (statusFilter.value && statusFilter.value !== 'all') params.status = statusFilter.value
 
     const res = await get('lost-policies', params)
@@ -111,15 +109,6 @@ watch([tab, range, branch, statusFilter], () => {
 })
 
 watch(page, () => fetchItems())
-
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(search, () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    page.value = 1
-    fetchItems()
-  }, 400)
-})
 
 onMounted(() => {
   fetchStats()
@@ -191,35 +180,10 @@ function onRegNoInput(item: any, value: string) {
 function exportExcel() {
   const params = new URLSearchParams({ tab: tab.value, token: token.value || '' })
   if (branch.value) params.set('branch', branch.value)
-  if (search.value) params.set('search', search.value)
   if (statusFilter.value) params.set('status', statusFilter.value)
   window.open(`/api/lost-policies/export?${params.toString()}`, '_blank')
 }
 
-
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6',
-  error: '#ef4444',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  info: '#8b5cf6',
-  neutral: '#6b7280'
-}
-
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
-
-function shortName(fullName?: string): string {
-  if (!fullName) return ''
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const first = parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const lastInitial = parts[parts.length - 1].charAt(0).toLocaleUpperCase('tr')
-  return first + ' ' + lastInitial + '.'
-}
 
 function formatCurrency(val: number) {
   return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val)
@@ -244,7 +208,7 @@ function urgencyBadge(days: number) {
   <div class="p-4 sm:p-6 space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Kaçırılan Poliçeler</h1>
+      <h1 class="text-2xl font-semibold">Kaçırılan Poliçeler</h1>
       <p class="text-sm text-muted mt-1">Yenilenmeyen poliçeleri takip edin ve geri kazanım sürecini yönetin.</p>
     </div>
 
@@ -252,31 +216,31 @@ function urgencyBadge(days: number) {
     <div class="hidden sm:grid grid-cols-2 lg:grid-cols-5 gap-3">
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-orange-400/50 transition-all" @click="tab = 'upcoming'; range = 'week'; statusFilter = 'all'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ statsLoading ? '...' : (stats?.thisWeek ?? 0) }}</p>
+          <p class="kpi-value text-orange-600 dark:text-orange-400">{{ statsLoading ? '...' : (stats?.thisWeek ?? 0) }}</p>
           <p class="text-xs text-muted mt-1">Bu Hafta</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-blue-400/50 transition-all" @click="tab = 'upcoming'; range = 'month'; statusFilter = 'all'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ statsLoading ? '...' : (stats?.thisMonth ?? 0) }}</p>
+          <p class="kpi-value text-blue-600 dark:text-blue-400">{{ statsLoading ? '...' : (stats?.thisMonth ?? 0) }}</p>
           <p class="text-xs text-muted mt-1">Bu Ay</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-red-400/50 transition-all" @click="tab = 'overdue'; range = ''; statusFilter = 'all'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ statsLoading ? '...' : (stats?.overdue ?? 0) }}</p>
+          <p class="kpi-value text-red-600 dark:text-red-400">{{ statsLoading ? '...' : (stats?.overdue ?? 0) }}</p>
           <p class="text-xs text-muted mt-1">Vadesi Geçmiş</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-green-400/50 transition-all" @click="tab = 'upcoming'; range = ''; statusFilter = 'WON'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ statsLoading ? '...' : (stats?.won ?? 0) }}</p>
+          <p class="kpi-value text-green-600 dark:text-green-400">{{ statsLoading ? '...' : (stats?.won ?? 0) }}</p>
           <p class="text-xs text-muted mt-1">Geri Kazanılan</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-amber-400/50 transition-all" @click="tab = 'upcoming'; range = ''; statusFilter = 'VEHICLE_SOLD'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ statsLoading ? '...' : (stats?.notNeeded ?? 0) }}</p>
+          <p class="kpi-value text-amber-600 dark:text-amber-400">{{ statsLoading ? '...' : (stats?.notNeeded ?? 0) }}</p>
           <p class="text-xs text-muted mt-1">İhtiyaç Duymuyor</p>
         </div>
       </UCard>
@@ -297,7 +261,6 @@ function urgencyBadge(days: number) {
               <!-- Sekmeler -->
               <div class="flex gap-1.5 shrink-0">
                 <UButton
-                  size="xl"
                   :color="tab === 'upcoming' ? 'primary' : 'neutral'"
                   :variant="tab === 'upcoming' ? 'solid' : 'outline'"
                   class="min-w-[130px] justify-center"
@@ -307,7 +270,6 @@ function urgencyBadge(days: number) {
                   <UBadge v-if="stats?.thisMonth" :label="String(stats.thisMonth)" size="xs" color="neutral" variant="subtle" class="ml-1" />
                 </UButton>
                 <UButton
-                  size="xl"
                   :color="tab === 'overdue' ? 'error' : 'neutral'"
                   :variant="tab === 'overdue' ? 'solid' : 'outline'"
                   class="min-w-[130px] justify-center"
@@ -318,20 +280,10 @@ function urgencyBadge(days: number) {
                 </UButton>
               </div>
               <!-- Filtreler -->
-              <div class="relative hidden sm:flex w-[200px] fl-input">
-                <UInput v-model="search" placeholder=" " class="w-full peer/fl-lpsearch" />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Müşteri, plaka, TC</label>
-              </div>
-              <div class="relative hidden sm:flex w-[180px] fl-select ">
-                <USelect v-model="branch" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...(stats?.branches || []).map((b: any) => ({ label: `${b.name} (${b.cnt})`, value: String(b.id) }))]" placeholder=" " class="w-full" />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Branş</label>
-              </div>
-              <div class="relative hidden sm:flex w-[160px] fl-select ">
-                <USelect v-model="statusFilter" :items="statusOptions" placeholder=" " class="w-full" />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
-              </div>
+              <USelect v-model="branch" :ui="filterDropdownUi" :items="[{ label: 'Tüm Branşlar', value: 'all' }, ...(stats?.branches || []).map((b: any) => ({ label: `${b.name} (${b.cnt})`, value: String(b.id) }))]" placeholder="Branş" class="hidden sm:flex filter-w-md" />
+              <USelect v-model="statusFilter" :ui="filterDropdownUi" :items="statusOptions" placeholder="Durum" class="hidden sm:flex filter-w-sm" />
             </div>
-            <UButton v-if="can('lost_policies.view')" label="Excel" icon="i-lucide-download" variant="outline" size="xl" class="hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
+            <UButton v-if="can('lost_policies.view')" label="Excel" icon="i-lucide-download" size="sm" variant="outline" class="hidden sm:flex" @click="exportExcel" title="Excel'e Aktar" />
           </div>
         </div>
       </template>
@@ -376,37 +328,32 @@ function urgencyBadge(days: number) {
                     <template #content>
                       <div class="px-4 py-3 flex items-center gap-3">
                         <UIcon name="i-lucide-phone" class="size-4 text-primary" />
-                        <span class="text-sm font-semibold tracking-wide">{{ formatPhone(item.customer_phone) }}</span>
+                        <span class="text-sm font-medium tracking-wide">{{ formatPhone(item.customer_phone) }}</span>
                       </div>
                     </template>
                   </UPopover>
                   <div v-else class="size-3.5 shrink-0" />
                   <div class="min-w-0">
-                    <NuxtLink :to="`/musteriler/${item.customer_id}`" class="text-primary hover:underline truncate block" :title="item.customer_name">
+                    <NuxtLink :to="`/musteriler/${item.customer_id}`" class="text-primary hover:underline overflow-hidden whitespace-nowrap block" :title="item.customer_name">
                       {{ item.customer_name }}
                     </NuxtLink>
-                    <span v-if="item.customer_identity" class="text-muted truncate block">{{ item.customer_identity }}</span>
+                    <span v-if="item.customer_identity" class="text-muted overflow-hidden whitespace-nowrap block">{{ item.customer_identity }}</span>
                   </div>
                 </div>
               </td>
               <!-- Poliçe Türü -->
               <td class="hidden sm:table-cell py-2 px-3">
-                <span
-                  class="badge-cell"
-                  :style="{ backgroundColor: toHex(item.branch_color) + '1a', color: toHex(item.branch_color) }"
-                >
-                  {{ item.branch_name }}
-                </span>
+                <span class="badge-cell" :style="insuranceBadgeStyle(item.branch_color)">{{ insuranceShortLabel(item.branch_name) }}</span>
               </td>
               <!-- Plaka -->
               <td class="hidden md:table-cell py-2 px-3">
-                <span v-if="item.plate_no" class="truncate block" :title="item.plate_no">{{ item.plate_no }}</span>
+                <span v-if="item.plate_no" class="overflow-hidden whitespace-nowrap block" :title="item.plate_no">{{ item.plate_no }}</span>
                 <span v-else class="text-muted">-</span>
               </td>
               <!-- Şirket -->
               <td class="hidden md:table-cell py-2 px-3 overflow-hidden" style="max-width:0">
-                <span class="truncate block">{{ item.company_name || '-' }}</span>
-                <span class="text-muted truncate block">{{ item.policy_no }}</span>
+                <span class="overflow-hidden whitespace-nowrap block">{{ item.company_name || '-' }}</span>
+                <span class="text-muted overflow-hidden whitespace-nowrap block">{{ item.policy_no }}</span>
               </td>
               <!-- Tahmini Vade -->
               <td class="hidden md:table-cell py-2 px-3">
@@ -424,7 +371,7 @@ function urgencyBadge(days: number) {
                 </span>
               </td>
               <!-- Son Prim -->
-              <td class="hidden md:table-cell py-2 px-3 text-right whitespace-nowrap tabular-nums">
+              <td class="hidden md:table-cell py-2 px-3 text-right whitespace-nowrap ">
                 <template v-if="item.action_status === 'WON' && item.new_premium">
                   <div class="text-[10px] text-muted line-through">{{ formatCurrency(item.gross_premium) }}</div>
                   <div class="text-green-600 dark:text-green-400">{{ formatCurrency(item.new_premium) }}</div>
@@ -494,7 +441,7 @@ function urgencyBadge(days: number) {
             <p class="text-sm">{{ vadeDegistirItem?.customer_name }}</p>
             <p class="text-xs text-muted mt-0.5">Mevcut bitiş tarihi: <span class="font-medium">{{ vadeDegistirItem ? formatDate(vadeDegistirItem.expires_at) : '' }}</span></p>
           </div>
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput type="date" v-model="newExpectedDate" placeholder=" " class="w-full peer/fl-vdate" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-vdate:top-0 peer-focus-within/fl-vdate:-translate-y-1/2 peer-focus-within/fl-vdate:text-xs peer-focus-within/fl-vdate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-vdate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-vdate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-vdate:text-[var(--ui-text-highlighted)]">Yeni Tahmini Vade Tarihi</label>
           </div>
@@ -506,8 +453,8 @@ function urgencyBadge(days: number) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="vadeDegistirOpen = false" />
-          <UButton label="Kaydet ve Görev Oluştur" icon="i-lucide-calendar-plus" size="xl"  :loading="vadeSaving" :disabled="!newExpectedDate" @click="saveVadeAndCreateTask" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="vadeDegistirOpen = false" />
+          <UButton label="Kaydet ve Görev Oluştur" icon="i-lucide-calendar-plus"  :loading="vadeSaving" :disabled="!newExpectedDate" @click="saveVadeAndCreateTask" />
         </div>
       </template>
     </UModal>
@@ -535,23 +482,4 @@ function urgencyBadge(days: number) {
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 td.kp-no-clip { overflow: visible; white-space: normal; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

@@ -138,7 +138,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
               <UIcon name="i-lucide-building-2" class="size-6 text-primary" />
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-900 dark:text-white">{{ agency.name }}</h1>
+              <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ agency.name }}</h1>
               <p class="text-sm text-muted">Acentemiz Hakkında</p>
             </div>
           </div>
@@ -154,25 +154,25 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-primary">{{ getYearCount() }}</p>
+            <p class="kpi-value text-primary">{{ getYearCount() }}</p>
             <p class="text-xs text-muted mt-1">Yıllık Tecrübe</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ formatFullCurrency(data.totalCustomers) }}</p>
+            <p class="kpi-value text-blue-600 dark:text-blue-400">{{ formatFullCurrency(data.totalCustomers) }}</p>
             <p class="text-xs text-muted mt-1">Toplam Müşteri</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ formatFullCurrency(data.activePolicies) }}</p>
+            <p class="kpi-value text-green-600 dark:text-green-400">{{ formatFullCurrency(data.activePolicies) }}</p>
             <p class="text-xs text-muted mt-1">Aktif Poliçe</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ formatCurrency(data.totalPremium) }} <span class="text-base font-normal">TL</span></p>
+            <p class="kpi-value text-amber-600 dark:text-amber-400">{{ formatCurrency(data.totalPremium) }} <span class="text-base font-normal">TL</span></p>
             <p class="text-xs text-muted mt-1">Toplam Üretim</p>
           </div>
         </UCard>
@@ -184,7 +184,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-history" class="size-5 text-amber-600 dark:text-amber-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Köklü Geçmişimiz ve İlk Günün Heyecanı</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Köklü Geçmişimiz ve İlk Günün Heyecanı</h2>
         </div>
         <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
           <p>
@@ -206,7 +206,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-bar-chart-3" class="size-5 text-green-600 dark:text-green-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Yıllara Sair İstikrarlı Büyümemiz ve Üretim Gücümüz</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Yıllara Sair İstikrarlı Büyümemiz ve Üretim Gücümüz</h2>
         </div>
         <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
           <p>
@@ -277,31 +277,31 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-user-check" class="size-5 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Müşteri Profilimiz ve Sadakat</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Müşteri Profilimiz ve Sadakat</h2>
         </div>
 
         <!-- Ozet Kartlar -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div class="kpi-value text-indigo-600 dark:text-indigo-400">
               %{{ getIndividualRate() }}
             </div>
             <div class="text-xs text-muted mt-1">Bireysel Müşteri</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            <div class="kpi-value text-gray-900 dark:text-white">
               %{{ getCorporateRate() }}
             </div>
             <div class="text-xs text-muted mt-1">Kurumsal Müşteri</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div class="kpi-value text-green-600 dark:text-green-400">
               %{{ data.loyalty?.returningRate || 0 }}
             </div>
             <div class="text-xs text-muted mt-1">Tekrar Gelen Müşteri</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            <div class="kpi-value text-gray-900 dark:text-white">
               {{ formatFullCurrency(data.loyalty?.y4plus || 0) }}
             </div>
             <div class="text-xs text-muted mt-1">4+ Yıllık Müşteri</div>
@@ -363,7 +363,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-shuffle" class="size-5 text-blue-600 dark:text-blue-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Pazar Dinamiklerine Uyum: Stratejik Dönüşümümüz</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Pazar Dinamiklerine Uyum: Stratejik Dönüşümümüz</h2>
         </div>
         <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed space-y-4 mb-8">
           <p>
@@ -445,7 +445,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-git-merge" class="size-5 text-teal-600 dark:text-teal-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Çapraz Satış Performansımız</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Çapraz Satış Performansımız</h2>
         </div>
         <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
           <p>
@@ -460,19 +460,19 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
         <!-- Ozet Kartlar -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-teal-600 dark:text-teal-400">%{{ data.crossSell.crossRate }}</div>
+            <div class="kpi-value text-teal-600 dark:text-teal-400">%{{ data.crossSell.crossRate }}</div>
             <div class="text-xs text-muted mt-1">Çapraz Satış Oranı</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ data.crossSell.avgProducts.toFixed(2) }}</div>
+            <div class="kpi-value text-gray-900 dark:text-white">{{ data.crossSell.avgProducts.toFixed(2) }}</div>
             <div class="text-xs text-muted mt-1">Ortalama Ürün/Müşteri</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ formatFullCurrency(data.crossSell.crossSold) }}</div>
+            <div class="kpi-value text-gray-900 dark:text-white">{{ formatFullCurrency(data.crossSell.crossSold) }}</div>
             <div class="text-xs text-muted mt-1">Çoklu Ürün Müşterisi</div>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ formatFullCurrency(data.crossSell.totalCustomers) }}</div>
+            <div class="kpi-value text-gray-900 dark:text-white">{{ formatFullCurrency(data.crossSell.totalCustomers) }}</div>
             <div class="text-xs text-muted mt-1">Aktif Müşteri</div>
           </div>
         </div>
@@ -534,7 +534,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
           <div class="size-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
             <UIcon name="i-lucide-handshake" class="size-5 text-purple-600 dark:text-purple-400" />
           </div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Güçlü İş Ortaklıklarımız</h2>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Güçlü İş Ortaklıklarımız</h2>
         </div>
         <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
           <p>
@@ -560,7 +560,7 @@ const branchColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#9
             <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <UIcon name="i-lucide-rocket" class="size-5 text-primary" />
             </div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Gelecek Vizyonumuz</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Gelecek Vizyonumuz</h2>
           </div>
           <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
             <p>

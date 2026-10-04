@@ -170,7 +170,7 @@ const sections = computed(() => {
             </button>
           </div>
           <div class="text-right">
-            <p class="font-bold">{{ formatCurrency(policy.grossPremium) }} TL</p>
+            <p class="font-semibold">{{ formatCurrency(policy.grossPremium) }} TL</p>
             <p class="text-xs text-muted">Brüt Prim</p>
           </div>
         </div>
@@ -196,7 +196,7 @@ const sections = computed(() => {
                     :class="[
                       field.dim ? 'text-xs font-normal' : 'text-sm font-semibold',
                       field.value === '-' ? 'text-muted/50' : (field.dim ? 'text-muted' : 'text-highlighted'),
-                      field.multiline ? 'whitespace-pre-line' : 'truncate'
+                      field.multiline ? 'whitespace-pre-line' : 'overflow-hidden whitespace-nowrap'
                     ]"
                     :title="!field.multiline ? field.value : undefined"
                   >{{ field.value }}</p>
@@ -214,8 +214,8 @@ const sections = computed(() => {
             <div class="flex items-start gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 min-w-0">
               <UIcon name="i-lucide-user" class="size-3.5 text-primary mt-0.5 shrink-0" />
               <div class="min-w-0">
-                <p class="text-xs text-muted truncate">{{ policy.customerIdentity || '—' }}</p>
-                <p class="text-sm font-semibold truncate">{{ policy.customerName }}</p>
+                <p class="text-xs text-muted overflow-hidden whitespace-nowrap">{{ policy.customerIdentity || '—' }}</p>
+                <p class="text-sm font-medium overflow-hidden whitespace-nowrap">{{ policy.customerName }}</p>
               </div>
             </div>
             <!-- Ek sigortalılar (JSON veya eski format) -->
@@ -226,8 +226,8 @@ const sections = computed(() => {
             >
               <UIcon name="i-lucide-user" class="size-3.5 text-muted mt-0.5 shrink-0" />
               <div class="min-w-0">
-                <p class="text-xs text-muted truncate">{{ person.tc || '—' }}</p>
-                <p class="text-sm font-semibold truncate">{{ person.name }}</p>
+                <p class="text-xs text-muted overflow-hidden whitespace-nowrap">{{ person.tc || '—' }}</p>
+                <p class="text-sm font-medium overflow-hidden whitespace-nowrap">{{ person.name }}</p>
               </div>
             </div>
           </div>

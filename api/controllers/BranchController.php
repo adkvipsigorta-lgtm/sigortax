@@ -4,7 +4,10 @@ class BranchController
 {
     public function index(array $user, array $query): void
     {
-        AuthMiddleware::requireAdmin($user);
+        // Dropdown listesi (all=1) herkese açık, tam liste admin-only
+        if (empty($query['all'])) {
+            AuthMiddleware::requireAdmin($user);
+        }
 
         $where = ["deleted_at IS NULL"];
         $params = [];

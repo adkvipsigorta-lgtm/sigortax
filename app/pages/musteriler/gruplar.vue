@@ -69,18 +69,15 @@ function getRowActions(group: CustomerCategory) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Müşteri Grupları</h1>
+      <h1 class="text-2xl font-semibold">Müşteri Grupları</h1>
       <p class="text-sm text-muted mt-1">Müşteri grupları ve prim aralıkları.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-gsearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gsearch:top-0 peer-focus-within/fl-gsearch:-translate-y-1/2 peer-focus-within/fl-gsearch:text-xs peer-focus-within/fl-gsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gsearch:text-[var(--ui-text-highlighted)]">Grup Ara</label>
-          </div>
-          <UButton label="Yeni Grup" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
+          <UInput v-model="searchInput" placeholder="Grup Ara..." icon="i-lucide-search" class="filter-w-search" />
+          <UButton label="Yeni Grup" icon="i-lucide-plus"  @click="openAddModal" />
         </div>
       </template>
 
@@ -91,7 +88,7 @@ function getRowActions(group: CustomerCategory) {
           <template #customerCount-header="{ column }"><SortableHeader label="Müşteri Sayısı" :column="column" /></template>
 
           <template #range-cell="{ row }">
-            <span class="tabular-nums">{{ row.original.minAmount != null ? Number(row.original.minAmount).toLocaleString('tr-TR') : '0' }} - {{ row.original.maxAmount != null ? Number(row.original.maxAmount).toLocaleString('tr-TR') : 'Sınırsız' }}</span>
+            <span>{{ row.original.minAmount != null ? Number(row.original.minAmount).toLocaleString('tr-TR') : '0' }} - {{ row.original.maxAmount != null ? Number(row.original.maxAmount).toLocaleString('tr-TR') : 'Sınırsız' }}</span>
           </template>
           <template #name-cell="{ row }">
             <div class="flex items-center gap-2">
@@ -106,7 +103,7 @@ function getRowActions(group: CustomerCategory) {
               <span class="text-muted">{{ row.original.color || '-' }}</span>
             </div>
           </template>
-          <template #customerCount-cell="{ row }"><span class="tabular-nums">{{ row.original.customerCount ?? 0 }}</span></template>
+          <template #customerCount-cell="{ row }"><span>{{ row.original.customerCount ?? 0 }}</span></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)"><UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" /></UDropdownMenu>
           </template>
@@ -135,7 +132,7 @@ function getRowActions(group: CustomerCategory) {
       <template #body>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="sm:col-span-2 relative fl-input">
+            <div class="sm:col-span-2 relative fl-form">
               <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-gname" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gname:top-0 peer-focus-within/fl-gname:-translate-y-1/2 peer-focus-within/fl-gname:text-xs peer-focus-within/fl-gname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gname:text-[var(--ui-text-highlighted)]">Grup Adı <span class="text-red-500">*</span></label>
             </div>
@@ -150,16 +147,16 @@ function getRowActions(group: CustomerCategory) {
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.minAmount" type="number" :min="0" placeholder=" " class="w-full peer/fl-gmin" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gmin:top-0 peer-focus-within/fl-gmin:-translate-y-1/2 peer-focus-within/fl-gmin:text-xs peer-focus-within/fl-gmin:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gmin:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gmin:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gmin:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gmin:text-[var(--ui-text-highlighted)]">Min Prim</label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.maxAmount" type="number" :min="0" placeholder=" " class="w-full peer/fl-gmax" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-gmax:top-0 peer-focus-within/fl-gmax:-translate-y-1/2 peer-focus-within/fl-gmax:text-xs peer-focus-within/fl-gmax:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-gmax:top-0 peer-has-[input:not(:placeholder-shown)]/fl-gmax:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-gmax:text-xs peer-has-[input:not(:placeholder-shown)]/fl-gmax:text-[var(--ui-text-highlighted)]">Max Prim</label>
             </div>
           </div>
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UTextarea v-model="form.description" :rows="2" placeholder=" " class="w-full peer/fl-gdesc" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.description ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Açıklama</label>
           </div>
@@ -167,8 +164,8 @@ function getRowActions(group: CustomerCategory) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingGroup" @click="isModalOpen = false" />
-          <UButton :label="editingGroup ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  :loading="savingGroup" :disabled="savingGroup" @click="saveGroup" />
+          <UButton label="İptal" color="neutral" variant="outline"  :disabled="savingGroup" @click="isModalOpen = false" />
+          <UButton :label="editingGroup ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check"  :loading="savingGroup" :disabled="savingGroup" @click="saveGroup" />
         </div>
       </template>
     </UModal>
@@ -180,8 +177,8 @@ function getRowActions(group: CustomerCategory) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -195,5 +192,5 @@ function getRowActions(group: CustomerCategory) {
 :deep(.gruplar-table th:nth-child(4)) { width: 90px; min-width: 90px; max-width: 90px; }
 :deep(.gruplar-table th:nth-child(5)) { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.gruplar-table th:nth-child(6)) { width: 60px; min-width: 60px; max-width: 60px; }
-:deep(.gruplar-table > tbody > tr > td) { overflow: hidden; text-overflow: ellipsis; }
+:deep(.gruplar-table > tbody > tr > td) { overflow: hidden; text-overflow: clip; }
 </style>

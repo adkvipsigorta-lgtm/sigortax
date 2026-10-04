@@ -90,24 +90,21 @@ function getRowActions(insurance: InsuranceType) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Poliçe Türleri</h1>
+      <h1 class="text-2xl font-semibold">Poliçe Türleri</h1>
       <p class="text-sm text-muted mt-1">Sigorta türleri ve komisyon ayarları.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-itsearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itsearch:top-0 peer-focus-within/fl-itsearch:-translate-y-1/2 peer-focus-within/fl-itsearch:text-xs peer-focus-within/fl-itsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itsearch:text-[var(--ui-text-highlighted)]">Poliçe Türü Ara</label>
-          </div>
-          <UButton label="Yeni Poliçe Türü" icon="i-lucide-plus" size="xl"  @click="openCreateModal()" />
+          <UInput v-model="searchInput" placeholder="Poliçe Türü Ara..." icon="i-lucide-search" class="filter-w-search" />
+          <UButton label="Yeni Poliçe Türü" icon="i-lucide-plus"  @click="openCreateModal()" />
         </div>
       </template>
 
       <SkeletonTable v-if="insuranceTypes.loading.value && !insuranceTypes.data.value.length" :rows="8" :cols="5" />
       <div v-else class="border border-default rounded-lg overflow-hidden">
-        <UTable v-model:sorting="sorting" :data="insuranceTypes.data.value" :columns="columns" :loading="insuranceTypes.loading.value && !insuranceTypes.data.value.length" :sorting-options="{ manualSorting: true }" :ui="{ base: 'table-fixed min-w-full sigorta-turleri-table', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis' }">
+        <UTable v-model:sorting="sorting" :data="insuranceTypes.data.value" :columns="columns" :loading="insuranceTypes.loading.value && !insuranceTypes.data.value.length" :sorting-options="{ manualSorting: true }" :ui="{ base: 'table-fixed min-w-full sigorta-turleri-table', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden' }">
           <template #name-header="{ column }"><SortableHeader label="Sigorta Türü" :column="column" /></template>
           <template #branchGroup-header="{ column }"><SortableHeader label="Grup" :column="column" /></template>
           <template #defaultCommRate-header="{ column }"><SortableHeader label="Komisyon (%)" :column="column" /></template>
@@ -118,7 +115,7 @@ function getRowActions(insurance: InsuranceType) {
           <template #name-cell="{ row }">
             <div class="flex items-center gap-2 min-w-0">
               <div class="size-2 rounded-full shrink-0" :style="{ backgroundColor: normalizeColor(row.original.color) }" />
-              <span class="truncate" :title="row.original.name">{{ row.original.name }}</span>
+              <span class="overflow-hidden whitespace-nowrap" :title="row.original.name">{{ row.original.name }}</span>
             </div>
           </template>
           <template #branchGroup-cell="{ row }">
@@ -126,10 +123,10 @@ function getRowActions(insurance: InsuranceType) {
             <span v-else class="text-muted">-</span>
           </template>
           <template #defaultCommRate-cell="{ row }">
-            <span v-if="row.original.defaultCommRate" class="tabular-nums">%{{ row.original.defaultCommRate }}</span>
+            <span v-if="row.original.defaultCommRate">%{{ row.original.defaultCommRate }}</span>
             <span v-else class="text-muted">-</span>
           </template>
-          <template #renewalDays-cell="{ row }"><span class="tabular-nums">{{ row.original.renewalDays }} gün</span></template>
+          <template #renewalDays-cell="{ row }"><span>{{ row.original.renewalDays }} gün</span></template>
           <template #isRenewable-cell="{ row }"><USwitch :model-value="row.original.isRenewable" @update:model-value="toggleRenewable(row.original)" size="xs" /></template>
           <template #isActive-cell="{ row }">
             <UBadge :color="row.original.isActive ? 'success' : 'neutral'" variant="subtle" size="sm">{{ row.original.isActive ? 'Aktif' : 'Pasif' }}</UBadge>
@@ -148,18 +145,18 @@ function getRowActions(insurance: InsuranceType) {
     <!-- Düzenleme Modalı -->
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingInsurance ? 'Poliçe Türü Düzenle' : 'Yeni Poliçe Türü'" class="sm:max-w-lg">
       <template #body>
-        <UForm :schema="insuranceSchema" :state="form" @submit="saveInsurance" class="space-y-5">
-          <div class="relative fl-input">
+        <UForm :schema="insuranceSchema" :state="form" :validate-on='["submit"]' @submit="saveInsurance" class="space-y-5">
+          <div class="relative fl-form">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-itname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itname:top-0 peer-focus-within/fl-itname:-translate-y-1/2 peer-focus-within/fl-itname:text-xs peer-focus-within/fl-itname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itname:text-[var(--ui-text-highlighted)]">Sigorta Türü Adı <span class="text-red-500">*</span></label>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative fl-select ">
+            <div class="relative fl-select-form ">
               <USelect v-model="form.code" :items="codeOptions" value-key="value" placeholder=" " class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.code ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Kategori <span class="text-red-500">*</span></label>
             </div>
-            <div class="relative fl-select ">
+            <div class="relative fl-select-form ">
               <USelect v-model="form.branchGroup" :items="groupOptions" value-key="value" placeholder=" " class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.branchGroup ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Grup</label>
             </div>
@@ -168,11 +165,11 @@ function getRowActions(insurance: InsuranceType) {
           <USeparator />
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.defaultCommRate" type="number" :min="0" :max="100" placeholder=" " class="w-full peer/fl-itcomm" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itcomm:top-0 peer-focus-within/fl-itcomm:-translate-y-1/2 peer-focus-within/fl-itcomm:text-xs peer-focus-within/fl-itcomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itcomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itcomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itcomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itcomm:text-[var(--ui-text-highlighted)]">Komisyon (%)</label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.renewalDays" type="number" :min="0" :max="90" placeholder=" " class="w-full peer/fl-itdays" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-itdays:top-0 peer-focus-within/fl-itdays:-translate-y-1/2 peer-focus-within/fl-itdays:text-xs peer-focus-within/fl-itdays:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-itdays:top-0 peer-has-[input:not(:placeholder-shown)]/fl-itdays:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-itdays:text-xs peer-has-[input:not(:placeholder-shown)]/fl-itdays:text-[var(--ui-text-highlighted)]">Hatırlatma (gün)</label>
             </div>
@@ -200,8 +197,8 @@ function getRowActions(insurance: InsuranceType) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingInsurance" @click="isModalOpen = false" />
-            <UButton :label="editingInsurance ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingInsurance" :disabled="savingInsurance" />
+            <UButton label="İptal" color="neutral" variant="outline"  :disabled="savingInsurance" @click="isModalOpen = false" />
+            <UButton :label="editingInsurance ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check"  type="submit" :loading="savingInsurance" :disabled="savingInsurance" />
           </div>
         </UForm>
       </template>

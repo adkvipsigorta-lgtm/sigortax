@@ -96,18 +96,15 @@ function getRowActions(item: LeadProduct) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Lead Ürünleri</h1>
+      <h1 class="text-2xl font-semibold">Lead Ürünleri</h1>
       <p class="text-sm text-muted mt-1">Lead'lerde seçilecek ürün listesini yönetin.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lpsearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsearch:top-0 peer-focus-within/fl-lpsearch:-translate-y-1/2 peer-focus-within/fl-lpsearch:text-xs peer-focus-within/fl-lpsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsearch:text-[var(--ui-text-highlighted)]">Ürün Ara</label>
-          </div>
-          <UButton label="Yeni Ürün" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
+          <UInput v-model="searchInput" placeholder="Ürün Ara..." icon="i-lucide-search" class="filter-w-search" />
+          <UButton label="Yeni Ürün" icon="i-lucide-plus"  @click="openAddModal" />
         </div>
       </template>
 
@@ -121,7 +118,7 @@ function getRowActions(item: LeadProduct) {
             base: 'table-fixed min-w-full',
             thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10',
             th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap',
-            td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis'
+            td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden'
           }"
         >
           <template #name-cell="{ row }">
@@ -135,7 +132,7 @@ function getRowActions(item: LeadProduct) {
             <span v-if="row.original.requiresFile" class="inline-flex items-center gap-1 text-xs font-semibold text-green-600"><UIcon name="i-lucide-check-circle" class="size-3.5" /> Açık</span>
             <span v-else class="text-xs text-muted">Kapalı</span>
           </template>
-          <template #sortOrder-cell="{ row }"><span class="tabular-nums">{{ row.original.sortOrder }}</span></template>
+          <template #sortOrder-cell="{ row }"><span>{{ row.original.sortOrder }}</span></template>
           <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)">
@@ -153,8 +150,8 @@ function getRowActions(item: LeadProduct) {
     <!-- Ekle/Düzenle Modal -->
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Ürün Düzenle' : 'Yeni Ürün'" class="sm:max-w-md">
       <template #body>
-        <UForm :schema="schema" :state="form" @submit="save" class="space-y-5">
-          <div class="relative fl-input">
+        <UForm :schema="schema" :state="form" :validate-on='["submit"]' @submit="save" class="space-y-5">
+          <div class="relative fl-form">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-lpname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpname:top-0 peer-focus-within/fl-lpname:-translate-y-1/2 peer-focus-within/fl-lpname:text-xs peer-focus-within/fl-lpname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpname:text-[var(--ui-text-highlighted)]">Ürün Adı <span class="text-red-500">*</span></label>
           </div>
@@ -167,7 +164,7 @@ function getRowActions(item: LeadProduct) {
                 <span class="text-xs text-muted">{{ form.color }}</span>
               </div>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.sortOrder" type="number" :min="0" placeholder=" " class="w-full peer/fl-lpsort" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lpsort:top-0 peer-focus-within/fl-lpsort:-translate-y-1/2 peer-focus-within/fl-lpsort:text-xs peer-focus-within/fl-lpsort:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lpsort:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lpsort:text-[var(--ui-text-highlighted)]">Sıralama</label>
             </div>
@@ -186,8 +183,8 @@ function getRowActions(item: LeadProduct) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="saving" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="saving" :disabled="saving" />
+            <UButton label="İptal" color="neutral" variant="outline"  :disabled="saving" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check"  type="submit" :loading="saving" :disabled="saving" />
           </div>
         </UForm>
       </template>
@@ -208,8 +205,8 @@ function getRowActions(item: LeadProduct) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  @click="doDelete" />
         </div>
       </template>
     </UModal>

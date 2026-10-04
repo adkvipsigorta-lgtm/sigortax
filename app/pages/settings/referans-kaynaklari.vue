@@ -92,18 +92,15 @@ function getRowActions(item: ReferenceSource) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Referans Kaynakları</h1>
+      <h1 class="text-2xl font-semibold">Referans Kaynakları</h1>
       <p class="text-sm text-muted mt-1">İş kaynakları ve komisyon oranları.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-rssearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rssearch:top-0 peer-focus-within/fl-rssearch:-translate-y-1/2 peer-focus-within/fl-rssearch:text-xs peer-focus-within/fl-rssearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rssearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rssearch:text-[var(--ui-text-highlighted)]">Kaynak Ara</label>
-          </div>
-          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
+          <UInput v-model="searchInput" placeholder="Kaynak Ara..." icon="i-lucide-search" class="filter-w-search" />
+          <UButton label="Yeni Kaynak" icon="i-lucide-plus"  @click="openAddModal" />
         </div>
       </template>
 
@@ -115,19 +112,19 @@ function getRowActions(item: ReferenceSource) {
           :columns="columns"
           :loading="sources.loading.value && !sources.data.value.length"
           :sorting-options="{ manualSorting: true }"
-          :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis' }"
+          :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden' }"
         >
           <template #name-header="{ column }"><SortableHeader label="Kaynak Adı" :column="column" /></template>
           <template #commissionRate-header="{ column }"><SortableHeader label="Komisyon" :column="column" /></template>
 
-          <template #name-cell="{ row }"><span class="truncate block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span></template>
+          <template #name-cell="{ row }"><span class="overflow-hidden whitespace-nowrap block" :class="row.original.isActive ? '' : 'text-muted'" :title="row.original.name">{{ row.original.name }}</span></template>
           <template #businessType-cell="{ row }">
             <UBadge :color="row.original.businessType === 'NEW' ? 'info' : row.original.businessType === 'RENEWAL' ? 'success' : 'neutral'" variant="subtle" size="sm">
               {{ row.original.businessType === 'NEW' ? 'Yeni İş' : row.original.businessType === 'RENEWAL' ? 'Yenileme' : 'Tümü' }}
             </UBadge>
           </template>
-          <template #commissionRate-cell="{ row }"><span class="tabular-nums">%{{ row.original.commissionRate }}</span></template>
-          <template #policyCount-cell="{ row }"><span class="tabular-nums">{{ row.original.policyCount }}</span></template>
+          <template #commissionRate-cell="{ row }"><span>%{{ row.original.commissionRate }}</span></template>
+          <template #policyCount-cell="{ row }"><span>{{ row.original.policyCount }}</span></template>
           <template #isActive-cell="{ row }"><USwitch :model-value="row.original.isActive" @update:model-value="toggleActive(row.original)" size="xs" /></template>
           <template #actions-cell="{ row }">
             <UDropdownMenu :items="getRowActions(row.original)"><UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" /></UDropdownMenu>
@@ -143,18 +140,18 @@ function getRowActions(item: ReferenceSource) {
     <!-- Ekle/Düzenle Modal -->
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Referans Kaynağı Düzenle' : 'Yeni Referans Kaynağı'" class="sm:max-w-md">
       <template #body>
-        <UForm :schema="referenceSchema" :state="form" @submit="save" class="space-y-5">
-          <div class="relative fl-input">
+        <UForm :schema="referenceSchema" :state="form" :validate-on='["submit"]' @submit="save" class="space-y-5">
+          <div class="relative fl-form">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-rsname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rsname:top-0 peer-focus-within/fl-rsname:-translate-y-1/2 peer-focus-within/fl-rsname:text-xs peer-focus-within/fl-rsname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rsname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rsname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rsname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rsname:text-[var(--ui-text-highlighted)]">Kaynak Adı <span class="text-red-500">*</span></label>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative fl-select ">
+            <div class="relative fl-select-form ">
               <USelect v-model="form.businessType" :items="businessTypeOptions" value-key="value" placeholder=" " class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.businessType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">İş Türü</label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model.number="form.commissionRate" type="number" :min="0" :max="100" :step="0.01" placeholder=" " class="w-full peer/fl-rscomm" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-rscomm:top-0 peer-focus-within/fl-rscomm:-translate-y-1/2 peer-focus-within/fl-rscomm:text-xs peer-focus-within/fl-rscomm:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-rscomm:top-0 peer-has-[input:not(:placeholder-shown)]/fl-rscomm:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-rscomm:text-xs peer-has-[input:not(:placeholder-shown)]/fl-rscomm:text-[var(--ui-text-highlighted)]">Komisyon (%)</label>
             </div>
@@ -165,8 +162,8 @@ function getRowActions(item: ReferenceSource) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="savingSource" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="savingSource" :disabled="savingSource" />
+            <UButton label="İptal" color="neutral" variant="outline"  :disabled="savingSource" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check"  type="submit" :loading="savingSource" :disabled="savingSource" />
           </div>
         </UForm>
       </template>
@@ -187,8 +184,8 @@ function getRowActions(item: ReferenceSource) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  @click="doDelete" />
         </div>
       </template>
     </UModal>

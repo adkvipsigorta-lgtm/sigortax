@@ -313,8 +313,8 @@ function getStatusColor(s: string) {
                   @click="activeTab = 'templates'"
                 >Şablonlar</button>
               </div>
-              <USelect v-model="filterChannel" :items="channelOptions" size="xs" :ui="{ base: 'h-[38px]' }" class="w-[180px]" />
-              <USelect v-model="filterStatus" :items="statusOptions" size="xs" :ui="{ base: 'h-[38px]' }" class="w-[180px]" />
+              <USelect v-model="filterChannel" :items="channelOptions" :ui="filterDropdownUi" class="filter-w-sm" />
+              <USelect v-model="filterStatus" :items="statusOptions" :ui="filterDropdownUi" class="filter-w-sm" />
             </div>
           </div>
         </div>
@@ -355,21 +355,21 @@ function getStatusColor(s: string) {
                 </span>
               </td>
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <p v-if="msg.customerName" class="truncate">{{ msg.customerName }}</p>
-                <span class="text-muted truncate block">{{ msg.recipient }}</span>
+                <p v-if="msg.customerName" class="overflow-hidden whitespace-nowrap">{{ formatPersonName(msg.customerName || '', 'compact') }}</p>
+                <span class="text-muted overflow-hidden whitespace-nowrap block">{{ msg.recipient }}</span>
               </td>
               <td class="hidden md:table-cell py-2 px-3 overflow-hidden" style="max-width:0">
-                <p class="truncate">{{ msg.subject || msg.content }}</p>
+                <p class="overflow-hidden whitespace-nowrap">{{ msg.subject || msg.content }}</p>
               </td>
               <td class="py-2 px-3">
                 <span class="badge-cell" :class="'badge-' + getStatusColor(msg.status)">
                   {{ getStatusLabel(msg.status) }}
                 </span>
               </td>
-              <td class="hidden sm:table-cell py-2 px-3 tabular-nums text-muted">
+              <td class="hidden sm:table-cell py-2 px-3 text-muted">
                 {{ formatDate(msg.sentAt || msg.createdAt) }}
               </td>
-              <td class="hidden md:table-cell py-2 px-3 text-muted truncate">
+              <td class="hidden md:table-cell py-2 px-3 text-muted overflow-hidden whitespace-nowrap">
                 {{ msg.sentByName || '-' }}
               </td>
               <td class="py-2 px-3">
@@ -695,24 +695,4 @@ function getStatusColor(s: string) {
 <style scoped>
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
-.badge-primary { background: rgb(99 102 241 / 0.1); color: #6366f1; }
 </style>

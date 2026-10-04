@@ -183,36 +183,18 @@ function exportCsv() {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Tali Acente Mutabakat</h1>
+      <h1 class="text-2xl font-semibold">Tali Acente Mutabakat</h1>
       <p class="text-sm text-muted mt-1">Aylık komisyon mutabakat raporu.</p>
     </div>
 
     <!-- Filtre Kartı -->
     <UCard>
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div class="col-span-2 sm:col-span-1 relative fl-select ">
-          <USelectMenu v-model="selectedBranchId" :items="branchOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-          <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', selectedBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Tali Acente</label>
-        </div>
-
-        <div class="relative fl-select ">
-          <USelect v-model="selectedYear" :items="yearOptions" value-key="value" placeholder=" " class="w-full" />
-          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Yıl</label>
-        </div>
-
-        <div class="relative fl-select ">
-          <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" placeholder=" " class="w-full" />
-          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Ay</label>
-        </div>
-
-        <div class="relative fl-select ">
-          <USelect v-model="selectedDateType" :items="dateTypeOptions" value-key="value" placeholder=" " class="w-full" />
-          <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Tarih Tipi</label>
-        </div>
-
-        <div class="flex items-end">
-          <UButton label="Getir" icon="i-lucide-search" size="xl" class="w-full" :loading="loading" @click="fetchReconciliation" />
-        </div>
+      <div class="filter-toolbar">
+        <USelectMenu v-model="selectedBranchId" :ui="filterDropdownUi" :items="branchOptions" value-key="value" placeholder="Tali Acente" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="filter-w-md" />
+        <USelect v-model="selectedYear" :ui="filterDropdownUi" :items="yearOptions" value-key="value" placeholder="Yıl" class="filter-w-sm" />
+        <USelect v-model="selectedMonth" :ui="filterDropdownUi" :items="monthOptions" value-key="value" placeholder="Ay" class="filter-w-sm" />
+        <USelect v-model="selectedDateType" :ui="filterDropdownUi" :items="dateTypeOptions" value-key="value" placeholder="Tarih Tipi" class="filter-w-sm" />
+        <UButton label="Getir" icon="i-lucide-search" size="sm" :loading="loading" @click="fetchReconciliation" />
       </div>
     </UCard>
 
@@ -243,31 +225,31 @@ function exportCsv() {
     <div v-if="data" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold">{{ data.stats.totalPolicies }}</p>
+          <p class="kpi-value">{{ data.stats.totalPolicies }}</p>
           <p class="text-xs text-muted">Toplam Poliçe</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold text-error">{{ data.stats.totalCancelled }}</p>
+          <p class="kpi-value text-error">{{ data.stats.totalCancelled }}</p>
           <p class="text-xs text-muted">Toplam İptal</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-sm font-bold">{{ formatCurrency(data.stats.totalGross) }}</p>
+          <p class="text-sm font-semibold">{{ formatCurrency(data.stats.totalGross) }}</p>
           <p class="text-xs text-muted">Brüt Prim</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-sm font-bold">{{ formatCurrency(data.stats.totalNet) }}</p>
+          <p class="text-sm font-semibold">{{ formatCurrency(data.stats.totalNet) }}</p>
           <p class="text-xs text-muted">Net Prim</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-sm font-bold text-primary">{{ formatCurrency(data.stats.totalCommission) }}</p>
+          <p class="text-sm font-semibold text-primary">{{ formatCurrency(data.stats.totalCommission) }}</p>
           <p class="text-xs text-muted">Kazanilan Komisyon</p>
           <UBadge v-if="isLocked" color="success" variant="solid" size="sm" class="mt-1">
             <UIcon name="i-lucide-circle-check" class="size-3 mr-0.5" /> Ödendi
@@ -276,7 +258,7 @@ function exportCsv() {
       </UCard>
       <UCard :ui="{ body: 'p-3' }">
         <div class="text-center">
-          <p class="text-2xl font-bold">%{{ data.stats.commissionRate }}</p>
+          <p class="kpi-value">%{{ data.stats.commissionRate }}</p>
           <p class="text-xs text-muted">Komisyon Orani</p>
         </div>
       </UCard>
@@ -292,8 +274,8 @@ function exportCsv() {
           </h3>
           <div class="flex items-center gap-2">
             <span class="text-xs text-muted">{{ data.policies.length }} kayıt</span>
-            <UButton label="Excel İndir" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="hidden sm:flex" @click="exportCsv" />
-            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success" size="xl"  @click="showLockConfirm = true" />
+            <UButton label="Excel İndir" icon="i-lucide-download" size="sm" color="neutral" variant="outline" class="hidden sm:flex" @click="exportCsv" />
+            <UButton v-if="data.policies.length > 0 && !isLocked" label="Onayla ve Kilitle" icon="i-lucide-lock" color="success"  @click="showLockConfirm = true" />
           </div>
         </div>
       </template>
@@ -342,41 +324,35 @@ function exportCsv() {
           </template>
 
           <template #issuedAt-cell="{ row }">
-            <span class="tabular-nums">{{ formatDateTr(row.original.issuedAt) }}</span>
+            <span >{{ formatDateTr(row.original.issuedAt) }}</span>
           </template>
 
           <template #startsAt-cell="{ row }">
-            <span class="tabular-nums">{{ formatDateTr(row.original.startsAt) }}</span>
+            <span >{{ formatDateTr(row.original.startsAt) }}</span>
           </template>
 
           <template #expiresAt-cell="{ row }">
-            <span class="tabular-nums">{{ formatDateTr(row.original.expiresAt) }}</span>
+            <span >{{ formatDateTr(row.original.expiresAt) }}</span>
           </template>
 
           <template #companyName-cell="{ row }">
-            <UTooltip v-if="row.original.companyName.length > 12" :text="row.original.companyName">
-              <span>{{ row.original.companyName.slice(0, 12) }}...</span>
-            </UTooltip>
-            <span v-else>{{ row.original.companyName }}</span>
+            <span :title="row.original.companyName">{{ formatCompanyName(row.original.companyName, 'compact') }}</span>
           </template>
 
           <template #customerName-cell="{ row }">
-            <UTooltip v-if="row.original.customerName.length > 18" :text="row.original.customerName">
-              <span>{{ row.original.customerName.slice(0, 18) }}...</span>
-            </UTooltip>
-            <span v-else>{{ row.original.customerName }}</span>
+            <span :title="row.original.customerName">{{ formatPersonName(row.original.customerName, 'compact') }}</span>
           </template>
 
           <template #grossPremium-cell="{ row }">
-            <span class="tabular-nums">{{ formatCurrency(row.original.grossPremium) }}</span>
+            <span >{{ formatCurrency(row.original.grossPremium) }}</span>
           </template>
 
           <template #netPremium-cell="{ row }">
-            <span class="tabular-nums">{{ formatCurrency(row.original.netPremium) }}</span>
+            <span >{{ formatCurrency(row.original.netPremium) }}</span>
           </template>
 
           <template #commission-cell="{ row }">
-            <span class="tabular-nums font-medium text-primary">{{ formatCurrency(row.original.commission) }}</span>
+            <span class="font-medium text-primary">{{ formatCurrency(row.original.commission) }}</span>
           </template>
 
           <template #prod-cell="{ row }">
@@ -493,8 +469,8 @@ function exportCsv() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showLockConfirm = false" />
-          <UButton label="Kilitle" icon="i-lucide-lock" color="success" size="xl"  :loading="locking" @click="lockReconciliation" />
+          <UButton label="İptal" color="neutral" variant="outline"  @click="showLockConfirm = false" />
+          <UButton label="Kilitle" icon="i-lucide-lock" color="success"  :loading="locking" @click="lockReconciliation" />
         </div>
       </template>
     </UModal>
@@ -513,5 +489,5 @@ function exportCsv() {
 :deep(.mutabakat-table th:nth-child(9))  { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.mutabakat-table th:nth-child(10)) { width: 100px; min-width: 100px; max-width: 100px; }
 :deep(.mutabakat-table th:nth-child(11)) { width: 90px;  min-width: 90px;  max-width: 90px;  }
-:deep(.mutabakat-table > tbody > tr > td) { overflow: hidden; text-overflow: ellipsis; }
+:deep(.mutabakat-table > tbody > tr > td) { overflow: hidden; text-overflow: clip; }
 </style>

@@ -2,19 +2,112 @@
 @import "@nuxt/ui";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-button,
-a,
-[role="button"],
-input[type="submit"],
-input[type="button"],
-select {
+/* ═══════════════════════════════════════════════════
+   ADK CRM DESIGN TOKENS
+   Tek noktadan kontrol. Sayfa bazlı override üretme.
+   ═══════════════════════════════════════════════════ */
+
+:root {
+  /* ── Typography ── */
+  --font-family: 'Inter', sans-serif;
+  --text-xs:  12px;
+  --text-sm:  14px;
+  --text-md:  16px;
+  --text-lg:  18px;
+  --text-xl:  20px;
+  --text-2xl: 24px;
+  --text-kpi: 32px;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --letter-spacing: 0em;
+
+  /* ── Radius ── */
+  --radius-sm:   6px;   /* badge */
+  --radius-md:   8px;   /* input, button, select, dropdown, table */
+  --radius-lg:  12px;   /* card, modal */
+  --radius-xl:  16px;   /* auth card, hero */
+  --radius-pill: 9999px;
+
+  /* ── Spacing (4px grid) ── */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  /* ── Component Heights ── */
+  --height-input:       36px;  /* compact input (PhoneInput non-modal) */
+  --height-filter:      40px;  /* liste filtre kontrolleri */
+  --height-input-modal: 48px;  /* modal form floating-label input */
+  --height-button:      36px;
+  --height-button-sm:   30px;
+  --height-button-xs:   24px;
+
+  /* ── Filter Toolbar ── */
+  --filter-gap:       12px;
+  --filter-width-sm:  160px;
+  --filter-width-md:  200px;
+  --filter-width-lg:  240px;
+
+  /* ── Modal Form Spacing ── */
+  --modal-field-gap:      16px;
+  --modal-row-gap:        16px;
+  --modal-section-gap:    24px;
+  --modal-textarea-min-h: 96px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  /* ── ADK Marka Renkleri ── */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-active: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  --color-success: #22c55e;
+  --color-success-light: #dcfce7;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-danger: #ef4444;
+  --color-danger-light: #fee2e2;
+  --color-info: #8b5cf6;
+  --color-info-light: #ede9fe;
+
+  /* ── Text ── */
+  --color-text: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #ffffff;
+
+  /* ── Borders ── */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  /* ── Surfaces ── */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-surface-hover: #f1f5f9;
+  --color-background: #f8fafc;
+}
+
+/* ── Global Defaults ── */
+body {
+  font-family: var(--font-family);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
+}
+
+button, a, [role="button"], input[type="submit"], input[type="button"], select {
   cursor: pointer;
 }
 
-
+/* ── Tailwind Theme Override ── */
 @theme static {
   --font-sans: 'Inter', sans-serif;
-
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
   --color-green-200: #B3F5D1;
@@ -28,57 +121,192 @@ select {
   --color-green-950: #052E16;
 }
 
-/* Search overlay transition */
+/* ── Transitions ── */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.15s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-/* Sayfa geçiş animasyonu */
 .page-enter-active { transition: opacity 0.1s ease; }
 .page-leave-active { transition: opacity 0.08s ease; }
 .page-enter-from, .page-leave-to { opacity: 0; }
 
-/* Navigasyon loading bar */
 @keyframes nav-loading {
   0%   { transform: translateX(-100%); }
   50%  { transform: translateX(0%); }
   100% { transform: translateX(100%); }
 }
-.nav-loading-bar {
-  animation: nav-loading 0.9s ease-in-out infinite;
+.nav-loading-bar { animation: nav-loading 0.9s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════════════
+   FILTER TOOLBAR — Liste/search kontrolleri
+   .filter-toolbar class'ı ile kullanılır.
+   ═══════════════════════════════════════════════════ */
+
+.filter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--filter-gap);
+}
+
+.filter-toolbar input,
+.filter-toolbar [role="combobox"],
+.filter-toolbar select { height: var(--height-filter) !important; }
+
+.filter-toolbar button[data-slot="trigger"],
+.filter-toolbar [data-slot="base"] { height: var(--height-filter) !important; }
+
+.filter-toolbar > [data-slot="base"],
+.filter-toolbar > button:not([data-slot="trigger"]) { height: var(--height-filter) !important; }
+
+.filter-w-sm { width: var(--filter-width-sm); }
+.filter-w-md { width: var(--filter-width-md); }
+.filter-w-lg { width: var(--filter-width-lg); }
+.filter-w-search { width: calc(var(--filter-width-md) * 2 + var(--filter-gap)); }
+
+@media (max-width: 640px) {
+  .filter-toolbar { gap: 8px; }
+  .filter-w-sm, .filter-w-md, .filter-w-lg, .filter-w-search { width: 100%; }
 }
 
 /* ═══════════════════════════════════════════════════
-   FLOATING LABEL — Tek noktadan kontrol
+   DROPDOWN — Trigger-width matching
+   Global: tüm USelect/USelectMenu panel === trigger width.
    ═══════════════════════════════════════════════════ */
 
-/* --- Seviye 1: Filtre/tablo/modal — kompakt (42px) --- */
-.fl-input { min-height: 38px; display: flex; align-items: stretch; }
-.fl-input input  { padding-top: 14px !important; padding-bottom: 4px !important; min-height: 38px; }
-.fl-input textarea { padding-top: 14px !important; padding-bottom: 4px !important; }
-
-.fl-select { min-height: 38px; }
-.fl-select button { min-height: 38px !important; height: auto !important; padding-top: 14px !important; padding-bottom: 4px !important; }
-
-/* --- Seviye 2: Login/profil — geniş (46px) --- */
-.fl-form { min-height: 42px; display: flex; align-items: stretch; }
-.fl-form input  { padding-top: 18px !important; padding-bottom: 6px !important; min-height: 42px; }
-.fl-form textarea { padding-top: 18px !important; padding-bottom: 6px !important; }
-
-.fl-select-form { min-height: 42px; }
-.fl-select-form button { min-height: 42px !important; height: auto !important; padding-top: 18px !important; padding-bottom: 6px !important; }
-
-/* Bold: sadece login/profil formlarında yazılan değer koyu */
-.fl-form input:not(:placeholder-shown),
-.fl-form textarea:not(:placeholder-shown) {
-  font-weight: 600;
+.dropdown-trigger-match {
+  --_trigger-w: var(--reka-combobox-trigger-width, var(--reka-select-trigger-width));
+  width: var(--_trigger-w) !important;
+  min-width: var(--_trigger-w) !important;
+  max-width: min(var(--_trigger-w), calc(100vw - 2rem)) !important;
 }
 
-/* Placeholder her yerde normal */
-input::placeholder, textarea::placeholder { font-weight: 400; }
+/* Filter-only: compact max-height (filterDropdownUi composable) */
+.filter-dropdown-panel { max-height: 300px !important; }
 
-/* Badge standardı: eşit genişlik + ortalama */
+/* ═══════════════════════════════════════════════════
+   MODAL FORM — Floating-label system
+   fl-form / fl-select-form: 48px sabit height.
+   fl-input / fl-select: 36px compact (PhoneInput non-modal).
+   ═══════════════════════════════════════════════════ */
+
+/* Compact (PhoneInput non-modal only) */
+.fl-input { height: var(--height-input); display: flex; align-items: stretch; }
+.fl-input:has(textarea) { height: auto; min-height: var(--height-input); }
+.fl-input input { padding-top: 14px !important; padding-bottom: 4px !important; height: var(--height-input) !important; }
+.fl-input textarea { padding-top: 14px !important; padding-bottom: 4px !important; }
+.fl-select { height: var(--height-input); display: flex; align-items: stretch; }
+.fl-select button { height: var(--height-input) !important; padding-top: 14px !important; padding-bottom: 4px !important; }
+
+/* Modal form — FIELD HEIGHT INVARIANT: 48px sabit */
+.fl-form { height: var(--height-input-modal); display: flex; align-items: stretch; }
+.fl-form:has(textarea) { height: auto; min-height: var(--height-input-modal); }
+.fl-form input { padding-top: 22px !important; padding-bottom: 8px !important; height: var(--height-input-modal) !important; }
+.fl-form textarea { padding-top: 22px !important; padding-bottom: 8px !important; }
+.fl-select-form { height: var(--height-input-modal); display: flex; align-items: stretch; }
+.fl-select-form button { height: var(--height-input-modal) !important; padding-top: 22px !important; padding-bottom: 8px !important; }
+
+/* Modal form filled value emphasis */
+.fl-form input:not(:placeholder-shown),
+.fl-form textarea:not(:placeholder-shown) { font-weight: var(--font-medium); }
+
+/* Placeholder weight */
+input::placeholder, textarea::placeholder { font-weight: var(--font-normal); }
+
+/* ═══════════════════════════════════════════════════
+   MODAL FORM SYSTEM — .modal-form class
+   Spacing, textarea, validation.
+   ═══════════════════════════════════════════════════ */
+
+.modal-form { gap: var(--modal-row-gap) var(--modal-field-gap); }
+
+.modal-form textarea, .fl-form textarea {
+  min-height: var(--modal-textarea-min-h) !important;
+  height: auto !important;
+}
+
+.modal-form .modal-section {
+  padding-top: calc(var(--modal-section-gap) - var(--modal-row-gap));
+}
+
+/* Validation: sr-only (no inline error text in modals) */
+.modal-form [data-slot="error"] {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  padding: 0 !important; margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important; border: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   BADGE — Global standart
+   ═══════════════════════════════════════════════════ */
 [data-slot="badge"] {
   min-width: 5.5rem;
   justify-content: center;
   text-align: center;
+}
+
+/* Badge cell — table/list inline badge (insurance type, status, days) */
+.badge-cell {
+  display: inline-block;
+  min-width: 5.5rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  vertical-align: middle;
+}
+
+/* Semantic badge colors */
+.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
+.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
+.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
+.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
+.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
+
+/* ═══════════════════════════════════════════════════
+   NUMERIC PRESENTATION — Tabular numerals standardi
+   Tüm numeric/financial/date/count alanlarinda kullanilir.
+   ═══════════════════════════════════════════════════ */
+
+/* Tabular numerals — tüm table hücrelerinde otomatik */
+table td, table th { font-variant-numeric: tabular-nums; }
+
+/* KPI values — stat cards */
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-2xl);
+  line-height: var(--line-height-tight);
+}
+
+/* Table/list numeric cells */
+.table-number {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.table-money {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  font-weight: var(--font-semibold);
+}
+
+.table-date {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE — iOS Safari zoom prevention
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  input, select, textarea { font-size: 16px !important; }
 }

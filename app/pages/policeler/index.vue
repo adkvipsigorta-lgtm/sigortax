@@ -624,77 +624,37 @@ function getRowStatusColor(policy: Policy): string {
   return '#22C55E'
 }
 
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6',
-  error: '#ef4444',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  info: '#8b5cf6',
-  neutral: '#6b7280'
-}
-
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
 </script>
 
 <template>
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Poliçeler</h1>
+      <h1 class="text-2xl font-semibold">Poliçeler</h1>
       <p class="text-sm text-muted mt-1">Poliçe listesi ve yönetimi.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="relative w-full sm:w-72 fl-input">
-              <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-polsearch" />
-              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polsearch:top-0 peer-focus-within/fl-polsearch:-translate-y-1/2 peer-focus-within/fl-polsearch:text-xs peer-focus-within/fl-polsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri, plaka ara</label>
-            </div>
-            <div class="flex items-center gap-2">
-              <UButton v-if="hasActiveFilters" label="Temizle" icon="i-lucide-x" color="neutral" variant="ghost" size="xl"  @click="clearFilters" />
-            </div>
+          <div class="filter-toolbar justify-between">
+            <UInput v-model="searchInput" placeholder="Poliçe, müşteri, plaka ara..." icon="i-lucide-search" class="w-full sm:filter-w-search" />
+            <UButton v-if="hasActiveFilters" label="Temizle" icon="i-lucide-x" size="sm" color="neutral" variant="ghost" @click="clearFilters" />
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            <div class="relative fl-select ">
-              <USelectMenu v-model="filterInsuranceId" :items="insuranceFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterInsuranceId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigortalar</label>
-            </div>
-
-            <div class="relative fl-select ">
-              <USelectMenu v-model="filterCompanyId" :items="companyFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterCompanyId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sigorta Şirketleri</label>
-            </div>
-
-            <div class="relative fl-select ">
-              <USelect v-model="filterProd" :items="prodFilterOptions" value-key="value" placeholder=" " class="w-full" />
-              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Üretim Yeri</label>
-            </div>
-
-            <div class="relative fl-select ">
-              <USelect v-model="filterStatus" :items="statusFilterOptions" value-key="value" placeholder=" " class="w-full" />
-              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Durum</label>
-            </div>
-
-            <div v-if="showBranchFilter" class="relative fl-select ">
-              <USelectMenu v-model="filterBranchId" :items="branchFilterOptions" value-key="value" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-              <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', filterBranchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Acente</label>
-            </div>
-
+          <div class="filter-toolbar">
+            <USelectMenu v-model="filterInsuranceId" :items="insuranceFilterOptions" value-key="value" placeholder="Sigortalar" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :ui="filterDropdownUi" class="flex-1 min-w-[var(--filter-width-sm)]" />
+            <USelectMenu v-model="filterCompanyId" :items="companyFilterOptions" value-key="value" placeholder="Sigorta Şirketleri" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :ui="filterDropdownUi" class="flex-1 min-w-[var(--filter-width-sm)]" />
+            <USelect v-model="filterProd" :items="prodFilterOptions" value-key="value" placeholder="Üretim Yeri" :ui="filterDropdownUi" class="flex-1 min-w-[var(--filter-width-sm)]" />
+            <USelect v-model="filterStatus" :items="statusFilterOptions" value-key="value" placeholder="Durum" :ui="filterDropdownUi" class="flex-1 min-w-[var(--filter-width-sm)]" />
+            <USelectMenu v-if="showBranchFilter" v-model="filterBranchId" :items="branchFilterOptions" value-key="value" placeholder="Acente" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :ui="filterDropdownUi" class="flex-1 min-w-[var(--filter-width-sm)]" />
             <UPopover v-model:open="filterDateRangePopoverOpen">
-              <UButton :label="dateRangeLabel" icon="i-lucide-calendar-range" color="neutral" variant="outline" size="xl" class="w-full justify-start" />
+              <UButton :label="dateRangeLabel" icon="i-lucide-calendar-range" size="sm" color="neutral" variant="outline" class="justify-start min-w-[var(--filter-width-sm)]" />
               <template #content>
                 <UCalendar locale="tr-TR" v-model="filterDateRange" range :number-of-months="2" class="p-2" @update:model-value="(v: any) => { if (v?.start && v?.end) filterDateRangePopoverOpen = false }" />
               </template>
             </UPopover>
-
-            <UButton v-if="can('policies.export')" label="Excel" icon="i-lucide-download" color="neutral" variant="outline" size="xl" class="w-full hidden sm:flex" @click="exportExcel" />
+            <UButton v-if="can('policies.export')" label="Excel" icon="i-lucide-download" size="sm" color="neutral" variant="outline" class="hidden sm:flex" @click="exportExcel" />
           </div>
         </div>
       </template>
@@ -712,7 +672,7 @@ function toHex(color?: string): string {
         >
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-semibold text-primary uppercase truncate">{{ p.customerName }}</p>
+              <p class="text-sm font-semibold text-primary uppercase overflow-hidden whitespace-nowrap">{{ formatPersonName(p.customerName || '', 'compact') }}</p>
               <p class="text-xs text-muted font-mono">{{ p.customerIdentity }}</p>
             </div>
             <UBadge
@@ -724,14 +684,8 @@ function toHex(color?: string): string {
             </UBadge>
           </div>
           <div class="flex items-center gap-3 mt-2">
-            <span
-              class="inline-block rounded-md px-2 py-0.5 text-xs font-medium"
-              :style="{
-                backgroundColor: toHex(p.insuranceColor) + '1a',
-                color: toHex(p.insuranceColor)
-              }"
-            >{{ p.insuranceName?.split(' ')[0] || '' }}</span>
-            <span class="text-xs font-semibold tabular-nums">{{ (p.totalGrossPremium ?? p.grossPremium ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} ₺</span>
+            <span class="badge-cell" :style="insuranceBadgeStyle(p.insuranceColor)">{{ insuranceShortLabel(p.insuranceName) }}</span>
+            <span class="text-xs font-semibold ">{{ (p.totalGrossPremium ?? p.grossPremium ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} ₺</span>
           </div>
         </div>
         <div v-if="!policies.data.value.length" class="text-center text-sm text-muted py-8">Poliçe bulunamadı</div>
@@ -800,7 +754,7 @@ function toHex(color?: string): string {
 
         <template #policyNo-cell="{ row }">
           <div class="flex flex-col cursor-pointer" @click="openPolicyDetail(row.original.id)">
-            <span class="text-xs" :style="{ color: toHex(row.original.companyColor) }">{{ row.original.companyName }}</span>
+            <span class="text-xs" :style="{ color: toHex(row.original.companyColor) }">{{ formatCompanyName(row.original.companyName || '', 'compact') }}</span>
             <span class="font-mono text-xs text-primary hover:underline">{{ row.original.policyNo }}</span>
           </div>
         </template>
@@ -808,15 +762,7 @@ function toHex(color?: string): string {
 
         <template #insuranceName-cell="{ row }">
           <UTooltip :text="row.original.insuranceName || ''">
-            <span
-              class="inline-block max-w-full truncate align-middle rounded-md px-2 py-0.5 text-xs font-medium"
-              :style="{
-                backgroundColor: toHex(row.original.insuranceColor) + '1a',
-                color: toHex(row.original.insuranceColor)
-              }"
-            >
-              {{ row.original.insuranceName?.split(' ')[0] || '' }}
-            </span>
+            <span class="badge-cell" :style="insuranceBadgeStyle(row.original.insuranceColor)">{{ insuranceShortLabel(row.original.insuranceName) }}</span>
           </UTooltip>
         </template>
 
@@ -827,7 +773,7 @@ function toHex(color?: string): string {
               :title="row.original.customerName"
               class="text-primary hover:underline text-xs uppercase"
             >
-              {{ row.original.customerName?.slice(0, 16) }}{{ (row.original.customerName?.length ?? 0) > 16 ? '…' : '' }}
+              {{ formatPersonName(row.original.customerName || '', 'compact') }}
             </NuxtLink>
             <span v-if="row.original.customerIdentity" class="font-mono text-xs text-muted">{{ row.original.customerIdentity }}</span>
           </div>
@@ -838,23 +784,23 @@ function toHex(color?: string): string {
         </template>
 
         <template #issuedAt-cell="{ row }">
-          <span class="text-xs tabular-nums">{{ formatDate(row.original.issuedAt) }}</span>
+          <span class="text-xs ">{{ formatDate(row.original.issuedAt) }}</span>
         </template>
 
         <template #startsAt-cell="{ row }">
-          <span class="text-xs tabular-nums">{{ formatDate(row.original.startsAt) }}</span>
+          <span class="text-xs ">{{ formatDate(row.original.startsAt) }}</span>
         </template>
 
         <template #expiresAt-cell="{ row }">
-          <span class="text-xs tabular-nums">{{ formatDate(row.original.effectiveExpiresAt ?? row.original.expiresAt) }}</span>
+          <span class="text-xs ">{{ formatDate(row.original.effectiveExpiresAt ?? row.original.expiresAt) }}</span>
         </template>
 
         <template #grossPremium-cell="{ row }">
-          <span class="text-xs tabular-nums block text-right">{{ (row.original.totalGrossPremium ?? row.original.grossPremium ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+          <span class="text-xs block text-right">{{ (row.original.totalGrossPremium ?? row.original.grossPremium ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
         </template>
 
         <template #income-cell="{ row }">
-          <span class="text-xs tabular-nums block text-right">{{ (row.original.income ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+          <span class="text-xs block text-right">{{ (row.original.income ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
         </template>
 
         <template #policyStatus-cell="{ row }">
@@ -934,13 +880,13 @@ function toHex(color?: string): string {
                           {{ getZeyilLabel(z) }}
                         </UBadge>
                       </td>
-                      <td class="px-2 py-2 whitespace-nowrap tabular-nums">{{ formatDate(z.issuedAt || '') }}</td>
-                      <td class="px-2 py-2 whitespace-nowrap tabular-nums">{{ formatDate(z.startsAt) }}</td>
-                      <td class="px-2 py-2 whitespace-nowrap tabular-nums">{{ formatDate(z.expiresAt) }}</td>
-                      <td class="px-3 py-2 whitespace-nowrap tabular-nums text-right" :class="z.grossPremium < 0 ? 'text-error' : ''">
+                      <td class="px-2 py-2 whitespace-nowrap ">{{ formatDate(z.issuedAt || '') }}</td>
+                      <td class="px-2 py-2 whitespace-nowrap ">{{ formatDate(z.startsAt) }}</td>
+                      <td class="px-2 py-2 whitespace-nowrap ">{{ formatDate(z.expiresAt) }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-right" :class="z.grossPremium < 0 ? 'text-error' : ''">
                         {{ z.grossPremium.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                       </td>
-                      <td class="px-3 py-2 whitespace-nowrap tabular-nums text-right" :class="z.netPremium < 0 ? 'text-error' : ''">
+                      <td class="px-3 py-2 whitespace-nowrap text-right" :class="z.netPremium < 0 ? 'text-error' : ''">
                         {{ z.netPremium.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                       </td>
                       <td class="px-3 py-2 whitespace-nowrap">
@@ -1043,8 +989,8 @@ function toHex(color?: string): string {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error"  @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1052,14 +998,14 @@ function toHex(color?: string): string {
     <!-- Cancel Modal -->
     <UModal :dismissible="false" v-model:open="isCancelModalOpen" title="Poliçe İptal Et" class="sm:max-w-lg">
       <template #body>
-        <UForm :schema="cancelSchema" :state="cancelForm" @submit="doCancel">
+        <UForm :schema="cancelSchema" :state="cancelForm" :validate-on='["submit"]' @submit="doCancel">
           <div class="space-y-4">
             <div class="p-3 bg-warning/10 rounded-lg text-sm text-warning">
               Bu poliçeyi iptal edeceksiniz. İptal zeyili otomatik oluşturulacaktır.
             </div>
 
             <!-- İptal Tarihi -->
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model="cancelDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-cdate">
                 <template #trailing>
                   <UPopover v-model:open="cancelDatePopoverOpen" :ui="{ content: 'p-0' }">
@@ -1075,14 +1021,14 @@ function toHex(color?: string): string {
 
             <div class="grid grid-cols-2 gap-4">
               <!-- İade Brüt Prim -->
-              <div class="relative fl-input">
+              <div class="relative fl-form">
                 <UInput :model-value="cancelGrossDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cgross" @update:model-value="onCancelCurrencyInput('cancelGrossRefund', $event)" @blur="onCancelCurrencyBlur('cancelGrossRefund')">
                   <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cgross:top-0 peer-focus-within/fl-cgross:-translate-y-1/2 peer-focus-within/fl-cgross:text-xs peer-focus-within/fl-cgross:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cgross:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cgross:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cgross:text-[var(--ui-text-highlighted)]">İade Brüt Prim</label>
               </div>
               <!-- İade Net Prim -->
-              <div class="relative fl-input">
+              <div class="relative fl-form">
                 <UInput :model-value="cancelNetDisplay" placeholder=" " inputmode="decimal" class="w-full peer/fl-cnet" @update:model-value="onCancelCurrencyInput('cancelNetRefund', $event)" @blur="onCancelCurrencyBlur('cancelNetRefund')">
                   <template #trailing><span class="text-xs text-muted">TL</span></template>
                 </UInput>
@@ -1101,7 +1047,7 @@ function toHex(color?: string): string {
               <div v-else class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <UIcon name="i-lucide-file-text" class="size-4 text-primary" />
-                  <span class="text-sm font-medium truncate max-w-[250px]">{{ cancelFile.name }}</span>
+                  <span class="text-sm font-medium overflow-hidden whitespace-nowrap max-w-[250px]">{{ cancelFile.name }}</span>
                   <span class="text-xs text-muted">{{ Math.round(cancelFile.size / 1024) }} KB</span>
                 </div>
                 <UButton icon="i-lucide-x" size="xs" color="error" variant="ghost" @click="cancelFile = null" />
@@ -1109,8 +1055,8 @@ function toHex(color?: string): string {
             </div>
 
             <div class="flex justify-end gap-2">
-              <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
-              <UButton label="İptal Et" color="warning" size="xl"  type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
+              <UButton label="Vazgeç" color="neutral" variant="outline"  :disabled="cancellingInProgress" @click="isCancelModalOpen = false" />
+              <UButton label="İptal Et" color="warning"  type="submit" :loading="cancellingInProgress" :disabled="cancellingInProgress || !!cancelPrimError" />
             </div>
           </div>
         </UForm>
@@ -1132,8 +1078,8 @@ function toHex(color?: string): string {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isZeyilDeleteModalOpen = false" />
-          <UButton label="Evet, Sil" color="error" size="xl"  @click="doZeyilDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isZeyilDeleteModalOpen = false" />
+          <UButton label="Evet, Sil" color="error"  @click="doZeyilDelete" />
         </div>
       </template>
     </UModal>
@@ -1175,6 +1121,6 @@ function toHex(color?: string): string {
 :deep(.policeler-table th:nth-child(4)),
 :deep(.policeler-table td:nth-child(4)) {
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
 </style>

@@ -486,7 +486,7 @@ function statusColor(s: string): string {
             >
               <div class="flex items-center gap-2 min-w-0">
                 <UIcon :name="f.mimeType === 'application/pdf' ? 'i-lucide-file-text' : 'i-lucide-image'" class="size-4 text-muted shrink-0" />
-                <button class="text-xs font-medium text-primary hover:underline truncate text-left" @click="openPreview(f)">{{ f.originalName }}</button>
+                <button class="text-xs font-medium text-primary hover:underline overflow-hidden whitespace-nowrap text-left" @click="openPreview(f)">{{ f.originalName }}</button>
                 <span class="text-[11px] text-muted shrink-0">{{ formatFileSize(f.fileSize) }}</span>
               </div>
               <div class="flex items-center gap-1">
@@ -582,20 +582,20 @@ function statusColor(s: string): string {
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
           <p class="text-sm">Güncelleniyor...</p>
         </div>
-        <div class="flex flex-col gap-4 [&_input]:!font-semibold">
+        <div class="modal-form flex flex-col [&_input]:!font-semibold">
           <!-- TC Kimlik No -->
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput :model-value="editForm.tcNo" placeholder=" " class="w-full peer/fl-etc" @update:model-value="(v: string) => editForm.tcNo = v.replace(/\D/g, '').slice(0, 11)" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-etc:top-0 peer-focus-within/fl-etc:-translate-y-1/2 peer-focus-within/fl-etc:text-xs peer-focus-within/fl-etc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-etc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-etc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-etc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-etc:text-[var(--ui-text-highlighted)]">TC Kimlik No</label>
           </div>
 
           <!-- Ad Soyad + Doğum Tarihi -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model="editForm.fullName" placeholder=" " class="w-full peer/fl-ename" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ename:top-0 peer-focus-within/fl-ename:-translate-y-1/2 peer-focus-within/fl-ename:text-xs peer-focus-within/fl-ename:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ename:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ename:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ename:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ename:text-[var(--ui-text-highlighted)]">Ad Soyad</label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput :model-value="editBirthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-ebd" @keydown="editPreventNonDigit" @update:model-value="onEditBirthInput">
                 <template #trailing>
                   <UPopover v-model:open="editBirthDateOpen">
@@ -611,15 +611,15 @@ function statusColor(s: string): string {
           </div>
 
           <!-- Telefon -->
-          <PhoneInput v-model="editForm.phone" label="Telefon No" />
+          <PhoneInput v-model="editForm.phone" label="Telefon No" modal />
 
           <!-- Ürün + Kaynak -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.productId" :items="leadProducts" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün</label>
             </div>
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.sourceId" :items="leadSources" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.sourceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Kaynak</label>
             </div>
@@ -641,7 +641,7 @@ function statusColor(s: string): string {
           <!-- Zoom kontrolleri -->
           <div class="sticky top-0 z-10 flex items-center gap-2 py-2 px-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm w-full justify-center border-b border-default">
             <UButton icon="i-lucide-zoom-out" size="xs" color="neutral" variant="ghost" @click="zoomOut" :disabled="previewZoom <= 0.25" />
-            <button class="text-xs font-semibold tabular-nums w-12 text-center" @click="zoomReset">{{ Math.round(previewZoom * 100) }}%</button>
+            <button class="text-xs font-semibold w-12 text-center" @click="zoomReset">{{ Math.round(previewZoom * 100) }}%</button>
             <UButton icon="i-lucide-zoom-in" size="xs" color="neutral" variant="ghost" @click="zoomIn" :disabled="previewZoom >= 4" />
             <a :href="previewUrl" download class="ml-2">
               <UButton icon="i-lucide-download" size="xs" color="neutral" variant="ghost" title="İndir" />

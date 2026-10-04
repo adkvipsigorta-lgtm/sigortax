@@ -79,18 +79,15 @@ function getRowActions(item: LeadSource) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Lead Kaynakları</h1>
+      <h1 class="text-2xl font-semibold">Lead Kaynakları</h1>
       <p class="text-sm text-muted mt-1">Lead'lerin geldiği kaynakları yönetin.</p>
     </div>
 
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-lssearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lssearch:top-0 peer-focus-within/fl-lssearch:-translate-y-1/2 peer-focus-within/fl-lssearch:text-xs peer-focus-within/fl-lssearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lssearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lssearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lssearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lssearch:text-[var(--ui-text-highlighted)]">Kaynak Ara</label>
-          </div>
-          <UButton label="Yeni Kaynak" icon="i-lucide-plus" size="xl"  @click="openAddModal" />
+          <UInput v-model="searchInput" placeholder="Kaynak Ara..." icon="i-lucide-search" class="filter-w-search" />
+          <UButton label="Yeni Kaynak" icon="i-lucide-plus"  @click="openAddModal" />
         </div>
       </template>
 
@@ -100,7 +97,7 @@ function getRowActions(item: LeadSource) {
           :data="sources.data.value"
           :columns="columns"
           :loading="sources.loading.value && !sources.data.value.length"
-          :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden text-ellipsis' }"
+          :ui="{ base: 'table-fixed min-w-full', thead: 'bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10', th: 'py-2 px-3 text-xs font-semibold tracking-wide text-muted whitespace-nowrap', td: 'py-2 px-3 text-xs whitespace-nowrap overflow-hidden' }"
         >
           <template #name-cell="{ row }"><span  :class="row.original.isActive ? '' : 'text-muted'">{{ row.original.name }}</span></template>
           <template #color-cell="{ row }">
@@ -126,8 +123,8 @@ function getRowActions(item: LeadSource) {
     <!-- Ekle/Düzenle Modal -->
     <UModal :dismissible="false" v-model:open="isModalOpen" :title="editingItem ? 'Kaynak Düzenle' : 'Yeni Kaynak'" class="sm:max-w-md">
       <template #body>
-        <UForm :schema="schema" :state="form" @submit="save" class="space-y-5">
-          <div class="relative fl-input">
+        <UForm :schema="schema" :state="form" :validate-on='["submit"]' @submit="save" class="space-y-5">
+          <div class="relative fl-form">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-lsname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lsname:top-0 peer-focus-within/fl-lsname:-translate-y-1/2 peer-focus-within/fl-lsname:text-xs peer-focus-within/fl-lsname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lsname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lsname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lsname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lsname:text-[var(--ui-text-highlighted)]">Kaynak Adı <span class="text-red-500">*</span></label>
           </div>
@@ -153,8 +150,8 @@ function getRowActions(item: LeadSource) {
           <USeparator />
 
           <div class="flex justify-end gap-2">
-            <UButton label="İptal" color="neutral" variant="outline" size="xl"  :disabled="saving" @click="isModalOpen = false" />
-            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check" size="xl"  type="submit" :loading="saving" :disabled="saving" />
+            <UButton label="İptal" color="neutral" variant="outline"  :disabled="saving" @click="isModalOpen = false" />
+            <UButton :label="editingItem ? 'Güncelle' : 'Kaydet'" icon="i-lucide-check"  type="submit" :loading="saving" :disabled="saving" />
           </div>
         </UForm>
       </template>
@@ -175,8 +172,8 @@ function getRowActions(item: LeadSource) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="isDeleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="isDeleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  @click="doDelete" />
         </div>
       </template>
     </UModal>

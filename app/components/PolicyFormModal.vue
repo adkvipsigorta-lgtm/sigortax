@@ -947,7 +947,10 @@ const saving = ref(false)
 async function onFormSubmit() {
   if (saving.value) return
   if (!policyFormRef.value) return
-  if (policyNoError.value) return
+  if (policyNoError.value) {
+    toast.add({ title: policyNoError.value, color: 'error' })
+    return
+  }
   try {
     await policyFormRef.value.validate()
     await savePolicy()
@@ -1103,7 +1106,7 @@ async function savePolicy() {
             <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" stroke-width="4" class="text-gray-200 dark:text-gray-700" />
             <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" stroke-width="4" class="text-primary transition-all duration-300" stroke-linecap="round" :stroke-dasharray="213.6" :stroke-dashoffset="213.6 - (213.6 * pdfProgress / 100)" />
           </svg>
-          <span class="text-lg font-bold text-primary tabular-nums">%{{ pdfProgress }}</span>
+          <span class="text-lg font-bold text-primary ">%{{ pdfProgress }}</span>
         </div>
         <div class="text-center">
           <p class="text-sm">{{ pdfProgressLabel }}</p>
@@ -1117,7 +1120,7 @@ async function savePolicy() {
             Bu poliçe mutabakat kapsamındadır. Yalnızca <strong>Plaka</strong> ve <strong>Ruhsat Seri No</strong> düzenlenebilir.
           </p>
         </div>
-        <div class="grid grid-cols-12 gap-4 [&_input]:!font-semibold">
+        <div class="modal-form grid grid-cols-12 [&_input]:!font-semibold">
           <!-- Müşteri -->
           <UFormField :class="['col-span-12', pdfHighlight('customerId')]" name="customerId">
             <template #label />
@@ -1211,7 +1214,7 @@ async function savePolicy() {
               <UInput v-model="form.policyNo" placeholder=" " class="w-full peer/fl-polyno" :loading="policyNoChecking" :disabled="isReconciled" @blur="checkPolicyNoDuplicate" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-polyno:top-0 peer-focus-within/fl-polyno:-translate-y-1/2 peer-focus-within/fl-polyno:text-xs peer-focus-within/fl-polyno:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-polyno:top-0 peer-has-[input:not(:placeholder-shown)]/fl-polyno:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-polyno:text-xs peer-has-[input:not(:placeholder-shown)]/fl-polyno:text-[var(--ui-text-highlighted)]">Poliçe Numarası <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <p v-if="policyNoError && !showZeyilConfirm" class="mt-1 text-[0.7rem] text-[var(--ui-error)]">{{ policyNoError }}</p>
+            <p v-if="policyNoError && !showZeyilConfirm" class="sr-only" role="alert">{{ policyNoError }}</p>
           </UFormField>
 
           <!-- İş Türü | Kaynak (sadece Yeni İş) | Satış Temsilcisi -->
@@ -1247,7 +1250,7 @@ async function savePolicy() {
               </div>
             </UFormField>
             <UFormField v-if="isFieldEnabled('policy_insured_no')" label="Sigorta Ettiren Telefonu" :class="isFieldEnabled('policy_insured_name') ? 'col-span-6' : 'col-span-12'">
-              <PhoneInput v-model="form.insuredNo" :disabled="isReconciled" />
+              <PhoneInput v-model="form.insuredNo" :disabled="isReconciled" modal />
             </UFormField>
           </template>
 
@@ -1471,7 +1474,7 @@ async function savePolicy() {
               <UIcon v-if="pdfParsing" name="i-lucide-loader-circle" class="size-5 text-primary shrink-0 animate-spin" />
               <UIcon v-else name="i-lucide-file-check" class="size-5 text-primary shrink-0" />
               <div class="flex-1 min-w-0">
-                <span class="text-sm font-semibold truncate block">{{ buildDocumentName() }}</span>
+                <span class="text-sm font-medium overflow-hidden whitespace-nowrap block">{{ buildDocumentName() }}</span>
                 <span v-if="pdfParsing" class="text-xs text-primary">AI alanları dolduruyor...</span>
                 <span v-else class="text-xs text-muted">{{ (policyFile.size / 1024).toFixed(0) }} KB</span>
               </div>

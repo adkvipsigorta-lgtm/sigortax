@@ -724,7 +724,7 @@ function onDragLeave() { isDragging.value = false }
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Allianz XML Import</h1>
+      <h1 class="text-2xl font-semibold">Allianz XML Import</h1>
       <p class="text-sm text-muted mt-1">Allianz sisteminden indirilen XML dosyasını içe aktarın.</p>
     </div>
 
@@ -749,7 +749,6 @@ function onDragLeave() { isDragging.value = false }
           v-if="!isDragging"
           label="Dosya Seç"
           icon="i-lucide-file-up"
-          size="xl"
           
           @click.stop="fileInput?.click()"
         />
@@ -805,7 +804,6 @@ function onDragLeave() { isDragging.value = false }
             label="Vazgeç"
             color="neutral"
             variant="outline"
-            size="xl"
             
             @click="resetState()"
           />
@@ -813,7 +811,6 @@ function onDragLeave() { isDragging.value = false }
             v-if="selectedCount === 0 && duplicateCount > 0"
             :label="`${duplicateCount} Poliçenin Eksik Alanlarını Güncelle`"
             icon="i-lucide-refresh-cw"
-            size="xl"
             
             color="warning"
             @click="updateExisting()"
@@ -822,7 +819,6 @@ function onDragLeave() { isDragging.value = false }
             v-else
             :label="`${selectedCount} Poliçe Import Et`"
             icon="i-lucide-download"
-            size="xl"
             
             @click="saveImport()"
           />
@@ -929,8 +925,8 @@ function onDragLeave() { isDragging.value = false }
                     <span v-else class="text-xs text-muted">—</span>
                   </td>
                   <td class="p-2 overflow-hidden">
-                    <p class="text-xs uppercase truncate" :title="p.customerName">{{ p.customerName }}</p>
-                    <p class="text-xs text-muted truncate">{{ p.identityNumber }}</p>
+                    <p class="text-xs uppercase overflow-hidden whitespace-nowrap" :title="p.customerName">{{ p.customerName }}</p>
+                    <p class="text-xs text-muted overflow-hidden whitespace-nowrap">{{ p.identityNumber }}</p>
                   </td>
                   <td class="p-2">
                     <UBadge
@@ -965,8 +961,8 @@ function onDragLeave() { isDragging.value = false }
                     <span v-else-if="p.zeyilNo > 1" class="text-muted">Zeyil</span>
                     <span v-else>Yeni</span>
                   </td>
-                  <td class="p-2 text-xs font-mono truncate" :title="p.plateNo">{{ p.plateNo || '—' }}</td>
-                  <td class="p-2 text-xs font-mono truncate" :title="p.policyNo">{{ p.policyNo }}</td>
+                  <td class="p-2 text-xs font-mono overflow-hidden whitespace-nowrap" :title="p.plateNo">{{ p.plateNo || '—' }}</td>
+                  <td class="p-2 text-xs font-mono overflow-hidden whitespace-nowrap" :title="p.policyNo">{{ p.policyNo }}</td>
                   <td class="p-2 text-right text-xs" :class="p.netPremium < 0 ? 'text-error' : ''">
                     {{ formatCurrency(p.netPremium) }}
                   </td>
@@ -1037,7 +1033,7 @@ function onDragLeave() { isDragging.value = false }
       <div class="flex flex-col items-center justify-center py-16 gap-10">
         <div class="text-center select-none">
           <p class="text-xs font-semibold text-muted uppercase tracking-widest mb-4">Kalan Poliçe</p>
-          <div class="text-[7rem] font-black leading-none tabular-nums text-primary transition-all duration-100">
+          <div class="text-[7rem] font-black leading-none text-primary transition-all duration-100">
             {{ remainingCount }}
           </div>
           <p class="text-sm text-muted mt-3">{{ processedCount }} / {{ totalToProcess }} işlendi</p>
@@ -1088,7 +1084,7 @@ function onDragLeave() { isDragging.value = false }
         </div>
 
         <div class="text-center">
-          <h2 class="text-2xl font-bold">
+          <h2 class="text-2xl font-semibold">
             {{ errorCount === 0 ? 'Tüm poliçeler başarıyla işlendi!' : 'İşlem tamamlandı' }}
           </h2>
           <p class="text-muted text-sm mt-1">Toplam {{ totalToProcess }} poliçe işlendi</p>
@@ -1096,18 +1092,18 @@ function onDragLeave() { isDragging.value = false }
 
         <div class="grid grid-cols-3 gap-4 w-full max-w-md">
           <div class="text-center p-5 rounded-xl bg-success/10 border border-success/20">
-            <p class="text-4xl font-black text-success tabular-nums">{{ savedCount }}</p>
+            <p class="text-4xl font-black text-success ">{{ savedCount }}</p>
             <p class="text-xs text-muted mt-1.5">Yeni Eklendi</p>
           </div>
           <div class="text-center p-5 rounded-xl bg-warning/10 border border-warning/20">
-            <p class="text-4xl font-black text-warning tabular-nums">{{ updatedCount }}</p>
+            <p class="text-4xl font-black text-warning ">{{ updatedCount }}</p>
             <p class="text-xs text-muted mt-1.5">Güncellendi</p>
           </div>
           <div
             class="text-center p-5 rounded-xl border"
             :class="errorCount > 0 ? 'bg-error/10 border-error/20' : 'bg-neutral-100 border-transparent'"
           >
-            <p class="text-4xl font-black tabular-nums" :class="errorCount > 0 ? 'text-error' : 'text-muted'">
+            <p class="text-4xl font-black " :class="errorCount > 0 ? 'text-error' : 'text-muted'">
               {{ errorCount }}
             </p>
             <p class="text-xs text-muted mt-1.5">Hata</p>
@@ -1125,8 +1121,8 @@ function onDragLeave() { isDragging.value = false }
         </div>
 
         <div class="flex gap-3">
-          <UButton label="Yeni XML Yükle" icon="i-lucide-upload" size="xl"  @click="resetState()" />
-          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline" size="xl"  to="/policeler" />
+          <UButton label="Yeni XML Yükle" icon="i-lucide-upload"  @click="resetState()" />
+          <UButton label="Poliçelere Git" icon="i-lucide-arrow-right" color="neutral" variant="outline"  to="/policeler" />
         </div>
       </div>
     </UCard>

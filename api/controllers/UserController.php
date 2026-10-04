@@ -44,7 +44,7 @@ class UserController
 
         $result = Database::paginate($sql, $params, $page, $limit);
 
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente', 3 => 'musteri'];
+        $roleMap = [1 => 'admin', 0 => 'kullanici', 4 => 'stajer'];
         $result['data'] = array_map(function ($u) use ($roleMap) {
             return [
                 'id' => (int) $u['id'],
@@ -67,7 +67,10 @@ class UserController
         AuthMiddleware::requireAdminOrSelf($user, $id);
 
         $u = Database::fetch(
-            "SELECT id, name, email, is_active, is_sales_rep, role, branch_id, created_at FROM users WHERE id = ? AND deleted_at IS NULL",
+            "SELECT id, name, email, is_active, is_sales_rep, role, branch_id, created_at,
+                    personal_phone, company_phone, personal_email, tc_no, birth_date, address,
+                    identity_front, identity_back, onboarding_completed
+             FROM users WHERE id = ? AND deleted_at IS NULL",
             [$id]
         );
 
@@ -75,7 +78,14 @@ class UserController
             Response::error('Kullanici bulunamadi', 404);
         }
 
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente', 3 => 'musteri'];
+        $roleMap = [1 => 'admin', 0 => 'kullanici', 4 => 'stajer'];
+
+        // Onay kayıtları
+        $agreements = Database::fetchAll(
+            "SELECT agreement_type, agreement_version, accepted_at, ip_address, sms_phone, sms_verified, sms_verified_at
+             FROM user_agreements WHERE user_id = ? AND sms_verified = 1 ORDER BY accepted_at DESC",
+            [$id]
+        );
 
         Response::success([
             'id' => (int) $u['id'],
@@ -86,6 +96,24 @@ class UserController
             'isActive' => (bool) $u['is_active'],
             'isSalesRep' => (bool) ($u['is_sales_rep'] ?? 1),
             'createdAt' => $u['created_at'],
+            'personalPhone' => $u['personal_phone'],
+            'companyPhone' => $u['company_phone'],
+            'personalEmail' => $u['personal_email'],
+            'tcNo' => $u['tc_no'],
+            'birthDate' => $u['birth_date'],
+            'address' => $u['address'],
+            'identityFront' => $u['identity_front'],
+            'identityBack' => $u['identity_back'],
+            'onboardingCompleted' => (bool) ($u['onboarding_completed'] ?? false),
+            'agreements' => array_map(fn($a) => [
+                'type' => $a['agreement_type'],
+                'version' => $a['agreement_version'],
+                'acceptedAt' => $a['accepted_at'],
+                'ipAddress' => $a['ip_address'],
+                'smsPhone' => $a['sms_phone'],
+                'smsVerified' => (bool) $a['sms_verified'],
+                'verifiedAt' => $a['sms_verified_at'],
+            ], $agreements),
         ]);
     }
 
@@ -118,18 +146,20 @@ class UserController
             $plainPassword .= $chars[random_int(0, strlen($chars) - 1)];
         }
 
-        $roleMap = ['admin' => 1, 'kullanici' => 0, 'acente' => 2, 'musteri' => 3];
+        $roleMap = ['admin' => 1, 'kullanici' => 0, 'stajer' => 4];
 
         $insertData = [
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => password_hash($plainPassword, PASSWORD_DEFAULT),
             'phone' => $input['phone'] ?? null,
+            'personal_phone' => $input['phone'] ?? null,
             'tc_no' => $input['tcNo'] ?? null,
             'is_active' => isset($input['isActive']) ? (int) $input['isActive'] : 1,
             'is_sales_rep' => isset($input['isSalesRep']) ? (int) $input['isSalesRep'] : 1,
             'role' => $roleMap[$input['role'] ?? 'kullanici'] ?? 0,
             'branch_id' => $input['branchId'] ?? null,
+            'onboarding_completed' => ($roleMap[$input['role'] ?? 'kullanici'] ?? 0) === 1 ? 1 : 0,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
@@ -181,9 +211,14 @@ class UserController
             $data['password'] = password_hash($input['password'], PASSWORD_DEFAULT);
         }
 
+        // Telefon ve kişisel bilgi alanları
+        if (isset($input['personalPhone'])) $data['personal_phone'] = $input['personalPhone'];
+        if (isset($input['companyPhone'])) $data['company_phone'] = $input['companyPhone'];
+        if (isset($input['personalEmail'])) $data['personal_email'] = $input['personalEmail'];
+
         // Only admin can change role/status
         if ((int) $user['role'] === 1) {
-            $roleMap = ['admin' => 1, 'kullanici' => 0, 'acente' => 2, 'musteri' => 3];
+            $roleMap = ['admin' => 1, 'kullanici' => 0, 'stajer' => 4];
             if (isset($input['role'])) $data['role'] = $roleMap[$input['role']] ?? 0;
             if (isset($input['isActive'])) $data['is_active'] = (int) $input['isActive'];
             if (isset($input['isSalesRep'])) $data['is_sales_rep'] = (int) $input['isSalesRep'];
@@ -211,6 +246,71 @@ class UserController
         }
 
         Response::success(null, 'Kullanici guncellendi');
+    }
+
+    /**
+     * Şifre sıfırla + 2FA sıfırla + kişisel telefona SMS gönder
+     * POST /api/users/:id/reset-password
+     */
+    public function resetPassword(array $user, int $id): void
+    {
+        AuthMiddleware::requireAdmin($user);
+
+        $target = Database::fetch(
+            "SELECT id, name, email, personal_phone, phone FROM users WHERE id = ? AND deleted_at IS NULL",
+            [$id]
+        );
+        if (!$target) {
+            Response::error('Kullanıcı bulunamadı', 404);
+        }
+
+        $phone = $target['personal_phone'] ?: $target['phone'];
+        if (empty($phone)) {
+            Response::error('Kullanıcının kişisel telefon numarası tanımlı değil', 400);
+        }
+
+        // Yeni şifre üret
+        $chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#';
+        $plainPassword = '';
+        for ($i = 0; $i < 8; $i++) {
+            $plainPassword .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+
+        // Şifre güncelle + 2FA sıfırla + onboarding sıfırla
+        Database::query(
+            "UPDATE users SET
+                password = ?,
+                two_factor_enabled = 0,
+                two_factor_secret_enc = NULL,
+                two_factor_secret_iv = NULL,
+                two_factor_secret_tag = NULL,
+                two_factor_recovery_codes = NULL,
+                two_factor_last_step = NULL,
+                onboarding_completed = 0,
+                updated_at = NOW()
+             WHERE id = ?",
+            [password_hash($plainPassword, PASSWORD_DEFAULT), $id]
+        );
+
+        // Tüm oturumları sonlandır
+        Database::query(
+            "UPDATE sessions SET is_revoked = 1 WHERE user_id = ? AND is_revoked = 0",
+            [$id]
+        );
+
+        // Kişisel telefona SMS gönder
+        require_once __DIR__ . '/../helpers/NetgsmSms.php';
+        $smsMessage = "ADK Vip Sigorta CRM\n"
+            . "Yeni giris bilgileriniz:\n"
+            . "Adres: crm.sigortax.net\n"
+            . "E-posta: " . $target['email'] . "\n"
+            . "Sifre: " . $plainPassword;
+        $smsResult = NetgsmSms::send($phone, $smsMessage);
+
+        Response::success([
+            'message' => 'Şifre sıfırlandı, 2FA kaldırıldı ve SMS gönderildi',
+            'smsSent' => $smsResult['success'] ?? false,
+        ]);
     }
 
     public function destroy(array $user, int $id): void

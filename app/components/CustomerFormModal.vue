@@ -351,8 +351,8 @@ async function saveCustomer() {
 <template>
   <UModal v-model:open="isOpen" :title="customer ? 'Müşteri Düzenle' : 'Yeni Müşteri'" class="sm:max-w-2xl" :ui="{ content: 'flex flex-col max-h-[90vh]', body: 'flex-1 overflow-y-auto min-h-0' }">
     <template #body>
-      <UForm ref="formRef" :schema="customerSchema" :state="form" :validate-on="['blur', 'change', 'submit']" @submit="saveCustomer">
-        <div class="grid grid-cols-12 gap-x-4 gap-y-3 [&_input]:!font-semibold">
+      <UForm ref="formRef" :schema="customerSchema" :state="form" :validate-on="['submit']" @submit="saveCustomer">
+        <div class="modal-form grid grid-cols-12 [&_input]:!font-semibold">
           <UFormField label="Müşteri Türü" name="type" class="col-span-12">
             <div class="grid grid-cols-2 gap-4">
               <button
@@ -401,7 +401,7 @@ async function saveCustomer() {
                 peer-has-[input:not(:placeholder-shown)]/fl-name:-translate-y-1/2
                 peer-has-[input:not(:placeholder-shown)]/fl-name:text-xs
                 peer-has-[input:not(:placeholder-shown)]/fl-name:text-[var(--ui-text-highlighted)]
-              ">
+            " >
                 {{ isIndividual ? 'Ad Soyad' : 'Firma Unvanı' }}
                 <span class="text-[var(--ui-error)]">*</span>
               </label>
@@ -474,21 +474,32 @@ async function saveCustomer() {
 
           <UFormField name="phone" class="col-span-6">
             <template #label />
-            <PhoneInput v-model="form.phone" label="Telefon" :required="true" />
+            <PhoneInput v-model="form.phone" label="Telefon" :required="true" modal />
           </UFormField>
 
           <UFormField v-if="showField('phone_2')" name="phoneAlt" class="col-span-6">
             <template #label />
-            <PhoneInput v-model="form.phoneAlt" label="İkinci Telefon" />
+            <PhoneInput v-model="form.phoneAlt" label="İkinci Telefon" modal />
           </UFormField>
 
-          <UFormField v-if="isIndividual ? showField('marital_status') : showField('sector')" :label="isIndividual ? 'Medeni Durum' : 'Sektor'" :name="isIndividual ? 'maritalStatus' : 'sector'" class="col-span-6">
-            <USelect v-if="isIndividual" v-model="form.maritalStatus" :items="maritalOptions" value-key="value" placeholder="Seçiniz..." class="w-full" />
-            <UInput v-else v-model="form.sector" placeholder="Insaat" class="w-full" />
+          <UFormField v-if="isIndividual ? showField('marital_status') : showField('sector')" :name="isIndividual ? 'maritalStatus' : 'sector'" class="col-span-6">
+            <template #label />
+            <div v-if="isIndividual" class="relative fl-select-form [&_.truncate]:!font-semibold">
+              <USelect v-model="form.maritalStatus" :items="maritalOptions" value-key="value" placeholder=" " class="w-full" />
+              <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.maritalStatus ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Medeni Durum</label>
+            </div>
+            <div v-else class="relative fl-form">
+              <UInput v-model="form.sector" placeholder=" " class="w-full peer/fl-sector" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-sector:top-0 peer-focus-within/fl-sector:-translate-y-1/2 peer-focus-within/fl-sector:text-xs peer-focus-within/fl-sector:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-sector:top-0 peer-has-[input:not(:placeholder-shown)]/fl-sector:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-sector:text-xs peer-has-[input:not(:placeholder-shown)]/fl-sector:text-[var(--ui-text-highlighted)]">Sektör</label>
+            </div>
           </UFormField>
 
-          <UFormField v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" :label="isIndividual ? 'Çocuk Sayısı' : 'Calisan Sayısı'" name="dependentsCount" class="col-span-6">
-            <UInput v-model.number="form.dependentsCount" type="number" :min="0" class="w-full" />
+          <UFormField v-if="isIndividual ? showField('number_of_children') : showField('number_of_employees')" name="dependentsCount" class="col-span-6">
+            <template #label />
+            <div class="relative fl-form">
+              <UInput v-model.number="form.dependentsCount" type="number" :min="0" placeholder=" " class="w-full peer/fl-deps" />
+              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-deps:top-0 peer-focus-within/fl-deps:-translate-y-1/2 peer-focus-within/fl-deps:text-xs peer-focus-within/fl-deps:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-deps:top-0 peer-has-[input:not(:placeholder-shown)]/fl-deps:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-deps:text-xs peer-has-[input:not(:placeholder-shown)]/fl-deps:text-[var(--ui-text-highlighted)]">{{ isIndividual ? 'Çocuk Sayısı' : 'Çalışan Sayısı' }}</label>
+            </div>
           </UFormField>
 
           <template v-if="showField('city')">
@@ -497,16 +508,28 @@ async function saveCustomer() {
               <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
             </div>
 
-            <UFormField label="Ulke" name="countryId" class="col-span-6">
-              <USelectMenu v-model="form.countryId" :items="countryOptions" value-key="value" label-key="label" placeholder="Ulke arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
+            <UFormField name="countryId" class="col-span-6">
+              <template #label />
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
+                <USelectMenu v-model="form.countryId" :items="countryOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" @update:search-term="(v: string) => countrySearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.countryId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ülke</label>
+              </div>
             </UFormField>
 
-            <UFormField label="Şehir" name="city" class="col-span-6">
-              <USelectMenu v-model="form.city" :items="cityOptions" value-key="value" label-key="label" placeholder="Şehir arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.countryId" class="w-full" @update:search-term="(v: string) => citySearch = v" />
+            <UFormField name="city" class="col-span-6">
+              <template #label />
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
+                <USelectMenu v-model="form.city" :items="cityOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.countryId" class="w-full" @update:search-term="(v: string) => citySearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.city ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Şehir</label>
+              </div>
             </UFormField>
 
-            <UFormField label="Ilce" name="district" class="col-span-6">
-              <USelectMenu v-model="form.district" :items="districtOptions" value-key="value" label-key="label" placeholder="Ilce arayiniz..." searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.city" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
+            <UFormField name="district" class="col-span-6">
+              <template #label />
+              <div class="relative fl-select-form [&_.truncate]:!font-semibold">
+                <USelectMenu v-model="form.district" :items="districtOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" :disabled="!form.city" class="w-full" @update:search-term="(v: string) => districtSearch = v" />
+                <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.district ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">İlçe</label>
+              </div>
             </UFormField>
           </template>
 
@@ -526,8 +549,8 @@ async function saveCustomer() {
     </template>
     <template #footer>
       <div class="w-full flex justify-end items-center gap-3">
-        <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="saving" @click="isOpen = false" />
-        <UButton :label="customer ? 'Güncelle' : 'Kaydet'" size="xl" class="w-36 justify-center" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
+        <UButton label="İptal" color="neutral" variant="outline" class="w-36 justify-center" :disabled="saving" @click="isOpen = false" />
+        <UButton :label="customer ? 'Güncelle' : 'Kaydet'" class="w-36 justify-center" :loading="saving" :disabled="saving" @click="submitBtnRef?.click()" />
       </div>
     </template>
   </UModal>

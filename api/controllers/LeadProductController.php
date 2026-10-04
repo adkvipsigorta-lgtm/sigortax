@@ -4,7 +4,8 @@ class LeadProductController
 {
     public function index(array $user, array $query): void
     {
-        Permission::require($user, 'leads.view');
+        // all=1: dropdown/form listesi — herkese açık. Sayfa listesi: leads.view gerekli.
+        if (empty($query['all'])) Permission::require($user, 'leads.view');
 
         $where = ["deleted_at IS NULL"];
         $params = [];

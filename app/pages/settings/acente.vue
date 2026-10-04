@@ -232,10 +232,10 @@ onMounted(fetchOptions)
     <div class="mb-6 pb-4 border-b border-default">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-xl">Acente Bilgileri</h1>
+          <h1 class="text-2xl font-semibold">Acente Bilgileri</h1>
           <p class="text-sm text-muted mt-1">Acentenizin genel bilgilerini ve entegrasyon ayarlarını yönetin.</p>
         </div>
-        <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="saveOptions" />
+        <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check"  :loading="saving" @click="saveOptions" />
       </div>
     </div>
 
@@ -274,10 +274,10 @@ onMounted(fetchOptions)
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="cursor-pointer">
-                  <UButton :label="form.agency_logo ? 'Değiştir' : 'Yükle'" icon="i-lucide-upload" color="neutral" variant="outline" size="xl"  :loading="uploadingLogo" as="span" />
+                  <UButton :label="form.agency_logo ? 'Değiştir' : 'Yükle'" icon="i-lucide-upload" color="neutral" variant="outline"  :loading="uploadingLogo" as="span" />
                   <input type="file" accept="image/*" class="hidden" :disabled="!isAdmin" @change="handleLogoUpload">
                 </label>
-                <UButton v-if="form.agency_logo" label="Kaldır" icon="i-lucide-trash-2" color="error" variant="ghost" size="xl"  @click="removeLogo" />
+                <UButton v-if="form.agency_logo" label="Kaldır" icon="i-lucide-trash-2" color="error" variant="ghost"  @click="removeLogo" />
               </div>
             </div>
           </div>
@@ -308,7 +308,7 @@ onMounted(fetchOptions)
         </template>
         <div v-show="openSections.has('iletisim')" class="space-y-0 divide-y divide-default">
           <div class="py-4 first:pt-0">
-            <PhoneInput v-model="form.agency_phone" :disabled="!isAdmin" />
+            <PhoneInput v-model="form.agency_phone" :disabled="!isAdmin" modal />
           </div>
           <div class="py-4">
             <div class="relative fl-form">
@@ -494,7 +494,7 @@ onMounted(fetchOptions)
         </template>
         <template #footer>
           <div class="flex justify-end">
-            <UButton label="Tamam" size="xl"  @click="showApiKeyHelp = false" />
+            <UButton label="Tamam"  @click="showApiKeyHelp = false" />
           </div>
         </template>
       </UModal>

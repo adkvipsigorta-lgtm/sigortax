@@ -278,6 +278,32 @@ if ($resource === 'leads' && $action === 'webhook' && $method === 'POST') {
 // Protected routes - require auth
 $user = AuthMiddleware::handle();
 
+// Onboarding routes
+if ($resource === 'onboarding') {
+    require_once __DIR__ . '/controllers/OnboardingController.php';
+    $onboardingCtrl = new OnboardingController();
+    match (true) {
+        $action === 'status' && $method === 'GET'
+            => $onboardingCtrl->status($user),
+        $action === 'profile' && $method === 'POST'
+            => $onboardingCtrl->saveProfile($user, $input),
+        $action === 'agreement' && isset($segments[2]) && $method === 'GET'
+            => $onboardingCtrl->getAgreement($segments[2]),
+        $action === 'agreement' && isset($segments[2]) && isset($segments[3]) && $segments[3] === 'accept' && $method === 'POST'
+            => $onboardingCtrl->acceptAgreement($user, $segments[2]),
+        $action === 'agreement' && isset($segments[2]) && isset($segments[3]) && $segments[3] === 'verify' && $method === 'POST'
+            => $onboardingCtrl->verifyAgreement($user, $segments[2], $input),
+        $action === 'identity' && $method === 'POST'
+            => $onboardingCtrl->uploadIdentity($user),
+        $action === 'identity' && isset($segments[2]) && isset($segments[3]) && $method === 'GET'
+            => $onboardingCtrl->serveIdentity($user, (int) $segments[2], $segments[3]),
+        $action === 'admin' && isset($segments[2]) && $method === 'GET'
+            => $onboardingCtrl->adminUserDetail($user, (int) $segments[2]),
+        default => Response::error('Endpoint bulunamadi', 404),
+    };
+    exit;
+}
+
 // Dashboard routes
 if ($resource === 'dashboard') {
     match (true) {
@@ -581,6 +607,8 @@ if ($resource === 'users') {
     // /api/users/{id}/permissions
     if ($id && $action === 'permissions' && $method === 'GET') { $controller->getPermissions($user, (int) $id); exit; }
     if ($id && $action === 'permissions' && $method === 'PUT') { $controller->updatePermissions($user, (int) $id, $input); exit; }
+    // /api/users/{id}/reset-password
+    if ($id && $action === 'reset-password' && $method === 'POST') { $controller->resetPassword($user, (int) $id); exit; }
 }
 
 // Personnel routes

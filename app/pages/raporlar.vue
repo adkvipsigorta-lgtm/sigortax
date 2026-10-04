@@ -348,7 +348,7 @@ const insuranceBarData = computed(() => {
   if (!data.value) return null
   const items = (data.value.byInsurance || []).slice(0, 10)
   return {
-    labels: items.map((i: any) => i.name?.length > 18 ? i.name.slice(0, 18) + '...' : i.name),
+    labels: items.map((i: any) => formatCompanyName(i.name || '', 'compact')),
     datasets: [{
       label: 'Brüt Prim',
       data: items.map((i: any) => i.premium),
@@ -380,7 +380,7 @@ const customerBarData = computed(() => {
   if (!data.value) return null
   const items = (data.value.byCustomer || []).slice(0, 15)
   return {
-    labels: items.map((c: any) => c.name?.length > 22 ? c.name.slice(0, 22) + '...' : c.name),
+    labels: items.map((c: any) => formatPersonName(c.name || '', 'compact')),
     datasets: [{
       label: 'Brüt Prim',
       data: items.map((c: any) => c.premium),
@@ -395,7 +395,7 @@ const companyBarData = computed(() => {
   if (!data.value) return null
   const items = (data.value.byCompany || []).slice(0, 10)
   return {
-    labels: items.map((c: any) => c.name?.length > 22 ? c.name.slice(0, 22) + '...' : c.name),
+    labels: items.map((c: any) => formatCompanyName(c.name || '', 'compact')),
     datasets: [{
       label: 'Brüt Prim',
       data: items.map((c: any) => c.premium),
@@ -410,7 +410,7 @@ const branchBarData = computed(() => {
   if (!data.value) return null
   const items = (data.value.byBranch || []).slice(0, 10)
   return {
-    labels: items.map((b: any) => b.name?.length > 22 ? b.name.slice(0, 22) + '...' : b.name),
+    labels: items.map((b: any) => formatCompanyName(b.name || '', 'compact')),
     datasets: [{
       label: 'Brüt Prim',
       data: items.map((b: any) => b.premium),
@@ -425,7 +425,7 @@ const branchBarData = computed(() => {
   <div class="p-4 sm:p-6 space-y-4">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <h1 class="text-xl font-bold">Raporlar</h1>
+      <h1 class="text-2xl font-semibold">Raporlar</h1>
       <div class="flex items-center gap-2 flex-wrap">
         <UButton
           v-for="p in presets"
@@ -473,25 +473,25 @@ const branchBarData = computed(() => {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold">{{ fmt(data.totals.count) }}</p>
+            <p class="kpi-value">{{ fmt(data.totals.count) }}</p>
             <p class="text-xs text-muted mt-1">Toplam Poliçe</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ fmtCurrency(data.totals.premium) }}</p>
+            <p class="kpi-value text-green-600 dark:text-green-400">{{ fmtCurrency(data.totals.premium) }}</p>
             <p class="text-xs text-muted mt-1">Brüt Prim</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ fmtCurrency(data.totals.net) }}</p>
+            <p class="kpi-value text-emerald-600 dark:text-emerald-400">{{ fmtCurrency(data.totals.net) }}</p>
             <p class="text-xs text-muted mt-1">Net Prim</p>
           </div>
         </UCard>
         <UCard :ui="{ body: 'p-3' }">
           <div class="text-center">
-            <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ fmt(data.totals.cancelled) }}</p>
+            <p class="kpi-value text-red-600 dark:text-red-400">{{ fmt(data.totals.cancelled) }}</p>
             <p class="text-xs text-muted mt-1">İptal</p>
           </div>
         </UCard>
@@ -619,7 +619,7 @@ const branchBarData = computed(() => {
                     <td class="py-2 px-2 max-w-[140px]">
                       <div class="flex items-center min-w-0">
                         <span class="inline-flex items-center justify-center size-5 rounded-full text-[10px] font-bold mr-1.5 shrink-0" :class="idx < 3 ? 'bg-primary/10 text-primary' : 'bg-gray-100 dark:bg-gray-800 text-muted'">{{ idx + 1 }}</span>
-                        <span class="truncate" :title="c.name">{{ c.name }}</span>
+                        <span class="overflow-hidden whitespace-nowrap" :title="c.name">{{ c.name }}</span>
                       </div>
                     </td>
                     <td class="py-2 px-2 text-right font-medium">{{ c.count }}</td>
@@ -767,7 +767,7 @@ const branchBarData = computed(() => {
             <div class="flex items-center gap-3">
               <div class="w-1 h-8 rounded-full" :style="{ backgroundColor: palette[idx % palette.length] }" />
               <div class="min-w-0">
-                <p class="text-sm font-bold">{{ g.group }}</p>
+                <p class="text-sm font-semibold">{{ g.group }}</p>
                 <p class="text-xs text-muted">{{ g.count }} poliçe</p>
                 <p class="text-xs font-medium mt-0.5">{{ fmtCurrency(g.premium) }}</p>
               </div>
@@ -876,19 +876,4 @@ const branchBarData = computed(() => {
 <style scoped>
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
 </style>

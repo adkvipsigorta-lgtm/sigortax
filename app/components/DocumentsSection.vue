@@ -216,7 +216,7 @@ watch(() => queryKey.value, () => fetchDocs(), { immediate: true })
       >
         <UIcon :name="fileIcon(d.type)" class="size-6 text-muted shrink-0" />
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium truncate" :title="d.name">{{ d.name }}</p>
+          <p class="text-sm font-medium overflow-hidden whitespace-nowrap" :title="d.name">{{ d.name }}</p>
         </div>
         <div class="flex gap-1">
           <UButton

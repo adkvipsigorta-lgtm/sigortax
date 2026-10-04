@@ -1110,10 +1110,10 @@ watch(() => route.path, () => {
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium">{{ po.policyNo }}</p>
-                      <p class="text-xs text-muted truncate">
+                      <p class="text-xs text-muted overflow-hidden whitespace-nowrap">
                         {{ po.customerName }}{{ po.plateNo ? ' · ' + po.plateNo : '' }}
                       </p>
-                      <p v-if="po.matchedInsured" class="text-xs text-primary truncate">
+                      <p v-if="po.matchedInsured" class="text-xs text-primary overflow-hidden whitespace-nowrap">
                         Sigortalı: {{ po.matchedInsured }}
                       </p>
                     </div>

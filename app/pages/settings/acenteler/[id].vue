@@ -124,12 +124,6 @@ function formatDate(d: string): string {
   try { return new Date(d).toLocaleDateString('tr-TR') } catch { return d }
 }
 
-function toHex(color?: string): string {
-  if (!color) return '#6366f1'
-  if (color.startsWith('#')) return color
-  const map: Record<string, string> = { red: '#ef4444', blue: '#3b82f6', green: '#22c55e', yellow: '#eab308', purple: '#a855f7', pink: '#ec4899', orange: '#f97316', cyan: '#06b6d4', indigo: '#6366f1', teal: '#14b8a6' }
-  return map[color] || '#6366f1'
-}
 
 // Ürün dağılımı chart
 const productChartData = computed(() => {
@@ -214,7 +208,7 @@ const stats = computed(() => {
       <UCard>
         <div class="flex items-start justify-between gap-4">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary/10">
+            <div class="size-12 rounded-xl flex items-center justify-center shrink-0 bg-primary/10">
               <UIcon name="i-lucide-building-2" class="size-6 text-primary" />
             </div>
             <div class="min-w-0">
@@ -253,7 +247,7 @@ const stats = computed(() => {
               <UIcon :name="stat.icon" :class="[stat.color, 'size-4.5']" />
             </div>
             <div>
-              <p class="text-lg font-bold leading-tight" :class="stat.color">{{ stat.value }}</p>
+              <p class="text-lg font-semibold leading-tight" :class="stat.color">{{ stat.value }}</p>
               <p class="text-xs text-muted">{{ stat.label }}</p>
             </div>
           </div>
@@ -302,8 +296,8 @@ const stats = computed(() => {
             <div class="flex-1 space-y-1.5 overflow-hidden">
               <div v-for="p in branch.byProduct" :key="p.name" class="flex items-center gap-2 text-xs">
                 <span class="size-2.5 rounded-full shrink-0" :style="{ backgroundColor: toHex(p.color) }" />
-                <span class="truncate flex-1">{{ p.name }}</span>
-                <span class="tabular-nums text-muted shrink-0">{{ p.count }}</span>
+                <span class="overflow-hidden whitespace-nowrap flex-1">{{ p.name }}</span>
+                <span class="text-muted shrink-0">{{ p.count }}</span>
               </div>
             </div>
           </div>
@@ -346,12 +340,12 @@ const stats = computed(() => {
                     <span >{{ p.name }}</span>
                   </div>
                 </td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ p.count }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(p.gross) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(p.net) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(p.commission) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums font-semibold text-success">{{ formatCurrency(p.earning) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums font-medium">
+                <td class="py-2 px-3 text-right ">{{ p.count }}</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(p.gross) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(p.net) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(p.commission) }} ₺</td>
+                <td class="py-2 px-3 text-right font-semibold text-success">{{ formatCurrency(p.earning) }} ₺</td>
+                <td class="py-2 px-3 text-right font-medium">
                   %{{ branch.stats.totalGross > 0 ? (p.gross / branch.stats.totalGross * 100).toFixed(1) : '0' }}
                 </td>
               </tr>
@@ -359,12 +353,12 @@ const stats = computed(() => {
             <tfoot>
               <tr class="border-t-2 border-default font-bold">
                 <td class="py-2 px-3">TOPLAM</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ branch.stats.total }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(branch.stats.totalGross) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(branch.stats.totalNet) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(branch.byProduct.reduce((s: number, p: any) => s + p.commission, 0)) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums font-semibold text-success">{{ formatCurrency(branch.byProduct.reduce((s: number, p: any) => s + p.earning, 0)) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">%100</td>
+                <td class="py-2 px-3 text-right ">{{ branch.stats.total }}</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(branch.stats.totalGross) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(branch.stats.totalNet) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(branch.byProduct.reduce((s: number, p: any) => s + p.commission, 0)) }} ₺</td>
+                <td class="py-2 px-3 text-right font-semibold text-success">{{ formatCurrency(branch.byProduct.reduce((s: number, p: any) => s + p.earning, 0)) }} ₺</td>
+                <td class="py-2 px-3 text-right ">%100</td>
               </tr>
             </tfoot>
           </table>
@@ -391,11 +385,11 @@ const stats = computed(() => {
             <tbody>
               <tr v-for="y in branch.yearly" :key="y.year" class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                 <td class="py-2 px-3">{{ y.year }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ y.count }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(y.gross) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(y.net) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(y.commission) }} ₺</td>
-                <td class="py-2 px-3 text-right tabular-nums font-semibold text-success">{{ formatCurrency(y.earning) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ y.count }}</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(y.gross) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(y.net) }} ₺</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(y.commission) }} ₺</td>
+                <td class="py-2 px-3 text-right font-semibold text-success">{{ formatCurrency(y.earning) }} ₺</td>
               </tr>
             </tbody>
           </table>
@@ -407,9 +401,9 @@ const stats = computed(() => {
         <template #header>
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 >Poliçeler</h3>
-            <div class="flex items-center gap-3">
-              <USelect v-model="policyDateType" :items="[{ label: 'Tanzim Tarihi', value: 'issued_at' }, { label: 'Başlangıç Tarihi', value: 'starts_at' }]" size="xs" class="w-[180px] h-[38px]" />
-              <div class="flex items-center gap-1 border border-gray-300 dark:border-gray-700 rounded-lg px-2 h-[38px]">
+            <div class="filter-toolbar">
+              <USelect v-model="policyDateType" :items="[{ label: 'Tanzim Tarihi', value: 'issued_at' }, { label: 'Başlangıç Tarihi', value: 'starts_at' }]" :ui="filterDropdownUi" class="filter-w-sm" />
+              <div class="flex items-center gap-1 border border-default rounded-lg px-2 h-[var(--height-filter)]">
                 <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevMonth" />
                 <span class="text-xs font-medium min-w-[110px] text-center whitespace-nowrap">{{ monthLabel }}</span>
                 <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextMonth" />
@@ -451,20 +445,18 @@ const stats = computed(() => {
                   class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
                   :class="p.isCancelled ? 'bg-red-50/50 dark:bg-red-900/10' : ''"
                 >
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis"><span class="text-primary truncate block" :title="p.customerName">{{ p.customerName }}</span></td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis font-mono text-muted">{{ p.policyNo }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
-                    <span class="inline-block rounded px-1.5 py-0.5 text-xs font-medium" :style="{ backgroundColor: toHex(p.insuranceColor) + '1a', color: toHex(p.insuranceColor) }">
-                      {{ p.insuranceName }}
-                    </span>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden"><span class="text-primary overflow-hidden whitespace-nowrap block" :title="p.customerName">{{ formatPersonName(p.customerName || '', 'compact') }}</span></td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden font-mono text-muted">{{ p.policyNo }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden">
+                    <span class="badge-cell" :style="insuranceBadgeStyle(p.insuranceColor)">{{ insuranceShortLabel(p.insuranceName) }}</span>
                   </td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis text-muted">{{ p.companyName }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">{{ p.plateNo || '—' }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis text-right tabular-nums font-medium">{{ formatCurrency(p.netPremium) }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis text-right tabular-nums">{{ formatCurrency(p.commission) }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis text-right tabular-nums font-semibold text-success">{{ formatCurrency(p.earning) }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis tabular-nums">{{ formatDate(policyDateType === 'starts_at' ? p.startsAt : p.issuedAt) }}</td>
-                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-muted">{{ formatCompanyName(p.companyName || '', 'compact') }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden">{{ p.plateNo || '—' }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-right font-medium">{{ formatCurrency(p.netPremium) }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-right ">{{ formatCurrency(p.commission) }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-right font-semibold text-success">{{ formatCurrency(p.earning) }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden ">{{ formatDate(policyDateType === 'starts_at' ? p.startsAt : p.issuedAt) }}</td>
+                  <td class="py-2 px-3 whitespace-nowrap overflow-hidden">
                     <UBadge v-if="p.isCancelled" color="error" variant="solid" size="xs">İptal</UBadge>
                     <UBadge v-else color="success" variant="solid" size="xs">Aktif</UBadge>
                   </td>

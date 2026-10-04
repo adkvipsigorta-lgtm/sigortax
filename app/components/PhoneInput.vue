@@ -6,6 +6,7 @@ const props = defineProps<{
   label?: string
   required?: boolean
   disabled?: boolean
+  modal?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -75,8 +76,8 @@ watch(countryCode, (val) => {
 
 <template>
   <div class="flex gap-2">
-    <!-- Alan Kodu: USelectMenu, tam isim gösterilir, sığmazsa ... olmadan kesilir -->
-    <div class="relative w-24 shrink-0 fl-select [&_.truncate]:[text-overflow:clip]">
+    <!-- Alan Kodu -->
+    <div :class="['relative w-24 shrink-0 [&_.truncate]:[text-overflow:clip]', modal ? 'fl-select-form' : 'fl-select']">
       <USelectMenu
         v-model="countryCode"
         :items="codeOptions"
@@ -91,8 +92,8 @@ watch(countryCode, (val) => {
         Alan Kodu
       </label>
     </div>
-    <!-- Telefon Numarası: floating label UInput -->
-    <div class="relative flex-1 fl-input">
+    <!-- Telefon Numarası -->
+    <div :class="['relative flex-1', modal ? 'fl-form' : 'fl-input']">
       <UInput
         :model-value="displayValue"
         type="tel"

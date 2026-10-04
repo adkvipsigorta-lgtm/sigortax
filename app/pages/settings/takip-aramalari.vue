@@ -158,10 +158,10 @@ onMounted(fetchConfig)
     <!-- Sayfa Başlığı -->
     <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h1 class="text-xl">Takip Aramaları</h1>
+        <h1 class="text-2xl font-semibold">Takip Aramaları</h1>
         <p class="text-sm text-muted mt-1">Poliçe satışı/yenilemesi sonrası otomatik müşteri arama görevi oluşturma ayarları.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="saveConfig" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check"  :loading="saving" @click="saveConfig" />
     </div>
 
     <!-- Loading -->
@@ -220,7 +220,7 @@ onMounted(fetchConfig)
                   <p class="text-xs text-muted">{{ ds.description }}</p>
                 </div>
               </div>
-              <div class="relative shrink-0 w-24 fl-input">
+              <div class="relative shrink-0 w-24 fl-form">
                 <UInput
                   v-model.number="getStageConfig(rule, ds.key).days"
                   type="number"
@@ -274,16 +274,16 @@ onMounted(fetchConfig)
 
             <!-- Accordion içerik -->
             <div v-if="expandedTemplateKey === ds.key" class="px-4 pb-4 space-y-4 border-t border-default pt-4">
-              <div class="relative fl-input">
+              <div class="relative fl-form">
                 <UInput v-model="stageTemplates[ds.key].titleTemplate" :disabled="!isAdmin" placeholder=" " class="w-full peer/fl-ttitle" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ttitle:top-0 peer-focus-within/fl-ttitle:-translate-y-1/2 peer-focus-within/fl-ttitle:text-xs peer-focus-within/fl-ttitle:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ttitle:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ttitle:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ttitle:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ttitle:text-[var(--ui-text-highlighted)]">Görev Başlığı</label>
               </div>
-              <div class="relative fl-input">
+              <div class="relative fl-form">
                 <UTextarea v-model="stageTemplates[ds.key].descriptionTemplate" :disabled="!isAdmin" :rows="4" placeholder=" " class="w-full peer/fl-tdesc" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', stageTemplates[ds.key].descriptionTemplate ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-3 text-[var(--ui-text-muted)]']">Görev İçeriği</label>
               </div>
               <div class="flex justify-end">
-                <UButton v-if="isAdmin" label="Varsayılana Sıfırla" variant="outline" size="xl"  color="neutral" icon="i-lucide-rotate-ccw" @click="resetTemplate(ds.key)" />
+                <UButton v-if="isAdmin" label="Varsayılana Sıfırla" variant="outline"  color="neutral" icon="i-lucide-rotate-ccw" @click="resetTemplate(ds.key)" />
               </div>
             </div>
           </div>

@@ -79,7 +79,7 @@ onMounted(() => { loadData() })
             <UIcon name="i-lucide-users" class="size-5 text-primary" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ stats.totalActive }}</p>
+            <p class="kpi-value">{{ stats.totalActive }}</p>
             <p class="text-xs text-muted">Aktif Personel</p>
           </div>
         </div>
@@ -90,7 +90,7 @@ onMounted(() => { loadData() })
             <UIcon name="i-lucide-palm-tree" class="size-5 text-warning" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ stats.onLeave }}</p>
+            <p class="kpi-value">{{ stats.onLeave }}</p>
             <p class="text-xs text-muted">İzinde</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ onMounted(() => { loadData() })
             <UIcon name="i-lucide-clock" class="size-5 text-info" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ stats.pendingLeaves }}</p>
+            <p class="kpi-value">{{ stats.pendingLeaves }}</p>
             <p class="text-xs text-muted">Bekleyen İzin Talebi</p>
           </div>
         </div>
@@ -112,7 +112,7 @@ onMounted(() => { loadData() })
             <UIcon name="i-lucide-user-x" class="size-5 text-neutral" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ stats.totalInactive }}</p>
+            <p class="kpi-value">{{ stats.totalInactive }}</p>
             <p class="text-xs text-muted">Pasif Personel</p>
           </div>
         </div>
@@ -138,18 +138,18 @@ onMounted(() => { loadData() })
           </thead>
           <tbody class="divide-y divide-default">
             <tr v-for="p in data" :key="p.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-              <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
+              <td class="py-2 px-3 whitespace-nowrap overflow-hidden">
                 <div class="flex items-center gap-3 cursor-pointer" @click="router.push(`/personel/${p.id}`)">
                   <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold shrink-0">
                     {{ p.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
                   </div>
                   <div class="min-w-0">
-                    <span class="text-primary truncate block" :title="p.name">{{ p.name }}</span>
+                    <span class="text-primary overflow-hidden whitespace-nowrap block" :title="p.name">{{ p.name }}</span>
                     <p class="text-xs text-muted">{{ p.phone || p.email }}</p>
                   </div>
                 </div>
               </td>
-              <td class="hidden sm:table-cell py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
+              <td class="hidden sm:table-cell py-2 px-3 whitespace-nowrap overflow-hidden">
                 <div class="flex flex-col gap-0.5">
                   <span>{{ p.position || '-' }}</span>
                   <UBadge :color="(roleColors[p.role] as any)" variant="subtle" size="xs">
@@ -157,19 +157,19 @@ onMounted(() => { loadData() })
                   </UBadge>
                 </div>
               </td>
-              <td class="hidden md:table-cell py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
-                <span class="tabular-nums text-muted">{{ formatDate(p.hireDate) }}</span>
+              <td class="hidden md:table-cell py-2 px-3 whitespace-nowrap overflow-hidden">
+                <span class="text-muted">{{ formatDate(p.hireDate) }}</span>
               </td>
-              <td class="hidden md:table-cell py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">
+              <td class="hidden md:table-cell py-2 px-3 whitespace-nowrap overflow-hidden">
                 <span class="text-muted">{{ calcSeniority(p.hireDate) }}</span>
               </td>
-              <td class="py-2 px-3 text-center whitespace-nowrap overflow-hidden text-ellipsis">
+              <td class="py-2 px-3 text-center whitespace-nowrap overflow-hidden">
                 <UBadge v-if="p.isOnLeave" color="warning" variant="subtle" size="xs">İzinde</UBadge>
                 <UBadge v-else :color="p.isActive ? 'success' : 'neutral'" variant="subtle" size="xs">
                   {{ p.isActive ? 'Aktif' : 'Pasif' }}
                 </UBadge>
               </td>
-              <td class="py-2 px-3 text-right whitespace-nowrap overflow-hidden text-ellipsis">
+              <td class="py-2 px-3 text-right whitespace-nowrap overflow-hidden">
                 <UButton
                   icon="i-lucide-arrow-right"
                   color="neutral"

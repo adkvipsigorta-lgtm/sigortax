@@ -74,11 +74,11 @@ function isItemActive(item: SidebarItem) {
           class="size-3.5 shrink-0"
         />
 
-        <span class="flex-1 truncate">{{ item.label }}</span>
+        <span class="flex-1 overflow-hidden whitespace-nowrap">{{ item.label }}</span>
 
         <span
           v-if="item.badge !== undefined"
-          class="text-xs text-muted tabular-nums"
+          class="text-xs text-muted "
         >
           {{ item.badge }}
         </span>

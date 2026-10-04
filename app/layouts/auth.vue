@@ -28,7 +28,7 @@ onMounted(() => {
               <UIcon name="i-lucide-umbrella" class="size-6" />
             </div>
             <div class="leading-tight">
-              <p class="text-xl font-bold tracking-wide">{{ agency.name }}</p>
+              <p class="text-xl font-semibold tracking-wide">{{ agency.name }}</p>
             </div>
           </template>
         </div>
@@ -73,7 +73,7 @@ onMounted(() => {
           >
           <template v-else>
             <UIcon name="i-lucide-umbrella" class="size-8 text-primary" />
-            <p class="text-lg font-bold tracking-wide text-primary">{{ agency.name }}</p>
+            <p class="text-lg font-semibold tracking-wide text-primary">{{ agency.name }}</p>
           </template>
         </div>
       </div>

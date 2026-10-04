@@ -82,10 +82,10 @@ onMounted(load)
     <!-- Sayfa Başlığı -->
     <div class="flex items-center justify-between pb-4 border-b border-default">
       <div>
-        <h1 class="text-xl">Alan Ayarları</h1>
+        <h1 class="text-2xl font-semibold">Alan Ayarları</h1>
         <p class="text-sm text-muted mt-1">Müşteri ve poliçe formlarında hangi alanların görüneceğini ayarlayın.</p>
       </div>
-      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" @click="save" />
+      <UButton v-if="isAdmin" label="Kaydet" icon="i-lucide-check"  :loading="saving" @click="save" />
     </div>
 
     <!-- Loading -->

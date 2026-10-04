@@ -16,7 +16,7 @@ interface UserItem {
   id: number
   name: string
   email: string
-  role: 'admin' | 'kullanıcı' | 'acente' | 'musteri'
+  role: 'admin' | 'kullanici' | 'stajer'
   branchId: number | null
   isActive: boolean
   isSalesRep: boolean
@@ -86,7 +86,7 @@ const form = reactive({
   password: '',
   phone: '',
   tcNo: '',
-  role: 'kullanıcı' as string,
+  role: '' as string,
   branchId: null as number | null,
   isActive: true,
   isSalesRep: true,
@@ -156,24 +156,21 @@ const deleting = ref(false)
 
 
 const roleLabels: Record<string, string> = {
-  admin: 'Yönetici',
-  acente: 'Acente',
-  kullanıcı: 'Kullanıcı',
-  musteri: 'Müşteri'
+  admin: 'Acente Sahibi',
+  kullanici: 'Personel',
+  stajer: 'Stajyer',
 }
 
 const roleColors: Record<string, string> = {
   admin: 'error',
-  acente: 'warning',
-  kullanıcı: 'info',
-  musteri: 'success'
+  kullanici: 'primary',
+  stajer: 'warning',
 }
 
 const roleOptions = [
-  { label: 'Kullanıcı', value: 'kullanıcı' },
-  { label: 'Acente', value: 'acente' },
-  { label: 'Yönetici', value: 'admin' },
-  { label: 'Müşteri (Portal)', value: 'musteri' }
+  { label: 'Acente Sahibi', value: 'admin' },
+  { label: 'Personel', value: 'kullanici' },
+  { label: 'Stajyer', value: 'stajer' },
 ]
 
 const isAdmin = computed(() => currentUser.value?.role === 'admin')
@@ -208,7 +205,7 @@ function openCreate() {
   form.password = ''
   form.phone = ''
   form.tcNo = ''
-  form.role = 'kullanıcı'
+  form.role = ''
   form.branchId = null
   form.isActive = true
   form.isSalesRep = true
@@ -244,16 +241,21 @@ async function openEdit(u: UserItem) {
 }
 
 async function saveUser() {
+  // Zorunlu alan kontrolleri
+  if (!form.name.trim()) { toast.add({ title: 'Ad Soyad zorunludur', color: 'error' }); return }
+  if (!form.email.trim()) { toast.add({ title: 'E-posta zorunludur', color: 'error' }); return }
+  if (!form.role) { toast.add({ title: 'Rol seçimi zorunludur', color: 'error' }); return }
+  if (!editing.value && !form.phone.trim()) { toast.add({ title: 'Telefon numarası zorunludur', color: 'error' }); return }
+
   saving.value = true
   try {
     const payload: any = {
       name: form.name,
       email: form.email,
       role: form.role,
-      branchId: form.role === 'acente' ? form.branchId : null,
+      branchId: null,
       isActive: form.isActive,
-      isSalesRep: form.role !== 'musteri' ? form.isSalesRep : false,
-      customerIds: form.role === 'musteri' ? form.customerIds : undefined
+      isSalesRep: form.isSalesRep,
     }
 
     if (editing.value) {
@@ -354,7 +356,7 @@ function getRowActions(u: UserItem) {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Takım Yönetimi</h1>
+      <h1 class="text-2xl font-semibold">Takım Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Kullanıcıları ve rollerini yönetin.</p>
     </div>
 
@@ -362,11 +364,8 @@ function getRowActions(u: UserItem) {
       <!-- Header -->
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="relative w-full sm:w-[250px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-usearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-usearch:top-0 peer-focus-within/fl-usearch:-translate-y-1/2 peer-focus-within/fl-usearch:text-xs peer-focus-within/fl-usearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-usearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-usearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-usearch:text-[var(--ui-text-highlighted)]">Kullanıcı Ara</label>
-          </div>
-          <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus" size="xl"  @click="openCreate" />
+          <UInput v-model="searchInput" placeholder="Kullanıcı Ara" icon="i-lucide-search" class="filter-w-search" />
+          <UButton v-if="isAdmin" label="Yeni Kullanıcı" icon="i-lucide-user-plus"  @click="openCreate" />
         </div>
       </template>
 
@@ -406,7 +405,7 @@ function getRowActions(u: UserItem) {
                 {{ row.original.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) }}
               </div>
               <div class="min-w-0">
-                <NuxtLink :to="`/settings/kullanicilar/${row.original.id}/izinler`" class="text-primary truncate block hover:underline" :title="row.original.name">{{ row.original.name }}</NuxtLink>
+                <NuxtLink :to="`/settings/kullanicilar/${row.original.id}/izinler`" class="text-primary overflow-hidden whitespace-nowrap block hover:underline" :title="row.original.name">{{ row.original.name }}</NuxtLink>
                 <p class="text-xs text-muted">{{ row.original.email }}</p>
               </div>
             </div>
@@ -429,7 +428,7 @@ function getRowActions(u: UserItem) {
           </template>
 
           <template #createdAt-cell="{ row }">
-            <span class="tabular-nums text-muted">{{ formatDate(row.original.createdAt) }}</span>
+            <span class="text-muted">{{ formatDate(row.original.createdAt) }}</span>
           </template>
 
           <template #actions-cell="{ row }">
@@ -452,44 +451,44 @@ function getRowActions(u: UserItem) {
     <!-- Kullanıcı Ekle/Düzenle Modal -->
     <UModal :dismissible="false" v-model:open="modalOpen" :title="editing ? 'Kullanıcı Düzenle' : 'Yeni Kullanıcı'">
       <template #body>
-        <UForm :schema="formSchema" :state="form" @submit="saveUser" class="space-y-5">
+        <UForm :schema="formSchema" :state="form" :validate-on='["submit"]' @submit="saveUser" class="space-y-5">
           <!-- TC Kimlik No (sadece yeni kullanıcı) -->
-          <div v-if="!editing" class="relative fl-input">
+          <div v-if="!editing" class="relative fl-form">
             <UInput v-model="form.tcNo" placeholder=" " maxlength="11" inputmode="numeric" class="w-full peer/fl-utc" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-utc:top-0 peer-focus-within/fl-utc:-translate-y-1/2 peer-focus-within/fl-utc:text-xs peer-focus-within/fl-utc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-utc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-utc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-utc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-utc:text-[var(--ui-text-highlighted)]">TC Kimlik No</label>
           </div>
 
           <!-- Ad Soyad -->
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput v-model="form.name" placeholder=" " class="w-full peer/fl-uname" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uname:top-0 peer-focus-within/fl-uname:-translate-y-1/2 peer-focus-within/fl-uname:text-xs peer-focus-within/fl-uname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uname:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-red-500">*</span></label>
           </div>
 
           <!-- E-posta -->
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput v-model="form.email" type="email" placeholder=" " class="w-full peer/fl-uemail" data-no-uppercase />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uemail:top-0 peer-focus-within/fl-uemail:-translate-y-1/2 peer-focus-within/fl-uemail:text-xs peer-focus-within/fl-uemail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uemail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uemail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uemail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uemail:text-[var(--ui-text-highlighted)]">E-posta <span class="text-red-500">*</span></label>
           </div>
 
           <!-- Telefon (sadece yeni kullanıcı) -->
           <div v-if="!editing" class="py-1">
-            <PhoneInput v-model="form.phone" />
+            <PhoneInput v-model="form.phone" modal />
           </div>
 
           <!-- Şifre (sadece düzenlemede) -->
-          <div v-if="editing" class="relative fl-input">
+          <div v-if="editing" class="relative fl-form">
             <UInput v-model="form.password" type="password" placeholder=" " class="w-full peer/fl-upass" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-upass:top-0 peer-focus-within/fl-upass:-translate-y-1/2 peer-focus-within/fl-upass:text-xs peer-focus-within/fl-upass:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-upass:top-0 peer-has-[input:not(:placeholder-shown)]/fl-upass:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-upass:text-xs peer-has-[input:not(:placeholder-shown)]/fl-upass:text-[var(--ui-text-highlighted)]">Yeni Şifre (boş bırakılırsa değişmez)</label>
           </div>
 
           <!-- Rol -->
-          <div class="relative fl-select ">
+          <div class="relative fl-select-form ">
             <USelect v-model="form.role" :items="roleOptions" value-key="value" placeholder=" " class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.role ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Rol <span class="text-red-500">*</span></label>
           </div>
 
           <!-- Şube (acente ise) -->
-          <div v-if="form.role === 'acente'" class="relative fl-select ">
+          <div v-if="form.role === 'acente'" class="relative fl-select-form ">
             <USelect v-model="form.branchId" :items="branches.map(b => ({ label: b.name, value: b.id }))" value-key="value" placeholder=" " class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', form.branchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şube</label>
           </div>
@@ -500,10 +499,10 @@ function getRowActions(u: UserItem) {
             <div v-if="form.customerIds.length" class="flex flex-wrap gap-1.5">
               <UBadge v-for="cid in form.customerIds" :key="cid" color="primary" variant="subtle" size="sm" class="gap-1">
                 {{ selectedCustomerNames[cid] || `#${cid}` }}
-                <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="2xs" :padded="false" @click="removeCustomer(cid)" />
+                <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="xs" :padded="false" @click="removeCustomer(cid)" />
               </UBadge>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model="customerSearchQuery" placeholder=" " class="w-full peer/fl-csearch" :loading="customerSearching" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-csearch:top-0 peer-focus-within/fl-csearch:-translate-y-1/2 peer-focus-within/fl-csearch:text-xs peer-focus-within/fl-csearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-csearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-csearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-csearch:text-[var(--ui-text-highlighted)]">Müşteri Ara</label>
               <div v-if="customerSearchResults.length" class="absolute z-50 mt-1 w-full bg-white rounded-lg border border-default shadow-lg max-h-48 overflow-y-auto">
@@ -525,8 +524,8 @@ function getRowActions(u: UserItem) {
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="modalOpen = false" />
-            <UButton :label="editing ? 'Güncelle' : 'Oluştur'" icon="i-lucide-check" size="xl"  :loading="saving" type="submit" />
+            <UButton label="Vazgeç" color="neutral" variant="outline"  @click="modalOpen = false" />
+            <UButton :label="editing ? 'Güncelle' : 'Oluştur'" icon="i-lucide-check"  :loading="saving" type="submit" />
           </div>
         </UForm>
       </template>
@@ -547,8 +546,8 @@ function getRowActions(u: UserItem) {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="deleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  :loading="deleting" @click="deleteUser" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  :loading="deleting" @click="deleteUser" />
         </div>
       </template>
     </UModal>
@@ -563,7 +562,7 @@ function getRowActions(u: UserItem) {
 :deep(.kullanicilar-table th:nth-child(4)) { width: 90px;  min-width: 90px;  max-width: 90px;  }
 :deep(.kullanicilar-table th:nth-child(5)) { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.kullanicilar-table th:nth-child(6)) { width: 120px; min-width: 120px; max-width: 120px; }
-:deep(.kullanicilar-table > tbody > tr > td) { overflow: hidden; text-overflow: ellipsis; }
+:deep(.kullanicilar-table > tbody > tr > td) { overflow: hidden; text-overflow: clip; }
 
 @media (max-width: 767px) {
   :deep(.kullanicilar-table th:nth-child(3)),

@@ -6,7 +6,7 @@ definePageMeta({
 
 const route = useRoute()
 const toast = useToast()
-const { get, put } = useApi()
+const { get, post, put } = useApi()
 
 const userId = Number(route.params.id)
 
@@ -37,14 +37,18 @@ const savingProfile = ref(false)
 
 // Profil düzenleme
 const editingProfile = ref(false)
-const profileForm = reactive({ name: '', email: '', role: '', branchId: null as number | null, isActive: true, isSalesRep: true })
+const profileForm = reactive({
+  name: '', email: '', role: '', branchId: null as number | null,
+  isActive: true, isSalesRep: true,
+  personalPhone: '', companyPhone: '', personalEmail: '',
+})
 const branches = ref<{ id: number, name: string }[]>([])
+const resettingPassword = ref(false)
 
 const roleOptions = [
-  { label: 'Kullanıcı', value: 'kullanici' },
-  { label: 'Acente', value: 'acente' },
-  { label: 'Yönetici', value: 'admin' },
-  { label: 'Müşteri (Portal)', value: 'musteri' }
+  { label: 'Acente Sahibi', value: 'admin' },
+  { label: 'Personel', value: 'kullanici' },
+  { label: 'Stajyer', value: 'stajer' },
 ]
 
 function startEditProfile() {
@@ -55,6 +59,9 @@ function startEditProfile() {
   profileForm.branchId = userInfo.value.branchId
   profileForm.isActive = userInfo.value.isActive
   profileForm.isSalesRep = userInfo.value.isSalesRep
+  profileForm.personalPhone = onboardingData.value?.personalPhone || ''
+  profileForm.companyPhone = onboardingData.value?.companyPhone || ''
+  profileForm.personalEmail = onboardingData.value?.personalEmail || ''
   editingProfile.value = true
 }
 
@@ -69,9 +76,12 @@ async function saveProfile() {
       name: profileForm.name,
       email: profileForm.email,
       role: profileForm.role,
-      branchId: profileForm.role === 'acente' ? profileForm.branchId : null,
+      branchId: null,
       isActive: profileForm.isActive,
-      isSalesRep: profileForm.role !== 'musteri' ? profileForm.isSalesRep : false
+      isSalesRep: profileForm.role !== 'musteri' ? profileForm.isSalesRep : false,
+      personalPhone: profileForm.personalPhone,
+      companyPhone: profileForm.companyPhone,
+      personalEmail: profileForm.personalEmail,
     })
     const wasPasified = userInfo.value!.isActive && !profileForm.isActive
     userInfo.value = { ...userInfo.value!, name: profileForm.name, email: profileForm.email, role: profileForm.role, branchId: profileForm.branchId, isActive: profileForm.isActive, isSalesRep: profileForm.isSalesRep }
@@ -119,8 +129,8 @@ const groupDescriptions: Record<string, string> = {
   'Araçlar': 'Excel/Allianz import, mutabakat ve çapraz satış araçlarına erişim',
   'Ayarlar': 'Sistem ayarları, kullanıcı yönetimi, şirketler ve sigorta türleri yetkileri',
 }
-const roleLabels: Record<string, string> = { admin: 'Yönetici', acente: 'Acente', kullanici: 'Kullanıcı', musteri: 'Müşteri' }
-const roleColors: Record<string, string> = { admin: 'error', acente: 'warning', kullanici: 'info', musteri: 'success' }
+const roleLabels: Record<string, string> = { admin: 'Acente Sahibi', kullanici: 'Personel', stajer: 'Stajyer' }
+const roleColors: Record<string, string> = { admin: 'error', kullanici: 'primary', stajer: 'warning' }
 
 const permGroups = computed(() => {
   const groups: Record<string, { key: string, label: string, icon: string, description: string, items: PermItem[] }> = {}
@@ -130,6 +140,39 @@ const permGroups = computed(() => {
   }
   return Object.values(groups)
 })
+
+// Onboarding bilgileri
+const onboardingData = ref<any>(null)
+const onboardingAgreements = ref<any[]>([])
+const identityFrontUrl = ref('')
+const identityBackUrl = ref('')
+
+function loadOnboardingFromUser(userData: any) {
+  if (!userData) return
+  onboardingData.value = userData
+  onboardingAgreements.value = userData.agreements || []
+  if (userData.identityFront) {
+    identityFrontUrl.value = `/api/onboarding/identity/${userId}/front`
+  }
+  if (userData.identityBack) {
+    identityBackUrl.value = `/api/onboarding/identity/${userId}/back`
+  }
+}
+
+async function resetPasswordAndSendSms() {
+  resettingPassword.value = true
+  try {
+    const res = await post(`users/${userId}/reset-password`, {})
+    toast.add({ title: res.data?.message || 'Şifre sıfırlandı ve SMS gönderildi', color: 'success' })
+    // Kullanıcı bilgilerini yeniden yükle
+    const uRes = await get<any>(`users/${userId}`)
+    userInfo.value = uRes.data
+    loadOnboardingFromUser(uRes.data)
+  } catch (e: any) {
+    toast.add({ title: e.message || 'Şifre sıfırlanamadı', color: 'error' })
+  }
+  resettingPassword.value = false
+}
 
 const initials = computed(() => { if (!userInfo.value) return ''; return userInfo.value.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) })
 const activeCount = computed(() => permData.value.filter(p => p.allowed).length)
@@ -163,6 +206,7 @@ onMounted(async () => {
     permData.value = pRes.data || []
     branches.value = bRes.data || []
     useSeoMeta({ title: `${uRes.data?.name} — Kullanıcı Detay` })
+    loadOnboardingFromUser(uRes.data)
   } catch { toast.add({ title: 'Yüklenemedi', color: 'error' }) }
   finally { loading.value = false }
 })
@@ -173,84 +217,152 @@ onMounted(async () => {
     <!-- Üst Bar -->
     <div class="flex items-center justify-between gap-3 pb-4 border-b border-default">
       <div class="flex items-center gap-3">
-        <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="xl"  @click="navigateTo('/settings/kullanicilar')" />
+        <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost"  @click="navigateTo('/settings/kullanicilar')" />
         <div>
-          <h1 class="text-xl">Kullanıcı Detay</h1>
+          <h1 class="text-2xl font-semibold">Kullanıcı Detay</h1>
           <p class="text-sm text-muted">{{ userInfo?.name }}</p>
         </div>
       </div>
-      <UButton label="İzinleri Kaydet" icon="i-lucide-check" size="xl"  :loading="saving" :disabled="loading" @click="save" />
+      <UButton label="İzinleri Kaydet" icon="i-lucide-check"  :loading="saving" :disabled="loading" @click="save" />
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-24">
       <UIcon name="i-lucide-loader-2" class="size-8 animate-spin text-muted" />
     </div>
 
-    <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
+    <div v-else class="space-y-6">
 
-      <!-- Sol: Kullanıcı Kartı + Profil Düzenleme -->
-      <UCard :ui="{ body: 'p-5' }" class="lg:col-span-1">
+    <!-- ÜST: 3'lü grid — Profil + Sözleşme + Kimlik -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- Profil Kartı -->
+      <UCard :ui="{ body: 'p-5' }">
         <div class="flex flex-col items-center text-center gap-3">
           <div class="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold">{{ initials }}</div>
 
           <!-- Görüntüleme modu -->
           <template v-if="!editingProfile">
             <div>
-              <p class="text-sm">{{ userInfo?.name }}</p>
+              <p class="text-sm font-medium">{{ userInfo?.name }}</p>
               <p class="text-xs text-muted mt-0.5">{{ userInfo?.email }}</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap justify-center">
               <UBadge :color="(roleColors[userInfo?.role || ''] as any)" variant="solid" size="sm">{{ roleLabels[userInfo?.role || ''] || userInfo?.role }}</UBadge>
               <UBadge :color="userInfo?.isActive ? 'success' : 'neutral'" variant="subtle" size="sm">{{ userInfo?.isActive ? 'Aktif' : 'Pasif' }}</UBadge>
             </div>
-            <UButton label="Düzenle" icon="i-lucide-pencil" size="xl" class="w-full" variant="outline" color="neutral" @click="startEditProfile" />
+            <div v-if="onboardingData" class="w-full text-left space-y-1 text-xs">
+              <div v-if="onboardingData.personalPhone" class="flex justify-between"><span class="text-muted">Kişisel Tel</span><span class="tabular-nums">{{ onboardingData.personalPhone }}</span></div>
+              <div v-if="onboardingData.companyPhone" class="flex justify-between"><span class="text-muted">Şirket Tel</span><span class="tabular-nums">{{ onboardingData.companyPhone }}</span></div>
+              <div v-if="onboardingData.personalEmail" class="flex justify-between"><span class="text-muted">Kişisel Mail</span><span class="text-xs">{{ onboardingData.personalEmail }}</span></div>
+            </div>
+            <UButton label="Düzenle" icon="i-lucide-pencil" class="w-full" variant="outline" color="neutral" @click="startEditProfile" />
+            <UButton label="Şifre Sıfırla + SMS Gönder" icon="i-lucide-key-round" class="w-full" variant="outline" color="warning" :loading="resettingPassword" @click="resetPasswordAndSendSms" />
           </template>
 
           <!-- Düzenleme modu -->
           <template v-else>
             <div class="w-full space-y-3 text-left">
-              <div class="relative fl-form">
-                <UInput v-model="profileForm.name" placeholder=" " class="w-full peer/fl-pname" />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pname:top-0 peer-focus-within/fl-pname:-translate-y-1/2 peer-focus-within/fl-pname:text-xs peer-focus-within/fl-pname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pname:text-[var(--ui-text-highlighted)]">Ad Soyad</label>
-              </div>
-              <div class="relative fl-form">
-                <UInput v-model="profileForm.email" type="email" placeholder=" " class="w-full peer/fl-pmail" data-no-uppercase />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pmail:top-0 peer-focus-within/fl-pmail:-translate-y-1/2 peer-focus-within/fl-pmail:text-xs peer-focus-within/fl-pmail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pmail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pmail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-[var(--ui-text-highlighted)]">E-posta</label>
-              </div>
-              <div class="relative fl-select-form ">
-                <USelect v-model="profileForm.role" :items="roleOptions" value-key="value" placeholder=" " class="w-full" />
-                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', profileForm.role ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Rol</label>
-              </div>
-              <div v-if="profileForm.role === 'acente'" class="relative fl-select-form ">
-                <USelect v-model="profileForm.branchId" :items="branches.map(b => ({ label: b.name, value: b.id }))" value-key="value" placeholder=" " class="w-full" />
-                <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', profileForm.branchId ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Şube</label>
-              </div>
+              <div class="relative fl-form"><UInput v-model="profileForm.name" placeholder=" " class="w-full peer/fl-pname" /><label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pname:top-0 peer-focus-within/fl-pname:-translate-y-1/2 peer-focus-within/fl-pname:text-xs peer-focus-within/fl-pname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pname:text-[var(--ui-text-highlighted)]">Ad Soyad</label></div>
+              <div class="relative fl-form"><UInput v-model="profileForm.email" type="email" placeholder=" " class="w-full peer/fl-pmail" data-no-uppercase /><label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pmail:top-0 peer-focus-within/fl-pmail:-translate-y-1/2 peer-focus-within/fl-pmail:text-xs peer-focus-within/fl-pmail:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pmail:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pmail:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pmail:text-[var(--ui-text-highlighted)]">E-posta</label></div>
+              <div class="relative fl-select-form"><USelect v-model="profileForm.role" :items="roleOptions" value-key="value" placeholder=" " class="w-full" /><label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', profileForm.role ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Rol</label></div>
+              <div class="relative fl-form"><UInput v-model="profileForm.personalPhone" type="tel" placeholder=" " class="w-full peer/fl-pph" /><label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pph:top-0 peer-focus-within/fl-pph:-translate-y-1/2 peer-focus-within/fl-pph:text-xs peer-focus-within/fl-pph:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pph:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pph:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pph:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pph:text-[var(--ui-text-highlighted)]">Kişisel Telefon</label></div>
+              <div class="relative fl-form"><UInput v-model="profileForm.companyPhone" type="tel" placeholder=" " class="w-full peer/fl-cph" /><label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cph:top-0 peer-focus-within/fl-cph:-translate-y-1/2 peer-focus-within/fl-cph:text-xs peer-focus-within/fl-cph:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cph:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cph:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cph:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cph:text-[var(--ui-text-highlighted)]">Şirket Telefonu</label></div>
+              <div class="relative fl-form"><UInput v-model="profileForm.personalEmail" type="email" placeholder=" " class="w-full peer/fl-pem" /><label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-pem:top-0 peer-focus-within/fl-pem:-translate-y-1/2 peer-focus-within/fl-pem:text-xs peer-focus-within/fl-pem:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-pem:top-0 peer-has-[input:not(:placeholder-shown)]/fl-pem:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-pem:text-xs peer-has-[input:not(:placeholder-shown)]/fl-pem:text-[var(--ui-text-highlighted)]">Kişisel E-posta</label></div>
               <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2"><USwitch v-model="profileForm.isActive" size="xs" /><span class="text-xs">{{ profileForm.isActive ? 'Aktif' : 'Pasif' }}</span></div>
                 <div class="flex items-center gap-2"><USwitch v-model="profileForm.isSalesRep" size="xs" /><span class="text-xs">Satış T.</span></div>
               </div>
               <div class="flex gap-2">
-                <UButton label="İptal" color="neutral" variant="outline" size="xl" class="flex-1" @click="cancelEditProfile" />
-                <UButton label="Kaydet" icon="i-lucide-check" size="xl" class="flex-1" :loading="savingProfile" @click="saveProfile" />
+                <UButton label="İptal" color="neutral" variant="outline" class="flex-1" @click="cancelEditProfile" />
+                <UButton label="Kaydet" icon="i-lucide-check" class="flex-1" :loading="savingProfile" @click="saveProfile" />
               </div>
             </div>
           </template>
         </div>
+      </UCard>
 
-        <!-- İzin istatistiği -->
-        <div class="mt-4 pt-4 border-t border-default">
-          <div class="flex items-center justify-between text-xs mb-2">
-            <span class="text-muted">Aktif İzinler</span>
-            <span >{{ activeCount }} / {{ totalCount }}</span>
+      <!-- Sözleşme Durumu -->
+      <UCard :ui="{ body: 'p-4' }">
+        <template #header>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-file-signature" class="size-4 text-primary" />
+            <span class="text-sm font-semibold">Sözleşme ve Onay Durumu</span>
           </div>
-          <div class="w-full bg-neutral-100 rounded-full h-1.5">
-            <div class="bg-primary rounded-full h-1.5 transition-all duration-300" :style="{ width: totalCount ? `${(activeCount / totalCount) * 100}%` : '0%' }" />
+        </template>
+        <div v-if="onboardingData" class="space-y-2.5 text-sm">
+          <!-- Onboarding adımları -->
+          <div class="flex items-center justify-between">
+            <span>Profil</span>
+            <UIcon :name="onboardingData.tcNo && onboardingData.birthDate && onboardingData.address ? 'i-lucide-check-circle' : 'i-lucide-circle-x'" :class="onboardingData.tcNo && onboardingData.birthDate && onboardingData.address ? 'text-green-600' : 'text-red-500'" class="size-4" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span>KVKK</span>
+            <UIcon :name="onboardingAgreements.some((a: any) => a.type === 'KVKK' && a.smsVerified) ? 'i-lucide-check-circle' : 'i-lucide-circle-x'" :class="onboardingAgreements.some((a: any) => a.type === 'KVKK' && a.smsVerified) ? 'text-green-600' : 'text-red-500'" class="size-4" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span>Kimlik</span>
+            <UIcon :name="onboardingData.identityFront && onboardingData.identityBack ? 'i-lucide-check-circle' : 'i-lucide-circle-x'" :class="onboardingData.identityFront && onboardingData.identityBack ? 'text-green-600' : 'text-red-500'" class="size-4" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span>Taahhütname</span>
+            <UIcon :name="onboardingAgreements.some((a: any) => a.type === 'COMMITMENT' && a.smsVerified) ? 'i-lucide-check-circle' : 'i-lucide-circle-x'" :class="onboardingAgreements.some((a: any) => a.type === 'COMMITMENT' && a.smsVerified) ? 'text-green-600' : 'text-red-500'" class="size-4" />
+          </div>
+          <!-- Onay detayları -->
+          <template v-for="agr in onboardingAgreements" :key="agr.type + agr.version">
+            <div class="border-t border-default pt-2">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-xs">{{ agr.type === 'KVKK' ? 'KVKK Metni' : 'Taahhütname' }}</span>
+                <UBadge :color="agr.smsVerified ? 'success' : 'warning'" variant="subtle" size="xs">{{ agr.smsVerified ? 'Onaylandı' : 'Bekleniyor' }}</UBadge>
+              </div>
+              <div class="mt-1 text-xs text-muted space-y-0.5">
+                <p v-if="agr.acceptedAt">Onay: {{ agr.acceptedAt }}</p>
+                <p v-if="agr.ipAddress">IP: {{ agr.ipAddress }}</p>
+                <p v-if="agr.smsPhone">SMS: {{ agr.smsPhone }}</p>
+              </div>
+            </div>
+          </template>
+          <!-- Aktif İzinler -->
+          <div class="border-t border-default pt-2.5">
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span>Aktif İzinler</span>
+              <span class="font-medium">{{ activeCount }} / {{ totalCount }}</span>
+            </div>
+            <div class="w-full bg-neutral-100 rounded-full h-1.5">
+              <div class="bg-primary rounded-full h-1.5 transition-all duration-300" :style="{ width: totalCount ? `${(activeCount / totalCount) * 100}%` : '0%' }" />
+            </div>
           </div>
         </div>
       </UCard>
 
-      <!-- Sağ: İzin Grupları -->
-      <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Kimlik Görselleri -->
+      <UCard :ui="{ body: 'p-4' }">
+        <template #header>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-id-card" class="size-4 text-primary" />
+            <span class="text-sm font-semibold">Kimlik Belgeleri</span>
+          </div>
+        </template>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="text-center">
+            <p class="text-xs text-muted mb-1">Ön Yüz</p>
+            <div v-if="identityFrontUrl" class="border border-default rounded-lg overflow-hidden"><img :src="identityFrontUrl" alt="Ön Yüz" class="w-full h-auto" /></div>
+            <p v-else class="text-xs text-muted py-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg">Yüklenmedi</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-muted mb-1">Arka Yüz</p>
+            <div v-if="identityBackUrl" class="border border-default rounded-lg overflow-hidden"><img :src="identityBackUrl" alt="Arka Yüz" class="w-full h-auto" /></div>
+            <p v-else class="text-xs text-muted py-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg">Yüklenmedi</p>
+          </div>
+        </div>
+      </UCard>
+    </div>
+
+    <!-- ALT: İzin Grupları — 3'lü grid -->
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold">İzin Yönetimi</h2>
+        <UButton label="İzinleri Kaydet" icon="i-lucide-check" :loading="saving" :disabled="loading" @click="save" />
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
         <UCard v-for="group in permGroups" :key="group.key" :ui="{ body: 'p-4' }">
           <div class="mb-3">
             <div class="flex items-center justify-between">
@@ -273,6 +385,8 @@ onMounted(async () => {
           </div>
         </UCard>
       </div>
+    </div>
+
     </div>
   </div>
 </template>

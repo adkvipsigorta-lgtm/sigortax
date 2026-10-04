@@ -2080,6 +2080,7 @@ class DashboardController
                 'customerId' => $p['customer_id'] ? (int) $p['customer_id'] : null,
                 'customerIdentity' => $p['customer_identity'] ?? '',
                 'insuranceName' => $p['insurance_name'] ?? '',
+                'insuranceColor' => $p['insurance_color'] ?? '',
                 'companyName' => $p['company_name'] ?? '',
                 'grossPremium' => (float) $p['gross_premium'],
                 'netPremium' => (float) $p['net_premium'],

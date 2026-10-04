@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { isLoggedIn, initialized, fetchMe } = useAuth()
+  const { isLoggedIn, initialized, fetchMe, user } = useAuth()
 
   // İlk yüklemede token varsa kullanıcı bilgisini cek
   if (!initialized.value) {
@@ -14,5 +14,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Giriş yapmis kullanıcı login'e gidemez
   if (isLoggedIn.value && to.path === '/login') {
     return navigateTo('/')
+  }
+
+  // Onboarding tamamlanmamış kullanıcı — admin hariç
+  if (isLoggedIn.value && user.value && !user.value.onboardingCompleted && user.value.role !== 'admin') {
+    if (to.path !== '/onboarding') {
+      return navigateTo('/onboarding')
+    }
   }
 })

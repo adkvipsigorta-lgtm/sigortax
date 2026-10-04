@@ -91,7 +91,10 @@ async function fetchCustomerOffers() {
 }
 
 watch(activeTab, (val) => {
-  if (val === 'teklifler') fetchCustomerOffers()
+  if (val === 'teklifler') {
+    offerSubTab.value = 'active'
+    fetchCustomerOffers()
+  }
 })
 
 const offerStatusLabels: Record<string, string> = { PENDING: 'Bekliyor', IN_PROGRESS: 'Devam Ediyor', COMPLETED: 'Tamamlandı', CANCELLED: 'İptal', EXPIRED: 'Süresi Doldu' }
@@ -678,10 +681,6 @@ function getRemainingColor(days: number): string {
   return 'success'
 }
 
-function truncateText(text: string, max: number = 30): string {
-  if (!text || text.length <= max) return text
-  return text.slice(0, max) + '...'
-}
 
 function formatDate(d: string) {
   if (!d) return '-'
@@ -728,12 +727,12 @@ async function deleteCustomer() {
       <div class="flex items-start justify-between gap-4">
         <!-- Avatar + Bilgi -->
         <div class="flex items-center gap-3 min-w-0">
-          <div class="size-12 rounded-2xl flex items-center justify-center shrink-0" :class="isIndividual ? 'bg-primary/10' : 'bg-amber-500/10'">
+          <div class="size-12 rounded-xl flex items-center justify-center shrink-0" :class="isIndividual ? 'bg-primary/10' : 'bg-amber-500/10'">
             <UIcon :name="isIndividual ? 'i-lucide-user' : 'i-lucide-building-2'" class="size-6" :class="isIndividual ? 'text-primary' : 'text-amber-500'" />
           </div>
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
-              <h2 class="text-lg font-bold leading-tight">{{ customer.name }}</h2>
+              <h2 class="text-lg font-semibold leading-tight">{{ customer.name }}</h2>
               <UBadge :color="isIndividual ? 'primary' : 'warning'" variant="solid" size="sm">
                 {{ isIndividual ? 'Bireysel' : 'Kurumsal' }}
               </UBadge>
@@ -786,7 +785,7 @@ async function deleteCustomer() {
             <UIcon :name="stat.icon" :class="[stat.color, 'size-4']" />
           </div>
           <div class="min-w-0">
-            <p class="text-sm font-bold leading-tight" :class="stat.color">{{ stat.value }}</p>
+            <p class="text-sm font-semibold leading-tight" :class="stat.color">{{ stat.value }}</p>
             <p class="text-xs text-muted leading-tight mt-0.5">{{ stat.label }}</p>
           </div>
         </div>
@@ -932,12 +931,12 @@ async function deleteCustomer() {
             <UIcon :name="member.customerType === 'CORPORATE' ? 'i-lucide-building' : 'i-lucide-user'" class="size-4" :class="member.customerType === 'CORPORATE' ? 'text-blue-500' : 'text-green-500'" />
           </div>
           <div class="min-w-0 flex-1">
-            <NuxtLink :to="`/musteriler/${member.id}`" class="text-sm font-medium text-primary hover:underline block truncate">{{ member.name }}</NuxtLink>
-            <p v-if="member.identityNo" class="text-xs text-muted truncate">{{ member.identityNo }}</p>
+            <NuxtLink :to="`/musteriler/${member.id}`" class="text-sm font-medium text-primary hover:underline block overflow-hidden whitespace-nowrap">{{ member.name }}</NuxtLink>
+            <p v-if="member.identityNo" class="text-xs text-muted overflow-hidden whitespace-nowrap">{{ member.identityNo }}</p>
           </div>
           <UButton
             icon="i-lucide-trash-2"
-            size="2xs"
+            size="xs"
             color="error"
             variant="ghost"
             title="Gruptan çıkar"
@@ -981,7 +980,7 @@ async function deleteCustomer() {
               <UIcon :name="item.identityNo && item.identityNo.length === 11 ? 'i-lucide-user' : 'i-lucide-building'" class="size-3.5" :class="item.identityNo && item.identityNo.length === 11 ? 'text-green-500' : 'text-blue-500'" />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-medium truncate">{{ item.name }}</p>
+              <p class="text-sm font-medium overflow-hidden whitespace-nowrap">{{ item.name }}</p>
               <p v-if="item.identityNo" class="text-[11px] text-muted">{{ item.identityNo }}</p>
             </div>
           </div>
@@ -1079,19 +1078,19 @@ async function deleteCustomer() {
               />
               <!-- Görev tipi + aşama -->
               <div class="min-w-0">
-                <span class="text-sm font-semibold truncate block">
+                <span class="text-sm font-semibold overflow-hidden whitespace-nowrap block">
                   {{ grp.taskType ? TASK_TYPE_LABELS[grp.taskType] || grp.taskType : (grp.type === 'CALL' ? 'Arama Kaydı' : 'Görev Notu') }}
                 </span>
-                <span v-if="grp.stageLabel" class="text-[11px] text-muted truncate block">{{ grp.stageLabel }}</span>
+                <span v-if="grp.stageLabel" class="text-[11px] text-muted overflow-hidden whitespace-nowrap block">{{ grp.stageLabel }}</span>
               </div>
               <!-- Branş -->
-              <span v-if="grp.insuranceName" class="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium truncate text-center">{{ grp.insuranceName }}</span>
+              <span v-if="grp.insuranceName" class="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium overflow-hidden whitespace-nowrap text-center">{{ grp.insuranceName }}</span>
               <span v-else class="text-xs text-muted text-center">—</span>
               <!-- Plaka -->
-              <span v-if="grp.plateNo" class="text-xs text-muted font-mono truncate">{{ grp.plateNo }}</span>
+              <span v-if="grp.plateNo" class="text-xs text-muted font-mono overflow-hidden whitespace-nowrap">{{ grp.plateNo }}</span>
               <span v-else class="text-xs text-muted text-center">—</span>
               <!-- Temsilci -->
-              <span class="text-xs text-muted truncate">{{ grp.assignedToName || '—' }}</span>
+              <span class="text-xs text-muted overflow-hidden whitespace-nowrap">{{ grp.assignedToName || '—' }}</span>
               <!-- Durum -->
               <div class="flex flex-col items-end gap-0.5">
                 <UBadge
@@ -1207,15 +1206,15 @@ async function deleteCustomer() {
             <div class="space-y-1 text-sm overflow-hidden">
               <div v-if="p.insuranceName" class="flex items-center gap-2 text-muted min-w-0">
                 <UIcon name="i-lucide-shield" class="size-3.5 shrink-0" />
-                <span class="truncate font-semibold text-default">{{ p.insuranceName }}</span>
+                <span class="overflow-hidden whitespace-nowrap font-semibold text-default">{{ p.insuranceName }}</span>
               </div>
               <div v-if="p.companyName" class="flex items-center gap-2 text-muted min-w-0">
                 <UIcon name="i-lucide-building" class="size-3.5 shrink-0" />
-                <span class="truncate">{{ p.companyName }}</span>
+                <span class="overflow-hidden whitespace-nowrap">{{ p.companyName }}</span>
               </div>
               <div class="flex items-center gap-2 text-muted min-w-0">
                 <UIcon :name="p.branchName ? 'i-lucide-git-branch' : 'i-lucide-home'" class="size-3.5 shrink-0" />
-                <span class="truncate">{{ p.branchName || agency.name }}</span>
+                <span class="overflow-hidden whitespace-nowrap">{{ p.branchName || agency.name }}</span>
               </div>
             </div>
 
@@ -1234,7 +1233,7 @@ async function deleteCustomer() {
                   {{ p.status === 'CANCELLED' ? 'Bitti' : (getRemainingDays(p.effectiveExpiresAt || p.expiresAt)! > 0 ? getRemainingDays(p.effectiveExpiresAt || p.expiresAt) + ' gün' : 'Bitti') }}
                 </UBadge>
               </div>
-              <p class="font-bold text-sm">{{ formatCurrency(p.totalGrossPremium ?? p.grossPremium) }}</p>
+              <p class="font-semibold text-sm">{{ formatCurrency(p.totalGrossPremium ?? p.grossPremium) }}</p>
             </div>
           </div>
         </UCard>
@@ -1263,7 +1262,7 @@ async function deleteCustomer() {
                 class="border-b border-default last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
                 @click="onPolicyClick(p)"
               >
-                <td class="hidden sm:table-cell py-2 px-3 font-semibold tabular-nums">{{ p.policyNo }}</td>
+                <td class="hidden sm:table-cell py-2 px-3 font-semibold ">{{ p.policyNo }}</td>
                 <td class="py-2 px-3">
                   {{ p.insuranceName }}
                   <div v-if="p.plateNo && (p.branchGroup === 'TRAFİK' || p.branchGroup === 'KASKO')" class="md:hidden font-mono font-bold text-muted mt-0.5">{{ p.plateNo }}</div>
@@ -1272,8 +1271,8 @@ async function deleteCustomer() {
                 <td class="hidden md:table-cell py-2 px-3">
                   <span v-if="p.plateNo" class="font-mono font-bold tracking-wide">{{ p.plateNo }}</span>
                 </td>
-                <td class="hidden md:table-cell py-2 px-3 tabular-nums text-muted">{{ formatDate(p.startsAt) }}</td>
-                <td class="hidden sm:table-cell py-2 px-3 tabular-nums text-muted">{{ formatDate(p.effectiveExpiresAt || p.expiresAt) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-muted">{{ formatDate(p.startsAt) }}</td>
+                <td class="hidden sm:table-cell py-2 px-3 text-muted">{{ formatDate(p.effectiveExpiresAt || p.expiresAt) }}</td>
                 <td class="py-2 px-3 text-center">
                   <span
                     v-if="getRemainingDays(p.effectiveExpiresAt || p.expiresAt) !== null"
@@ -1283,7 +1282,7 @@ async function deleteCustomer() {
                     {{ p.status === 'CANCELLED' ? 'Bitti' : (getRemainingDays(p.effectiveExpiresAt || p.expiresAt)! > 0 ? getRemainingDays(p.effectiveExpiresAt || p.expiresAt) + ' gün' : 'Bitti') }}
                   </span>
                 </td>
-                <td class="py-2 px-3 text-right font-bold tabular-nums">{{ formatCurrency(p.totalGrossPremium ?? p.grossPremium) }}</td>
+                <td class="py-2 px-3 text-right font-semibold ">{{ formatCurrency(p.totalGrossPremium ?? p.grossPremium) }}</td>
               </tr>
             </tbody>
           </table>
@@ -1341,7 +1340,7 @@ async function deleteCustomer() {
                 </div>
               </div>
               <div class="text-right">
-                <p class="font-bold text-sm">{{ formatCurrency(z.grossPremium) }}</p>
+                <p class="font-semibold text-sm">{{ formatCurrency(z.grossPremium) }}</p>
                 <p class="text-xs text-muted">{{ formatCurrency(z.netPremium) }} net</p>
               </div>
             </div>
@@ -1437,19 +1436,19 @@ async function deleteCustomer() {
                     <div class="space-y-1 text-sm overflow-hidden">
                       <div v-if="getOfferInsuranceName(offer)" class="flex items-center gap-2 text-muted min-w-0">
                         <UIcon name="i-lucide-shield" class="size-3.5 shrink-0" />
-                        <span class="truncate font-semibold text-default">{{ getOfferInsuranceName(offer) }}</span>
+                        <span class="overflow-hidden whitespace-nowrap font-semibold text-default">{{ getOfferInsuranceName(offer) }}</span>
                       </div>
                       <div v-if="offer.type === 'RENEWAL' && offer.companyName" class="flex items-center gap-2 text-muted min-w-0">
                         <UIcon name="i-lucide-building" class="size-3.5 shrink-0" />
-                        <span class="truncate">{{ offer.companyName }}</span>
+                        <span class="overflow-hidden whitespace-nowrap">{{ offer.companyName }}</span>
                       </div>
                       <div v-else class="flex items-center gap-2 text-muted min-w-0">
                         <UIcon name="i-lucide-home" class="size-3.5 shrink-0" />
-                        <span class="truncate">{{ agency.name }}</span>
+                        <span class="overflow-hidden whitespace-nowrap">{{ agency.name }}</span>
                       </div>
                       <div v-if="offer.assignedToName" class="flex items-center gap-2 text-muted min-w-0">
                         <UIcon name="i-lucide-user" class="size-3.5 shrink-0" />
-                        <span class="truncate">{{ offer.assignedToName }}</span>
+                        <span class="overflow-hidden whitespace-nowrap">{{ offer.assignedToName }}</span>
                       </div>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-default">
@@ -1509,8 +1508,8 @@ async function deleteCustomer() {
                           <span v-else class="text-muted">-</span>
                         </td>
                         <td class="hidden md:table-cell py-2 px-3 text-muted">{{ offer.assignedToName || '-' }}</td>
-                        <td class="hidden md:table-cell py-2 px-3 tabular-nums text-muted">{{ getOfferExpiresAt(offer) ? formatDate(getOfferExpiresAt(offer)) : '-' }}</td>
-                        <td class="hidden md:table-cell py-2 px-3 tabular-nums text-muted">{{ offer.createdAt ? formatDate(offer.createdAt) : '-' }}</td>
+                        <td class="hidden md:table-cell py-2 px-3 text-muted">{{ getOfferExpiresAt(offer) ? formatDate(getOfferExpiresAt(offer)) : '-' }}</td>
+                        <td class="hidden md:table-cell py-2 px-3 text-muted">{{ offer.createdAt ? formatDate(offer.createdAt) : '-' }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1582,7 +1581,7 @@ async function deleteCustomer() {
               <UIcon :name="field.icon" class="size-3.5 text-muted mt-0.5 shrink-0" />
               <div class="min-w-0">
                 <p class="text-xs text-muted">{{ field.label }}</p>
-                <p class="text-sm font-medium">{{ truncateText(field.value, 25) }}</p>
+                <p class="text-sm font-medium overflow-hidden whitespace-nowrap">{{ field.value }}</p>
               </div>
             </div>
           </div>
@@ -1704,23 +1703,4 @@ async function deleteCustomer() {
 <style scoped>
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

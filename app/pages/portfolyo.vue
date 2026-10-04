@@ -756,7 +756,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-wallet" class="text-blue-600 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold">{{ formatCurrency(totalPrem('current')) }}</p>
+              <p class="text-sm font-semibold">{{ formatCurrency(totalPrem('current')) }}</p>
               <p class="text-xs text-muted">{{ data.currentYear }} {{ premiumMode === 'net' ? 'Net' : 'Brüt' }} Prim</p>
             </div>
           </div>
@@ -769,7 +769,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-wallet" class="text-gray-500 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold">{{ formatCurrency(totalPrem('prev')) }}</p>
+              <p class="text-sm font-semibold">{{ formatCurrency(totalPrem('prev')) }}</p>
               <p class="text-xs text-muted">{{ data.prevYear }} {{ premiumMode === 'net' ? 'Net' : 'Brüt' }} Prim</p>
             </div>
           </div>
@@ -789,7 +789,7 @@ function linearRegression(x: number[], y: number[]) {
               />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold" :class="totalPremChange() >= 0 ? 'text-green-600' : 'text-red-600'">
+              <p class="text-sm font-semibold" :class="totalPremChange() >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ formatPercent(totalPremChange()) }}
               </p>
               <p class="text-xs text-muted">Prim Değişim</p>
@@ -804,7 +804,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-hand-coins" class="text-emerald-600 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold text-emerald-700 dark:text-emerald-400">{{ formatCurrency(data.totals.currentCommission) }}</p>
+              <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ formatCurrency(data.totals.currentCommission) }}</p>
               <p class="text-xs text-muted">{{ data.currentYear }} Komisyon</p>
             </div>
           </div>
@@ -817,7 +817,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-hand-coins" class="text-gray-500 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold">{{ formatCurrency(data.totals.prevCommission) }}</p>
+              <p class="text-sm font-semibold">{{ formatCurrency(data.totals.prevCommission) }}</p>
               <p class="text-xs text-muted">{{ data.prevYear }} Komisyon</p>
             </div>
           </div>
@@ -837,7 +837,7 @@ function linearRegression(x: number[], y: number[]) {
               />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold" :class="data.totals.commissionChange >= 0 ? 'text-green-600' : 'text-red-600'">
+              <p class="text-sm font-semibold" :class="data.totals.commissionChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ formatPercent(data.totals.commissionChange) }}
               </p>
               <p class="text-xs text-muted">Komisyon Değişim</p>
@@ -852,7 +852,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-file-text" class="text-blue-600 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-2xl font-bold">{{ data.totals.currentCount.toLocaleString('tr-TR') }}</p>
+              <p class="kpi-value">{{ data.totals.currentCount.toLocaleString('tr-TR') }}</p>
               <p class="text-xs text-muted">{{ data.currentYear }} Poliçe</p>
             </div>
           </div>
@@ -865,7 +865,7 @@ function linearRegression(x: number[], y: number[]) {
               <UIcon name="i-lucide-file-text" class="text-gray-500 size-5" />
             </div>
             <div class="min-w-0">
-              <p class="text-2xl font-bold">{{ data.totals.prevCount.toLocaleString('tr-TR') }}</p>
+              <p class="kpi-value">{{ data.totals.prevCount.toLocaleString('tr-TR') }}</p>
               <p class="text-xs text-muted">{{ data.prevYear }} Poliçe</p>
             </div>
           </div>
@@ -885,7 +885,7 @@ function linearRegression(x: number[], y: number[]) {
               />
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-bold" :class="data.totals.countChange >= 0 ? 'text-green-600' : 'text-red-600'">
+              <p class="text-sm font-semibold" :class="data.totals.countChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ formatPercent(data.totals.countChange) }}
               </p>
               <p class="text-xs text-muted">Poliçe Değişim</p>
@@ -902,8 +902,8 @@ function linearRegression(x: number[], y: number[]) {
               <h3 >Portföyüm</h3>
               <p class="text-xs text-muted">Yıllık prim üretimi, komisyon geliri ve poliçe adet karşılaştırması</p>
             </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <div class="flex rounded-md border border-default overflow-hidden text-xs font-semibold h-[38px]">
+            <div class="filter-toolbar">
+              <div class="flex rounded-lg border border-default overflow-hidden text-xs font-semibold h-[var(--height-filter)]">
                 <button
                   @click="premiumMode = 'gross'"
                   class="px-3 transition-colors"
@@ -915,20 +915,8 @@ function linearRegression(x: number[], y: number[]) {
                   :class="premiumMode === 'net' ? 'bg-primary text-white' : 'text-muted hover:bg-gray-50 dark:hover:bg-gray-800'"
                 >Net Prim</button>
               </div>
-              <USelect
-                v-model="viewMode"
-                :items="viewOptions"
-                size="xs"
-                :ui="{ base: 'h-[38px]' }"
-                class="w-[180px]"
-              />
-              <USelect
-                v-model="currentYear"
-                :items="yearOptions.map(y => ({ label: String(y), value: y }))"
-                size="xs"
-                :ui="{ base: 'h-[38px]' }"
-                class="w-[180px]"
-              />
+              <USelect v-model="viewMode" :items="viewOptions" :ui="filterDropdownUi" class="filter-w-sm" />
+              <USelect v-model="currentYear" :items="yearOptions.map(y => ({ label: String(y), value: y }))" :ui="filterDropdownUi" class="filter-w-sm" />
             </div>
           </div>
         </template>
@@ -969,12 +957,12 @@ function linearRegression(x: number[], y: number[]) {
                 :class="prem(row,'current') === 0 && prem(row,'prev') === 0 ? 'opacity-40' : ''"
               >
                 <td class="py-2 px-3 font-medium">{{ row.month }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(prem(row,'current')) }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-muted">{{ formatCurrency(prem(row,'prev')) }}</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(prem(row,'current')) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right text-muted">{{ formatCurrency(prem(row,'prev')) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
                     v-if="prem(row,'current') > 0 || prem(row,'prev') > 0"
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold ml-auto cursor-help"
                     :class="changeBadgeClass(premChange(row))"
                     :title="premChange(row) > 0 ? `${row.month} ayında prim geçen yıla göre %${Math.abs(premChange(row)).toFixed(1)} arttı. (${data.prevYear}: ${formatCurrency(prem(row,'prev'))} → ${data.currentYear}: ${formatCurrency(prem(row,'current'))})` : premChange(row) < 0 ? `${row.month} ayında prim geçen yıla göre %${Math.abs(premChange(row)).toFixed(1)} düştü. (${data.prevYear}: ${formatCurrency(prem(row,'prev'))} → ${data.currentYear}: ${formatCurrency(prem(row,'current'))})` : `${row.month} ayında geçen yıla göre değişim yok. (${formatCurrency(prem(row,'current'))})`"
                   >
@@ -982,12 +970,12 @@ function linearRegression(x: number[], y: number[]) {
                     {{ formatPercent(premChange(row)) }}
                   </span>
                 </td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums font-semibold text-emerald-700 dark:text-emerald-400">{{ formatCurrency(row.currentCommission) }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-muted">{{ formatCurrency(row.prevCommission) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right font-semibold text-emerald-700 dark:text-emerald-400">{{ formatCurrency(row.currentCommission) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right text-muted">{{ formatCurrency(row.prevCommission) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
                     v-if="row.currentCommission > 0 || row.prevCommission > 0"
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold ml-auto cursor-help"
                     :class="changeBadgeClass(row.commissionChange)"
                     :title="row.commissionChange > 0 ? `${row.month} ayında komisyon geçen yıla göre %${Math.abs(row.commissionChange).toFixed(1)} arttı. (${data.prevYear}: ${formatCurrency(row.prevCommission)} → ${data.currentYear}: ${formatCurrency(row.currentCommission)})` : row.commissionChange < 0 ? `${row.month} ayında komisyon geçen yıla göre %${Math.abs(row.commissionChange).toFixed(1)} düştü. (${data.prevYear}: ${formatCurrency(row.prevCommission)} → ${data.currentYear}: ${formatCurrency(row.currentCommission)})` : `${row.month} ayında komisyon değişim yok. (${formatCurrency(row.currentCommission)})`"
                   >
@@ -995,12 +983,12 @@ function linearRegression(x: number[], y: number[]) {
                     {{ formatPercent(row.commissionChange) }}
                   </span>
                 </td>
-                <td class="py-2 px-3 text-center tabular-nums">{{ row.currentCount }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums text-muted">{{ row.prevCount }}</td>
+                <td class="py-2 px-3 text-center ">{{ row.currentCount }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-center text-muted">{{ row.prevCount }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
                     v-if="row.currentCount > 0 || row.prevCount > 0"
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-semibold ml-auto cursor-help"
                     :class="changeBadgeClass(row.countChange)"
                     :title="row.countChange > 0 ? `${row.month} ayında poliçe adedi geçen yıla göre %${Math.abs(row.countChange).toFixed(1)} arttı. (${data.prevYear}: ${row.prevCount} adet → ${data.currentYear}: ${row.currentCount} adet)` : row.countChange < 0 ? `${row.month} ayında poliçe adedi geçen yıla göre %${Math.abs(row.countChange).toFixed(1)} düştü. (${data.prevYear}: ${row.prevCount} adet → ${data.currentYear}: ${row.currentCount} adet)` : `${row.month} ayında poliçe adedi değişim yok. (${row.currentCount} adet)`"
                   >
@@ -1013,11 +1001,11 @@ function linearRegression(x: number[], y: number[]) {
             <tfoot>
               <tr class="bg-primary/5 border-t-2 border-primary/30 font-bold">
                 <td class="py-2 px-3 text-primary">Toplam</td>
-                <td class="py-2 px-3 text-right tabular-nums text-primary">{{ formatCurrency(totalPrem('current')) }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-primary/70">{{ formatCurrency(totalPrem('prev')) }}</td>
+                <td class="py-2 px-3 text-right text-primary">{{ formatCurrency(totalPrem('current')) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right text-primary/70">{{ formatCurrency(totalPrem('prev')) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold ml-auto cursor-help"
                     :class="changeBadgeClass(totalPremChange())"
                     :title="totalPremChange() > 0 ? `Yıllık toplam prim %${Math.abs(totalPremChange()).toFixed(1)} arttı. (${data.prevYear}: ${formatCurrency(totalPrem('prev'))} → ${data.currentYear}: ${formatCurrency(totalPrem('current'))})` : totalPremChange() < 0 ? `Yıllık toplam prim %${Math.abs(totalPremChange()).toFixed(1)} düştü. (${data.prevYear}: ${formatCurrency(totalPrem('prev'))} → ${data.currentYear}: ${formatCurrency(totalPrem('current'))})` : 'Yıllık toplam primde değişim yok.'"
                   >
@@ -1025,11 +1013,11 @@ function linearRegression(x: number[], y: number[]) {
                     {{ formatPercent(totalPremChange()) }}
                   </span>
                 </td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400 font-bold">{{ formatCurrency(data.totals.currentCommission) }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-primary/70">{{ formatCurrency(data.totals.prevCommission) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right text-emerald-700 dark:text-emerald-400 font-bold">{{ formatCurrency(data.totals.currentCommission) }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-right text-primary/70">{{ formatCurrency(data.totals.prevCommission) }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold ml-auto cursor-help"
                     :class="changeBadgeClass(data.totals.commissionChange)"
                     :title="data.totals.commissionChange > 0 ? `Yıllık toplam komisyon %${Math.abs(data.totals.commissionChange).toFixed(1)} arttı. (${data.prevYear}: ${formatCurrency(data.totals.prevCommission)} → ${data.currentYear}: ${formatCurrency(data.totals.currentCommission)})` : data.totals.commissionChange < 0 ? `Yıllık toplam komisyon %${Math.abs(data.totals.commissionChange).toFixed(1)} düştü. (${data.prevYear}: ${formatCurrency(data.totals.prevCommission)} → ${data.currentYear}: ${formatCurrency(data.totals.currentCommission)})` : 'Yıllık toplam komisyonda değişim yok.'"
                   >
@@ -1037,11 +1025,11 @@ function linearRegression(x: number[], y: number[]) {
                     {{ formatPercent(data.totals.commissionChange) }}
                   </span>
                 </td>
-                <td class="py-2 px-3 text-center tabular-nums text-primary">{{ data.totals.currentCount }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums text-primary/70">{{ data.totals.prevCount }}</td>
+                <td class="py-2 px-3 text-center text-primary">{{ data.totals.currentCount }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-center text-primary/70">{{ data.totals.prevCount }}</td>
                 <td class="hidden md:table-cell py-2 px-3 text-right">
                   <span
-                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold tabular-nums ml-auto cursor-help"
+                    class="flex items-center justify-center gap-1 w-28 h-6 rounded-full text-xs font-bold ml-auto cursor-help"
                     :class="changeBadgeClass(data.totals.countChange)"
                     :title="data.totals.countChange > 0 ? `Yıllık toplam poliçe adedi %${Math.abs(data.totals.countChange).toFixed(1)} arttı. (${data.prevYear}: ${data.totals.prevCount} adet → ${data.currentYear}: ${data.totals.currentCount} adet)` : data.totals.countChange < 0 ? `Yıllık toplam poliçe adedi %${Math.abs(data.totals.countChange).toFixed(1)} düştü. (${data.prevYear}: ${data.totals.prevCount} adet → ${data.currentYear}: ${data.totals.currentCount} adet)` : 'Yıllık toplam poliçe adedinde değişim yok.'"
                   >
@@ -1116,7 +1104,7 @@ function linearRegression(x: number[], y: number[]) {
                 <td
                   v-for="group in data.productGroups"
                   :key="group"
-                  class="py-2 px-3 text-right tabular-nums"
+                  class="py-2 px-3 text-right "
                   :class="[
                     productPrem(group, row) > 0 ? '' : 'text-muted opacity-40',
                     i === data.productMonths.length - 1 && productPrem(group, row) > 0 ? 'font-semibold' : ''
@@ -1126,7 +1114,7 @@ function linearRegression(x: number[], y: number[]) {
                   <div v-if="row[group + '_count']" class="text-[10px] text-muted font-normal">{{ row[group + '_count'] }} adet</div>
                   <div v-if="row[group + '_comm']" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-normal">K: {{ formatCurrency(row[group + '_comm']) }}</div>
                 </td>
-                <td class="py-2 px-3 text-right tabular-nums" :class="i === data.productMonths.length - 1 ? 'font-bold' : 'font-medium'">
+                <td class="py-2 px-3 text-right " :class="i === data.productMonths.length - 1 ? 'font-bold' : 'font-medium'">
                   {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + productPrem(g, row), 0)) }}
                   <div class="text-[10px] text-muted font-normal">{{ data.productGroups.reduce((sum: number, g: string) => sum + (row[g + '_count'] || 0), 0) }} adet</div>
                   <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-normal">K: {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + (row[g + '_comm'] || 0), 0)) }}</div>
@@ -1139,13 +1127,13 @@ function linearRegression(x: number[], y: number[]) {
                 <td
                   v-for="group in data.productGroups"
                   :key="group"
-                  class="py-2 px-3 text-right tabular-nums text-primary"
+                  class="py-2 px-3 text-right text-primary"
                 >
                   {{ formatCurrency(productPremTotal(group)) }}
                   <div class="text-[10px] text-primary/60">{{ (data.productCountTotals?.[group] || 0).toLocaleString('tr-TR') }} adet</div>
                   <div class="text-[10px] text-emerald-600 dark:text-emerald-400">K: {{ formatCurrency(data.productCommTotals?.[group] || 0) }}</div>
                 </td>
-                <td class="py-2 px-3 text-right tabular-nums text-primary font-extrabold">
+                <td class="py-2 px-3 text-right text-primary font-extrabold">
                   {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + productPremTotal(g), 0)) }}
                   <div class="text-[10px] text-primary/60">{{ data.productGroups.reduce((sum: number, g: string) => sum + (data.productCountTotals?.[g] || 0), 0).toLocaleString('tr-TR') }} adet</div>
                   <div class="text-[10px] text-emerald-600 dark:text-emerald-400">K: {{ formatCurrency(data.productGroups.reduce((sum: number, g: string) => sum + (data.productCommTotals?.[g] || 0), 0)) }}</div>
@@ -1176,16 +1164,16 @@ function linearRegression(x: number[], y: number[]) {
               </div>
 
               <div class="flex items-center gap-3 shrink-0">
-                <span class="text-sm font-bold tabular-nums w-32 text-right">
+                <span class="text-sm font-semibold w-32 text-right">
                   {{ formatCurrency(productPremTotal(group)) }}
                 </span>
-                <span class="text-xs font-semibold tabular-nums w-12 text-right text-muted">
+                <span class="text-xs font-semibold w-12 text-right text-muted">
                   %{{ productShare(group) }}
                 </span>
-                <span class="text-xs text-emerald-600 dark:text-emerald-400 tabular-nums w-24 text-right">
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 w-24 text-right">
                   K: {{ formatCurrency(data.productCommTotals?.[group] || 0) }}
                 </span>
-                <span class="text-xs text-muted tabular-nums w-16 text-right">
+                <span class="text-xs text-muted w-16 text-right">
                   {{ productPolicyCount(group) }} poliçe
                 </span>
               </div>
@@ -1222,9 +1210,8 @@ function linearRegression(x: number[], y: number[]) {
               <USelect
                 v-model="selectedForecastMonth"
                 :items="forecastMonthOptions"
-                size="xs"
-                :ui="{ base: 'h-[38px]' }"
-                class="w-[180px]"
+                :ui="filterDropdownUi"
+                class="filter-w-sm"
               />
               <span class="text-[10px] px-2 py-0.5 rounded-full"
                 :class="isPastMonth
@@ -1259,7 +1246,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-check-circle-2" class="size-4 text-blue-600" />
                   <span class="text-xs font-semibold text-blue-700 dark:text-blue-400">Gerçekleşen</span>
                 </div>
-                <p class="text-xl font-bold text-blue-700 dark:text-blue-300 tabular-nums">{{ formatCurrency(actualData.premium) }}</p>
+                <p class="text-xl font-bold text-blue-700 dark:text-blue-300 ">{{ formatCurrency(actualData.premium) }}</p>
                 <p class="text-xs text-blue-600/70 mt-1">{{ actualData.count }} poliçe</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(actualData.commission) }}</p>
               </div>
@@ -1273,7 +1260,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-target" class="size-4 text-violet-600" />
                   <span class="text-xs font-semibold text-violet-700 dark:text-violet-400">Tahmin (Beklenen)</span>
                 </div>
-                <p class="text-xl font-bold text-violet-700 dark:text-violet-300 tabular-nums">{{ formatCurrency(forecast.general.expected) }}</p>
+                <p class="text-xl font-bold text-violet-700 dark:text-violet-300 ">{{ formatCurrency(forecast.general.expected) }}</p>
                 <p class="text-xs text-violet-600/70 mt-1">~{{ forecast.general.count }} poliçe</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commission) }}</p>
               </div>
@@ -1287,7 +1274,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-git-compare-arrows" class="size-4 text-gray-500" />
                   <span class="text-xs font-semibold tracking-wide text-muted">Sapma</span>
                 </div>
-                <p class="text-xl font-bold tabular-nums" :class="Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 10 ? 'text-green-600' : Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 25 ? 'text-amber-600' : 'text-red-600'">
+                <p class="text-xl font-bold " :class="Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 10 ? 'text-green-600' : Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 25 ? 'text-amber-600' : 'text-red-600'">
                   {{ deviation(forecast.general.expected, actualData.premium) > 0 ? '+' : '' }}{{ deviation(forecast.general.expected, actualData.premium) }}%
                 </p>
                 <p class="text-xs text-muted mt-1">
@@ -1312,7 +1299,7 @@ function linearRegression(x: number[], y: number[]) {
                     :class="accuracy(forecast.general.expected, actualData.premium) >= 80 ? 'text-green-700 dark:text-green-400' : accuracy(forecast.general.expected, actualData.premium) >= 60 ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400'"
                   >Doğruluk</span>
                 </div>
-                <p class="text-3xl font-bold tabular-nums"
+                <p class="text-3xl font-bold "
                   :class="accuracy(forecast.general.expected, actualData.premium) >= 80 ? 'text-green-700 dark:text-green-300' : accuracy(forecast.general.expected, actualData.premium) >= 60 ? 'text-amber-700 dark:text-amber-300' : 'text-red-700 dark:text-red-300'"
                 >
                   %{{ accuracy(forecast.general.expected, actualData.premium) }}
@@ -1409,24 +1396,24 @@ function linearRegression(x: number[], y: number[]) {
                           {{ group }}
                         </div>
                       </td>
-                      <td class="py-2 px-3 text-right tabular-nums font-semibold text-blue-700 dark:text-blue-300">
+                      <td class="py-2 px-3 text-right font-semibold text-blue-700 dark:text-blue-300">
                         {{ formatCurrency(actualData.products[group]?.premium || 0) }}
                         <div class="text-[10px] text-muted font-normal">{{ actualData.products[group]?.count || 0 }} adet</div>
                       </td>
-                      <td class="py-2 px-3 text-right tabular-nums text-violet-700 dark:text-violet-300">
+                      <td class="py-2 px-3 text-right text-violet-700 dark:text-violet-300">
                         {{ formatCurrency(forecast.products[group]?.expected || 0) }}
                         <div class="text-[10px] text-muted font-normal">~{{ forecast.products[group]?.count || 0 }} adet</div>
                       </td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400">
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-emerald-700 dark:text-emerald-400">
                         {{ formatCurrency(actualData.products[group]?.commission || 0) }}
                       </td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-emerald-600 dark:text-emerald-400">
                         {{ formatCurrency(forecast.products[group]?.commission || 0) }}
                       </td>
                       <td class="py-2 px-3 text-center"
                         :title="deviationTitle(forecast.products[group]?.expected || 0, actualData.products[group]?.premium || 0)"
                       >
-                        <span class="text-xs font-bold tabular-nums cursor-help"
+                        <span class="text-xs font-bold cursor-help"
                           :class="Math.abs(deviation(forecast.products[group]?.expected || 0, actualData.products[group]?.premium || 0)) <= 10 ? 'text-green-600' : Math.abs(deviation(forecast.products[group]?.expected || 0, actualData.products[group]?.premium || 0)) <= 25 ? 'text-amber-600' : 'text-red-600'"
                         >
                           {{ deviation(forecast.products[group]?.expected || 0, actualData.products[group]?.premium || 0) > 0 ? '+' : '' }}{{ deviation(forecast.products[group]?.expected || 0, actualData.products[group]?.premium || 0) }}%
@@ -1451,14 +1438,14 @@ function linearRegression(x: number[], y: number[]) {
                   <tfoot>
                     <tr class="bg-blue-50 dark:bg-blue-900/20 border-t-2 border-blue-200 dark:border-blue-800 font-bold">
                       <td class="py-2 px-3 text-blue-700 dark:text-blue-300">Toplam</td>
-                      <td class="py-2 px-3 text-right tabular-nums text-blue-700 dark:text-blue-300">{{ formatCurrency(actualData.premium) }}</td>
-                      <td class="py-2 px-3 text-right tabular-nums text-violet-700 dark:text-violet-300">{{ formatCurrency(forecast.general.expected) }}</td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400">{{ formatCurrency(actualData.commission) }}</td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-emerald-600">{{ formatCurrency(forecast.general.commission) }}</td>
+                      <td class="py-2 px-3 text-right text-blue-700 dark:text-blue-300">{{ formatCurrency(actualData.premium) }}</td>
+                      <td class="py-2 px-3 text-right text-violet-700 dark:text-violet-300">{{ formatCurrency(forecast.general.expected) }}</td>
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-emerald-700 dark:text-emerald-400">{{ formatCurrency(actualData.commission) }}</td>
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-emerald-600">{{ formatCurrency(forecast.general.commission) }}</td>
                       <td class="py-2 px-3 text-center"
                         :title="deviationTitle(forecast.general.expected, actualData.premium)"
                       >
-                        <span class="text-xs font-bold tabular-nums cursor-help"
+                        <span class="text-xs font-bold cursor-help"
                           :class="Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 10 ? 'text-green-600' : Math.abs(deviation(forecast.general.expected, actualData.premium)) <= 25 ? 'text-amber-600' : 'text-red-600'"
                         >
                           {{ deviation(forecast.general.expected, actualData.premium) > 0 ? '+' : '' }}{{ deviation(forecast.general.expected, actualData.premium) }}%
@@ -1494,7 +1481,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-arrow-down-circle" class="size-4 text-red-500" />
                   <span class="text-xs font-semibold text-red-700 dark:text-red-400">Kötümser Senaryo</span>
                 </div>
-                <p class="text-lg font-bold text-red-700 dark:text-red-300 tabular-nums">{{ formatCurrency(forecast.general.pessimistic) }}</p>
+                <p class="text-lg font-bold text-red-700 dark:text-red-300 ">{{ formatCurrency(forecast.general.pessimistic) }}</p>
                 <p class="text-xs text-red-600/70 dark:text-red-400/70 mt-1">~{{ forecast.general.countPessimistic }} poliçe</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commissionPessimistic) }}</p>
               </div>
@@ -1505,7 +1492,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-target" class="size-4 text-violet-600" />
                   <span class="text-xs font-semibold text-violet-700 dark:text-violet-400">Beklenen Senaryo</span>
                 </div>
-                <p class="text-2xl font-bold text-violet-700 dark:text-violet-300 tabular-nums">{{ formatCurrency(forecast.general.expected) }}</p>
+                <p class="kpi-value text-violet-700 dark:text-violet-300 ">{{ formatCurrency(forecast.general.expected) }}</p>
                 <p class="text-xs text-violet-600/70 dark:text-violet-400/70 mt-1">~{{ forecast.general.count }} poliçe</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commission) }}</p>
               </div>
@@ -1516,7 +1503,7 @@ function linearRegression(x: number[], y: number[]) {
                   <UIcon name="i-lucide-arrow-up-circle" class="size-4 text-green-500" />
                   <span class="text-xs font-semibold text-green-700 dark:text-green-400">İyimser Senaryo</span>
                 </div>
-                <p class="text-lg font-bold text-green-700 dark:text-green-300 tabular-nums">{{ formatCurrency(forecast.general.optimistic) }}</p>
+                <p class="text-lg font-bold text-green-700 dark:text-green-300 ">{{ formatCurrency(forecast.general.optimistic) }}</p>
                 <p class="text-xs text-green-600/70 dark:text-green-400/70 mt-1">~{{ forecast.general.countOptimistic }} poliçe</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">K: {{ formatCurrency(forecast.general.commissionOptimistic) }}</p>
               </div>
@@ -1588,11 +1575,11 @@ function linearRegression(x: number[], y: number[]) {
                           {{ group }}
                         </div>
                       </td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-red-600 dark:text-red-400">{{ formatCurrency(forecast.products[group]?.pessimistic || 0) }}</td>
-                      <td class="py-2 px-3 text-right tabular-nums font-semibold text-violet-700 dark:text-violet-300">{{ formatCurrency(forecast.products[group]?.expected || 0) }}</td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-green-600 dark:text-green-400">{{ formatCurrency(forecast.products[group]?.optimistic || 0) }}</td>
-                      <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">{{ formatCurrency(forecast.products[group]?.commission || 0) }}</td>
-                      <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums">{{ forecast.products[group]?.count || 0 }}</td>
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-red-600 dark:text-red-400">{{ formatCurrency(forecast.products[group]?.pessimistic || 0) }}</td>
+                      <td class="py-2 px-3 text-right font-semibold text-violet-700 dark:text-violet-300">{{ formatCurrency(forecast.products[group]?.expected || 0) }}</td>
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-green-600 dark:text-green-400">{{ formatCurrency(forecast.products[group]?.optimistic || 0) }}</td>
+                      <td class="hidden md:table-cell py-2 px-3 text-right text-emerald-600 dark:text-emerald-400">{{ formatCurrency(forecast.products[group]?.commission || 0) }}</td>
+                      <td class="hidden md:table-cell py-2 px-3 text-center ">{{ forecast.products[group]?.count || 0 }}</td>
                       <td class="py-2 px-3 text-center">
                         <span
                           class="text-xs font-bold px-2 py-0.5 rounded-full"
@@ -1610,19 +1597,19 @@ function linearRegression(x: number[], y: number[]) {
                   <tfoot>
                     <tr class="bg-violet-50 dark:bg-violet-900/20 border-t-2 border-violet-200 dark:border-violet-800 font-bold">
                       <td class="py-2 px-3 text-violet-700 dark:text-violet-300">Toplam</td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-red-600">
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-red-600">
                         {{ formatCurrency(forecast.productGroups.reduce((s: number, g: string) => s + (forecast.products[g]?.pessimistic || 0), 0)) }}
                       </td>
-                      <td class="py-2 px-3 text-right tabular-nums text-violet-700 dark:text-violet-300">
+                      <td class="py-2 px-3 text-right text-violet-700 dark:text-violet-300">
                         {{ formatCurrency(forecast.productGroups.reduce((s: number, g: string) => s + (forecast.products[g]?.expected || 0), 0)) }}
                       </td>
-                      <td class="hidden sm:table-cell py-2 px-3 text-right tabular-nums text-green-600">
+                      <td class="hidden sm:table-cell py-2 px-3 text-right text-green-600">
                         {{ formatCurrency(forecast.productGroups.reduce((s: number, g: string) => s + (forecast.products[g]?.optimistic || 0), 0)) }}
                       </td>
-                      <td class="hidden md:table-cell py-2 px-3 text-right tabular-nums text-emerald-600 dark:text-emerald-400">
+                      <td class="hidden md:table-cell py-2 px-3 text-right text-emerald-600 dark:text-emerald-400">
                         {{ formatCurrency(forecast.productGroups.reduce((s: number, g: string) => s + (forecast.products[g]?.commission || 0), 0)) }}
                       </td>
-                      <td class="hidden md:table-cell py-2 px-3 text-center tabular-nums">
+                      <td class="hidden md:table-cell py-2 px-3 text-center ">
                         {{ forecast.productGroups.reduce((s: number, g: string) => s + (forecast.products[g]?.count || 0), 0) }}
                       </td>
                       <td class="py-2 px-3 text-center">

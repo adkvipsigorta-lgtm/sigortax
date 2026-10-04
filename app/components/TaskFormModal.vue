@@ -121,10 +121,13 @@ const leadAssignOptions = computed(() => [
   ...users.value,
 ])
 
-// Tab seçildiğinde varsayılan atama: Lead → giren kişi, Quick → havuz
+// Tab seçildiğinde varsayılan atama: Lead → giren kişi, Quick → havuz, Offer → gerçek user
 watch(activeTab, (tab) => {
-  if (tab === 'LEAD' && currentUser.value?.id) {
-    if (!form.value.assignedTo) form.value.assignedTo = currentUser.value.id
+  if (tab === 'OFFER') {
+    // OFFER tabında -1 (havuz) geçersiz — users listesinde yok
+    if (form.value.assignedTo === -1) form.value.assignedTo = undefined
+  } else if (tab === 'LEAD' && currentUser.value?.id) {
+    if (!form.value.assignedTo || form.value.assignedTo === -1) form.value.assignedTo = currentUser.value.id
   } else if (tab === 'QUICK') {
     form.value.assignedTo = -1
   }
@@ -560,7 +563,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
           </button>
         </div>
 
-        <div class="flex flex-col gap-4 [&_input]:!font-semibold">
+        <div class="modal-form flex flex-col [&_input]:!font-semibold">
 
           <!-- ===== TEKLİF FORMU ===== -->
           <template v-if="activeTab === 'OFFER'">
@@ -594,7 +597,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.customerId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Müşteri Adı Soyadı <span class="text-[var(--ui-error)]">*</span></label>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-4">
               <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu
                   v-model="form.insuranceId"
@@ -630,7 +633,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <span class="text-xs font-semibold text-muted uppercase tracking-wider">Araç Bilgileri</span>
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-2 gap-4">
                 <div class="relative fl-form">
                   <UInput :model-value="form.plateNo" placeholder=" " class="w-full peer/fl-plate" @update:model-value="onPlateInput" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-plate:top-0 peer-focus-within/fl-plate:-translate-y-1/2 peer-focus-within/fl-plate:text-xs peer-focus-within/fl-plate:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-plate:top-0 peer-has-[input:not(:placeholder-shown)]/fl-plate:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-plate:text-xs peer-has-[input:not(:placeholder-shown)]/fl-plate:text-[var(--ui-text-highlighted)]">Plaka</label>
@@ -680,7 +683,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <span class="text-xs font-semibold text-muted uppercase tracking-wider">DASK Bilgileri</span>
                 <div class="flex-1 h-px bg-[var(--ui-border)]"></div>
               </div>
-              <div class="grid gap-3" :class="(isFieldEnabled('policy_uavt') && isFieldEnabled('dask_no')) ? 'grid-cols-2' : 'grid-cols-1'">
+              <div class="grid gap-4" :class="(isFieldEnabled('policy_uavt') && isFieldEnabled('dask_no')) ? 'grid-cols-2' : 'grid-cols-1'">
                 <div v-if="isFieldEnabled('policy_uavt')" class="relative fl-form">
                   <UInput v-model="form.uavtCode" placeholder=" " class="w-full peer/fl-uavt2" />
                   <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-uavt2:top-0 peer-focus-within/fl-uavt2:-translate-y-1/2 peer-focus-within/fl-uavt2:text-xs peer-focus-within/fl-uavt2:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-uavt2:top-0 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-xs peer-has-[input:not(:placeholder-shown)]/fl-uavt2:text-[var(--ui-text-highlighted)]">UAVT Kodu</label>
@@ -702,13 +705,13 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <USelectMenu v-model="form.network" :items="networkOptions" value-key="value" placeholder=" " class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.network ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Network</label>
               </div>
-              <div class="relative fl-input">
+              <div class="relative fl-form">
                 <UTextarea v-model="form.insureds" placeholder=" " :rows="2" class="w-full peer/fl-insureds" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-4 peer-focus-within/fl-insureds:top-0 peer-focus-within/fl-insureds:-translate-y-1/2 peer-focus-within/fl-insureds:text-xs peer-focus-within/fl-insureds:text-[var(--ui-primary)] peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:top-0 peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:-translate-y-1/2 peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:text-xs peer-has-[textarea:not(:placeholder-shown)]/fl-insureds:text-[var(--ui-text-highlighted)]">Sigortalılar</label>
               </div>
             </template>
 
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UTextarea v-model="form.offerNote" placeholder=" " :rows="2" class="w-full peer/fl-note" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-4 peer-focus-within/fl-note:top-0 peer-focus-within/fl-note:-translate-y-1/2 peer-focus-within/fl-note:text-xs peer-focus-within/fl-note:text-[var(--ui-primary)] peer-has-[textarea:not(:placeholder-shown)]/fl-note:top-0 peer-has-[textarea:not(:placeholder-shown)]/fl-note:-translate-y-1/2 peer-has-[textarea:not(:placeholder-shown)]/fl-note:text-xs peer-has-[textarea:not(:placeholder-shown)]/fl-note:text-[var(--ui-text-highlighted)]">Teklif Notu</label>
             </div>
@@ -723,7 +726,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
             </div>
 
             <!-- Ad Soyad + Doğum Tarihi -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-4">
               <div class="relative fl-form">
                 <UInput v-model="form.leadFullName" placeholder=" " class="w-full peer/fl-lname" />
                 <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-lname:top-0 peer-focus-within/fl-lname:-translate-y-1/2 peer-focus-within/fl-lname:text-xs peer-focus-within/fl-lname:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-lname:top-0 peer-has-[input:not(:placeholder-shown)]/fl-lname:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-lname:text-xs peer-has-[input:not(:placeholder-shown)]/fl-lname:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
@@ -744,10 +747,10 @@ function onQuickLeadPaste(e: ClipboardEvent) {
             </div>
 
             <!-- Telefon -->
-            <PhoneInput v-model="form.leadPhone" label="Telefon No" :required="true" />
+            <PhoneInput v-model="form.leadPhone" label="Telefon No" :required="true" modal />
 
             <!-- Ürün + Kaynak -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-4">
               <div class="relative fl-select-form [&_.truncate]:!font-semibold">
                 <USelectMenu v-model="form.leadProductId" :items="leadProducts" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
                 <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.leadProductId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
@@ -778,7 +781,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <div v-for="(file, idx) in leadUploadFiles" :key="idx" class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <div class="flex items-center gap-2 min-w-0">
                     <UIcon :name="file.type === 'application/pdf' ? 'i-lucide-file-text' : 'i-lucide-image'" class="size-4 text-muted shrink-0" />
-                    <span class="text-xs font-medium truncate">{{ file.name }}</span>
+                    <span class="text-xs font-medium overflow-hidden whitespace-nowrap">{{ file.name }}</span>
                     <span class="text-xs text-muted shrink-0">{{ formatFileSize(file.size) }}</span>
                   </div>
                   <UButton icon="i-lucide-x" color="error" variant="ghost" size="xs" @click="removeLeadFile(idx)" />
@@ -809,7 +812,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
                 <div v-for="(file, idx) in quickLeadFiles" :key="idx" class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <div class="flex items-center gap-2 min-w-0">
                     <UIcon :name="file.type === 'application/pdf' ? 'i-lucide-file-text' : 'i-lucide-image'" class="size-4 text-muted shrink-0" />
-                    <span class="text-xs font-medium truncate">{{ file.name }}</span>
+                    <span class="text-xs font-medium overflow-hidden whitespace-nowrap">{{ file.name }}</span>
                     <span class="text-xs text-muted shrink-0">{{ formatFileSize(file.size) }}</span>
                   </div>
                   <UButton icon="i-lucide-x" color="error" variant="ghost" size="xs" @click="removeQuickLeadFile(idx)" />
@@ -818,7 +821,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
             </div>
 
             <!-- Telefon -->
-            <PhoneInput v-model="form.quickPhone" label="Telefon No" :required="true" />
+            <PhoneInput v-model="form.quickPhone" label="Telefon No" :required="true" modal />
 
             <!-- Ürün -->
             <div class="relative fl-select-form [&_.truncate]:!font-semibold">
@@ -834,7 +837,7 @@ function onQuickLeadPaste(e: ClipboardEvent) {
           </template>
 
           <!-- Ortak: Öncelik (sadece teklif) + Atanan -->
-          <div v-if="activeTab !== 'QUICK'" :class="activeTab === 'OFFER' ? 'grid grid-cols-2 gap-3' : ''">
+          <div v-if="activeTab !== 'QUICK'" :class="activeTab === 'OFFER' ? 'grid grid-cols-2 gap-4' : ''">
             <div v-if="activeTab === 'OFFER'" class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelect v-model="form.priority" :items="priorityOptions" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', form.priority ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Öncelik</label>

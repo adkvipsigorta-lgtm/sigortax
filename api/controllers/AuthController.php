@@ -472,7 +472,7 @@ class AuthController
             'branchId' => $user['branch_id'],
         ]);
 
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente'];
+        $roleMap = [1 => 'admin', 0 => 'kullanici', 4 => 'stajer'];
         $roleName = $roleMap[(int) $user['role']] ?? 'kullanici';
 
         $this->logSession((int) $user['id'], $token);
@@ -572,7 +572,7 @@ class AuthController
         }
 
         $user = Database::fetch(
-            "SELECT id, name, email, role, branch_id, is_active, two_factor_enabled, phone, birth_date, address, country_id, city_id, district_id FROM users WHERE id = ? AND deleted_at IS NULL",
+            "SELECT id, name, email, role, branch_id, is_active, two_factor_enabled, phone, birth_date, address, country_id, city_id, district_id, onboarding_completed FROM users WHERE id = ? AND deleted_at IS NULL",
             [$tokenData['userId']]
         );
 
@@ -580,7 +580,7 @@ class AuthController
             Response::error('Kullanici bulunamadi', 404);
         }
 
-        $roleMap = [1 => 'admin', 0 => 'kullanici', 2 => 'acente'];
+        $roleMap = [1 => 'admin', 0 => 'kullanici', 4 => 'stajer'];
         $roleName = $roleMap[(int) $user['role']] ?? 'kullanici';
 
         Response::success([
@@ -597,6 +597,7 @@ class AuthController
             'countryId' => $user['country_id'] ? (int) $user['country_id'] : null,
             'cityId' => $user['city_id'] ? (int) $user['city_id'] : null,
             'districtId' => $user['district_id'] ? (int) $user['district_id'] : null,
+            'onboardingCompleted' => (bool) ($user['onboarding_completed'] ?? false),
             'sessionExpiresAt' => Auth::sessionBoundaryISO(),
             'socketToken' => Auth::generateSocketToken((int) $user['id'], $roleName),
         ]);

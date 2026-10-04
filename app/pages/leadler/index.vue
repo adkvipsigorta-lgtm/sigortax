@@ -791,7 +791,7 @@ async function saveLead() {
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Lead Yönetimi</h1>
+      <h1 class="text-2xl font-semibold">Lead Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Gelen lead'leri takip edin ve yönetin.</p>
     </div>
 
@@ -800,7 +800,7 @@ async function saveLead() {
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
             <UButton
-              size="xl"
+              size="sm"
               :color="activeTab === 'acik' ? 'primary' : 'neutral'"
               :variant="activeTab === 'acik' ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
@@ -810,7 +810,7 @@ async function saveLead() {
               <UBadge v-if="tabCounts.acik" :label="String(tabCounts.acik)" size="sm" color="neutral" variant="subtle" class="ml-1" />
             </UButton>
             <UButton
-              size="xl"
+              size="sm"
               :color="activeTab === 'devam' ? 'primary' : 'neutral'"
               :variant="activeTab === 'devam' ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
@@ -820,7 +820,7 @@ async function saveLead() {
               <UBadge v-if="tabCounts.devam" :label="String(tabCounts.devam)" size="sm" color="neutral" variant="subtle" class="ml-1" />
             </UButton>
             <UButton
-              size="xl"
+              size="sm"
               :color="activeTab === 'kapatilan' ? 'primary' : 'neutral'"
               :variant="activeTab === 'kapatilan' ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[120px] justify-center"
@@ -840,7 +840,7 @@ async function saveLead() {
           :class="closedFilter === 'KAZANILDI' ? 'border-green-500 ring-2 ring-green-500/30 bg-green-50 dark:bg-green-900/30' : 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 hover:border-green-400'"
           @click="closedFilter = closedFilter === 'KAZANILDI' ? 'all' : 'KAZANILDI'"
         >
-          <p class="text-2xl font-bold text-green-600">{{ tabCounts.kazanildi || 0 }}</p>
+          <p class="kpi-value text-green-600">{{ tabCounts.kazanildi || 0 }}</p>
           <p class="text-xs font-medium text-green-600/80">Kazanıldı</p>
         </div>
         <div
@@ -848,7 +848,7 @@ async function saveLead() {
           :class="closedFilter === 'KAYBEDILDI' ? 'border-red-500 ring-2 ring-red-500/30 bg-red-50 dark:bg-red-900/30' : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 hover:border-red-400'"
           @click="closedFilter = closedFilter === 'KAYBEDILDI' ? 'all' : 'KAYBEDILDI'"
         >
-          <p class="text-2xl font-bold text-red-500">{{ tabCounts.kaybedildi || 0 }}</p>
+          <p class="kpi-value text-red-500">{{ tabCounts.kaybedildi || 0 }}</p>
           <p class="text-xs font-medium text-red-500/80">Kaybedildi</p>
         </div>
         <div
@@ -856,7 +856,7 @@ async function saveLead() {
           :class="closedFilter === 'all' ? 'border-primary ring-2 ring-primary/30 bg-gray-50 dark:bg-gray-800/50' : 'border-default bg-gray-50 dark:bg-gray-800/50 hover:border-gray-400'"
           @click="closedFilter = 'all'"
         >
-          <p class="text-2xl font-bold text-muted">{{ tabCounts.kapatilan || 0 }}</p>
+          <p class="kpi-value text-muted">{{ tabCounts.kapatilan || 0 }}</p>
           <p class="text-xs font-medium text-muted">Toplam</p>
         </div>
       </div>
@@ -899,7 +899,7 @@ async function saveLead() {
                   class="border-b border-default hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 >
                   <!-- Geliş Tarihi -->
-                  <td class="py-2 px-3 tabular-nums">{{ formatDateTime(lead.createdAt) }}</td>
+                  <td class="py-2 px-3 ">{{ formatDateTime(lead.createdAt) }}</td>
 
                   <!-- Ad Soyad -->
                   <td class="py-2 px-3">
@@ -908,13 +908,13 @@ async function saveLead() {
                   </td>
 
                   <!-- TC Kimlik No -->
-                  <td class="py-2 px-3 tabular-nums hidden lg:table-cell">{{ lead.tcNo || '' }}</td>
+                  <td class="py-2 px-3 hidden lg:table-cell">{{ lead.tcNo || '' }}</td>
 
                   <!-- Doğum Tarihi -->
-                  <td class="py-2 px-3 tabular-nums hidden lg:table-cell">{{ formatDate(lead.birthDate) }}</td>
+                  <td class="py-2 px-3 hidden lg:table-cell">{{ formatDate(lead.birthDate) }}</td>
 
                   <!-- Telefon -->
-                  <td class="py-2 px-3 tabular-nums">{{ formatPhone(lead.phone) }}</td>
+                  <td class="py-2 px-3 ">{{ formatPhone(lead.phone) }}</td>
 
                   <!-- Ürün -->
                   <td class="py-2 px-3 hidden sm:table-cell">
@@ -1024,7 +1024,7 @@ async function saveLead() {
                               <span class="mx-1 text-muted">/</span>
                               <span class="text-muted">{{ formatNoteDate(note.createdAt) }}</span>
                             </span>
-                            <UButton v-if="activeTab === 'devam'" icon="i-lucide-trash-2" size="2xs" color="error" variant="ghost" @click="deleteLeadNote(note.id, lead.id)" />
+                            <UButton v-if="activeTab === 'devam'" icon="i-lucide-trash-2" size="xs" color="error" variant="ghost" @click="deleteLeadNote(note.id, lead.id)" />
                           </div>
                           <div class="px-3 py-2">
                             <p class="text-sm">{{ note.note }}</p>
@@ -1051,7 +1051,7 @@ async function saveLead() {
                 :disabled="pagination.page <= 1"
                 @click="pagination.page--; fetchLeads()"
               />
-              <span class="text-xs tabular-nums px-2">{{ pagination.page }} / {{ pagination.totalPages }}</span>
+              <span class="text-xs px-2">{{ pagination.page }} / {{ pagination.totalPages }}</span>
               <UButton
                 icon="i-lucide-chevron-right"
                 size="xs"
@@ -1093,7 +1093,7 @@ async function saveLead() {
               <div v-for="(file, idx) in quickFiles" :key="idx" class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                 <div class="flex items-center gap-2 min-w-0">
                   <UIcon :name="file.type === 'application/pdf' ? 'i-lucide-file-text' : 'i-lucide-image'" class="size-4 text-muted shrink-0" />
-                  <span class="text-xs font-medium truncate">{{ file.name }}</span>
+                  <span class="text-xs font-medium overflow-hidden whitespace-nowrap">{{ file.name }}</span>
                 </div>
                 <UButton icon="i-lucide-x" color="error" variant="ghost" size="xs" @click="removeQuickFile(idx)" />
               </div>
@@ -1101,10 +1101,10 @@ async function saveLead() {
           </div>
 
           <!-- Telefon -->
-          <PhoneInput v-model="quickForm.phone" label="Telefon No" :required="true" />
+          <PhoneInput v-model="quickForm.phone" label="Telefon No" :required="true" modal />
 
           <!-- Ürün (opsiyonel) -->
-          <div class="relative fl-select [&_.truncate]:!font-semibold">
+          <div class="relative fl-select-form [&_.truncate]:!font-semibold">
             <USelectMenu v-model="quickForm.productId" :items="productOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
             <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', quickForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
           </div>
@@ -1112,8 +1112,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingQuick" @click="quickModalOpen = false" />
-          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" size="xl" class="w-36 justify-center" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
+          <UButton label="İptal" color="neutral" variant="outline" class="w-36 justify-center" :disabled="savingQuick" @click="quickModalOpen = false" />
+          <UButton label="Lead Oluştur" icon="i-lucide-zap" color="primary" class="w-36 justify-center" :loading="savingQuick" :disabled="savingQuick" @click="saveQuickLead" />
         </div>
       </template>
     </UModal>
@@ -1133,8 +1133,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Vazgeç" color="neutral" variant="outline" size="xl"  @click="deleteModalOpen = false" />
-          <UButton label="Sil" color="error" icon="i-lucide-trash-2" size="xl"  @click="doDelete" />
+          <UButton label="Vazgeç" color="neutral" variant="outline"  @click="deleteModalOpen = false" />
+          <UButton label="Sil" color="error" icon="i-lucide-trash-2"  @click="doDelete" />
         </div>
       </template>
     </UModal>
@@ -1146,20 +1146,20 @@ async function saveLead() {
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
           <p class="text-sm">Güncelleniyor...</p>
         </div>
-        <div class="flex flex-col gap-4 [&_input]:!font-semibold">
+        <div class="modal-form flex flex-col [&_input]:!font-semibold">
           <!-- TC Kimlik No -->
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput :model-value="editForm.tcNo" placeholder=" " class="w-full peer/fl-etc" @update:model-value="(v: string) => editForm.tcNo = v.replace(/\D/g, '').slice(0, 11)" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-etc:top-0 peer-focus-within/fl-etc:-translate-y-1/2 peer-focus-within/fl-etc:text-xs peer-focus-within/fl-etc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-etc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-etc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-etc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-etc:text-[var(--ui-text-highlighted)]">TC Kimlik No <span class="text-[var(--ui-error)]">*</span></label>
           </div>
 
           <!-- Ad Soyad + Doğum Tarihi -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model="editForm.fullName" placeholder=" " class="w-full peer/fl-ename" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-ename:top-0 peer-focus-within/fl-ename:-translate-y-1/2 peer-focus-within/fl-ename:text-xs peer-focus-within/fl-ename:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-ename:top-0 peer-has-[input:not(:placeholder-shown)]/fl-ename:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-ename:text-xs peer-has-[input:not(:placeholder-shown)]/fl-ename:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput :model-value="editBirthDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-ebd" @keydown="editPreventNonDigit" @update:model-value="onEditBirthInput">
                 <template #trailing>
                   <UPopover v-model:open="editBirthOpen">
@@ -1175,15 +1175,15 @@ async function saveLead() {
           </div>
 
           <!-- Telefon -->
-          <PhoneInput v-model="editForm.phone" label="Telefon No" />
+          <PhoneInput v-model="editForm.phone" label="Telefon No" modal />
 
           <!-- Ürün + Kaynak -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.productId" :items="productOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu v-model="editForm.sourceId" :items="sourceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', editForm.sourceId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Kaynak <span class="text-[var(--ui-error)]">*</span></label>
             </div>
@@ -1192,8 +1192,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingEdit" @click="editModalOpen = false" />
-          <UButton label="Güncelle" icon="i-lucide-check" color="primary" size="xl" class="w-36 justify-center" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
+          <UButton label="İptal" color="neutral" variant="outline" class="w-36 justify-center" :disabled="savingEdit" @click="editModalOpen = false" />
+          <UButton label="Güncelle" icon="i-lucide-check" color="primary" class="w-36 justify-center" :loading="savingEdit" :disabled="savingEdit" @click="saveEdit" />
         </div>
       </template>
     </UModal>
@@ -1211,7 +1211,6 @@ async function saveLead() {
               color="primary"
               variant="soft"
               block
-              size="xl"
               
               :loading="closingLead"
               @click="closeAsWon"
@@ -1222,7 +1221,6 @@ async function saveLead() {
               color="error"
               variant="soft"
               block
-              size="xl"
               
               :disabled="closingLead"
               @click="statusStep = 'lost_reason'"
@@ -1241,8 +1239,8 @@ async function saveLead() {
             class="w-full"
           />
           <div class="flex justify-end gap-2">
-            <UButton label="Geri" color="neutral" variant="outline" size="xl"  :disabled="closingLead" @click="statusStep = 'choose'" />
-            <UButton label="Kaydet" color="error" size="xl"  icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
+            <UButton label="Geri" color="neutral" variant="outline"  :disabled="closingLead" @click="statusStep = 'choose'" />
+            <UButton label="Kaydet" color="error"  icon="i-lucide-check" :loading="closingLead" :disabled="closingLead || !lostReason.trim()" @click="closeAsLost" />
           </div>
         </div>
       </template>
@@ -1255,21 +1253,21 @@ async function saveLead() {
           <UIcon name="i-lucide-loader-circle" class="size-10 animate-spin text-primary" />
           <p class="text-sm">Kaydediliyor...</p>
         </div>
-        <div class="flex flex-col gap-4 [&_input]:!font-semibold">
+        <div class="modal-form flex flex-col [&_input]:!font-semibold">
 
           <!-- TC Kimlik No -->
-          <div class="relative fl-input">
+          <div class="relative fl-form">
             <UInput :model-value="addForm.tcNo" placeholder=" " class="w-full peer/fl-tc" @update:model-value="onTcInput" />
             <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tc:top-0 peer-focus-within/fl-tc:-translate-y-1/2 peer-focus-within/fl-tc:text-xs peer-focus-within/fl-tc:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tc:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tc:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tc:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tc:text-[var(--ui-text-highlighted)]">TC Kimlik No <span class="text-[var(--ui-error)]">*</span></label>
           </div>
 
           <!-- Ad Soyad + Doğum Tarihi -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput v-model="addForm.fullName" placeholder=" " class="w-full peer/fl-name" />
               <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-name:top-0 peer-focus-within/fl-name:-translate-y-1/2 peer-focus-within/fl-name:text-xs peer-focus-within/fl-name:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-name:top-0 peer-has-[input:not(:placeholder-shown)]/fl-name:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-name:text-xs peer-has-[input:not(:placeholder-shown)]/fl-name:text-[var(--ui-text-highlighted)]">Ad Soyad <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative fl-input">
+            <div class="relative fl-form">
               <UInput :model-value="birthDateDisplay" placeholder=" " maxlength="10" class="w-full peer/fl-bd" @keydown="preventNonDigitKey" @update:model-value="onBirthDateInput">
                 <template #trailing>
                   <UPopover v-model:open="birthDateOpen">
@@ -1285,11 +1283,11 @@ async function saveLead() {
           </div>
 
           <!-- Telefon -->
-          <PhoneInput v-model="addForm.phone" label="Telefon No" :required="true" />
+          <PhoneInput v-model="addForm.phone" label="Telefon No" :required="true" modal />
 
           <!-- Ürün + Kaynak -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="addForm.productId"
                 :items="productOptions"
@@ -1303,7 +1301,7 @@ async function saveLead() {
               />
               <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', addForm.productId ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Ürün <span class="text-[var(--ui-error)]">*</span></label>
             </div>
-            <div class="relative fl-select [&_.truncate]:!font-semibold">
+            <div class="relative fl-select-form [&_.truncate]:!font-semibold">
               <USelectMenu
                 v-model="addForm.sourceId"
                 :items="sourceOptions"
@@ -1320,7 +1318,7 @@ async function saveLead() {
           </div>
 
           <!-- Atanan Kişi -->
-          <div class="relative fl-select [&_.truncate]:!font-semibold">
+          <div class="relative fl-select-form [&_.truncate]:!font-semibold">
             <template v-if="isAllianzSource">
               <UInput model-value="Havuza At (Atanmamış)" disabled class="w-full" />
             </template>
@@ -1366,7 +1364,7 @@ async function saveLead() {
               >
                 <div class="flex items-center gap-2 min-w-0">
                   <UIcon :name="file.type === 'application/pdf' ? 'i-lucide-file-text' : 'i-lucide-image'" class="size-4 text-muted shrink-0" />
-                  <span class="text-xs font-medium truncate">{{ file.name }}</span>
+                  <span class="text-xs font-medium overflow-hidden whitespace-nowrap">{{ file.name }}</span>
                   <span class="text-xs text-muted shrink-0">{{ formatFileSize(file.size) }}</span>
                 </div>
                 <UButton icon="i-lucide-x" color="error" variant="ghost" size="xs" @click="removeFile(idx)" />
@@ -1378,8 +1376,8 @@ async function saveLead() {
       </template>
       <template #footer>
         <div class="w-full flex justify-end items-center gap-3">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl" class="w-36 justify-center" :disabled="savingLead" @click="addModalOpen = false" />
-          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" size="xl" class="w-36 justify-center" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
+          <UButton label="İptal" color="neutral" variant="outline" class="w-36 justify-center" :disabled="savingLead" @click="addModalOpen = false" />
+          <UButton label="Lead Kaydet" icon="i-lucide-user-plus" color="primary" class="w-36 justify-center" :loading="savingLead" :disabled="savingLead" @click="saveLead" />
         </div>
       </template>
     </UModal>
@@ -1398,7 +1396,7 @@ async function saveLead() {
   display: inline-block;
   width: 110px;
   padding: 2px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.4;
@@ -1413,7 +1411,7 @@ async function saveLead() {
   display: inline-block;
   width: 90px;
   padding: 4px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.4;
@@ -1466,7 +1464,7 @@ async function saveLead() {
   width: 42px;
   height: 24px;
   padding: 0 4px;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   font-size: 10px;
   font-weight: 700;
   line-height: 1;

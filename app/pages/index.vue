@@ -277,14 +277,6 @@ function statusColor(status: string): string {
   return map[status] || 'neutral'
 }
 
-function shortName(fullName?: string): string {
-  if (!fullName) return ''
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const first = parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const lastInitial = parts[parts.length - 1].charAt(0).toLocaleUpperCase('tr')
-  return first + ' ' + lastInitial + '.'
-}
 
 function statusLabel(status: string): string {
   const map: Record<string, string> = { PENDING: 'Bekleyen', IN_PROGRESS: 'Devam Eden', COMPLETED: 'Tamamlanan', EXPIRED: 'Süresi Geçen', CANCELLED: 'İptal' }
@@ -662,20 +654,6 @@ const prodLabels: Record<string, string> = {
   OUTGOING: 'Tali Giden',
 }
 
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6',
-  error: '#ef4444',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  info: '#8b5cf6',
-  neutral: '#6b7280'
-}
-
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
 
 async function startTask(task: any) {
   try {
@@ -1273,7 +1251,7 @@ function toggleDashboardTab(tab: string) {
             <UIcon name="i-lucide-users" class="size-6 text-blue-500" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ stats?.totalCustomers?.toLocaleString('tr-TR') }}</p>
+            <p class="kpi-value">{{ stats?.totalCustomers?.toLocaleString('tr-TR') }}</p>
             <p class="text-sm text-muted">Toplam Müşteri</p>
           </div>
         </div>
@@ -1286,7 +1264,7 @@ function toggleDashboardTab(tab: string) {
             <UIcon name="i-lucide-shield-check" class="size-6 text-green-500" />
           </div>
           <div>
-            <p class="text-2xl font-bold">{{ (stats?.allActivePolicies ?? 0).toLocaleString('tr-TR') }}</p>
+            <p class="kpi-value">{{ (stats?.allActivePolicies ?? 0).toLocaleString('tr-TR') }}</p>
             <p class="text-sm text-muted">Aktif Poliçe</p>
           </div>
         </div>
@@ -1299,7 +1277,7 @@ function toggleDashboardTab(tab: string) {
             <UIcon name="i-lucide-x-circle" class="size-6 text-red-500" />
           </div>
           <div>
-            <p class="text-2xl font-bold text-red-600">{{ stats?.totalCancelled?.toLocaleString('tr-TR') }}</p>
+            <p class="kpi-value text-red-600">{{ stats?.totalCancelled?.toLocaleString('tr-TR') }}</p>
             <p class="text-sm text-muted">İptal ({{ currentYear }})</p>
           </div>
         </div>
@@ -1336,8 +1314,8 @@ function toggleDashboardTab(tab: string) {
           <div class="flex-1 min-w-0 space-y-2.5">
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-800 dark:text-white">{{ portfolioComparison.currentYear }}</span>
-                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 tabular-nums">{{ formatCurrency(portfolioComparison.current) }} TL</span>
+                <span class="text-sm font-semibold text-gray-800 dark:text-white">{{ portfolioComparison.currentYear }}</span>
+                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 ">{{ formatCurrency(portfolioComparison.current) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-blue-500 transition-all duration-700" :style="{ width: portfolioComparison.currentWidth + '%' }" />
@@ -1345,8 +1323,8 @@ function toggleDashboardTab(tab: string) {
             </div>
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-400 dark:text-gray-500">{{ portfolioComparison.previousYear }}</span>
-                <span class="text-xs font-semibold text-gray-400 tabular-nums">{{ formatCurrency(portfolioComparison.previous) }} TL</span>
+                <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{{ portfolioComparison.previousYear }}</span>
+                <span class="text-xs font-semibold text-gray-400 ">{{ formatCurrency(portfolioComparison.previous) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-700" :style="{ width: portfolioComparison.previousWidth + '%' }" />
@@ -1360,7 +1338,7 @@ function toggleDashboardTab(tab: string) {
                 <circle cx="40" cy="40" r="34" fill="none" stroke-width="6" stroke-linecap="round" :class="portfolioComparison.up ? 'stroke-blue-500' : 'stroke-red-500'" :stroke-dasharray="213.6" :stroke-dashoffset="213.6 - (213.6 * Math.min(portfolioComparison.pct, 100) / 100)" />
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">%{{ portfolioComparison.pct }}</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">%{{ portfolioComparison.pct }}</span>
               </div>
             </div>
           </UTooltip>
@@ -1389,8 +1367,8 @@ function toggleDashboardTab(tab: string) {
           <div class="flex-1 min-w-0 space-y-2.5">
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-800 dark:text-white">{{ monthlyProdComparison.currentYear }} <span class="text-xs font-normal text-gray-500">{{ monthlyProdComparison.currentCount }} adet</span></span>
-                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 tabular-nums">{{ formatCurrencyShort(monthlyProdComparison.current) }} TL</span>
+                <span class="text-sm font-semibold text-gray-800 dark:text-white">{{ monthlyProdComparison.currentYear }} <span class="text-xs font-normal text-gray-500">{{ monthlyProdComparison.currentCount }} adet</span></span>
+                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 ">{{ formatCurrencyShort(monthlyProdComparison.current) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-purple-500 transition-all duration-700" :style="{ width: monthlyProdComparison.currentWidth + '%' }" />
@@ -1398,8 +1376,8 @@ function toggleDashboardTab(tab: string) {
             </div>
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-400 dark:text-gray-500">{{ monthlyProdComparison.previousYear }} <span class="text-xs font-normal text-gray-400">{{ monthlyProdComparison.previousCount }} adet</span></span>
-                <span class="text-xs font-semibold text-gray-400 tabular-nums">{{ formatCurrencyShort(monthlyProdComparison.previous) }} TL</span>
+                <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{{ monthlyProdComparison.previousYear }} <span class="text-xs font-normal text-gray-400">{{ monthlyProdComparison.previousCount }} adet</span></span>
+                <span class="text-xs font-semibold text-gray-400 ">{{ formatCurrencyShort(monthlyProdComparison.previous) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-700" :style="{ width: monthlyProdComparison.previousWidth + '%' }" />
@@ -1413,7 +1391,7 @@ function toggleDashboardTab(tab: string) {
                 <circle cx="40" cy="40" r="34" fill="none" stroke-width="6" stroke-linecap="round" :class="monthlyProdComparison.up ? 'stroke-purple-500' : 'stroke-red-500'" :stroke-dasharray="213.6" :stroke-dashoffset="213.6 - (213.6 * Math.min(monthlyProdComparison.pct, 100) / 100)" />
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">%{{ monthlyProdComparison.pct }}</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">%{{ monthlyProdComparison.pct }}</span>
               </div>
             </div>
           </UTooltip>
@@ -1427,8 +1405,8 @@ function toggleDashboardTab(tab: string) {
           <div class="flex-1 min-w-0 space-y-2.5">
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-800 dark:text-white">{{ perCustomerComparison.currentYear }} <span class="text-xs font-normal text-gray-500">{{ perCustomerComparison.currentCount.toLocaleString('tr-TR') }} müşteri</span></span>
-                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 tabular-nums">{{ formatCurrency(perCustomerComparison.current) }} TL</span>
+                <span class="text-sm font-semibold text-gray-800 dark:text-white">{{ perCustomerComparison.currentYear }} <span class="text-xs font-normal text-gray-500">{{ perCustomerComparison.currentCount.toLocaleString('tr-TR') }} müşteri</span></span>
+                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 ">{{ formatCurrency(perCustomerComparison.current) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-emerald-500 transition-all duration-700" :style="{ width: perCustomerComparison.currentWidth + '%' }" />
@@ -1436,8 +1414,8 @@ function toggleDashboardTab(tab: string) {
             </div>
             <div>
               <div class="flex items-baseline justify-between mb-1">
-                <span class="text-sm font-bold text-gray-400 dark:text-gray-500">{{ perCustomerComparison.previousYear }} <span class="text-xs font-normal text-gray-400">{{ perCustomerComparison.previousCount.toLocaleString('tr-TR') }} müşteri</span></span>
-                <span class="text-xs font-semibold text-gray-400 tabular-nums">{{ formatCurrency(perCustomerComparison.previous) }} TL</span>
+                <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{{ perCustomerComparison.previousYear }} <span class="text-xs font-normal text-gray-400">{{ perCustomerComparison.previousCount.toLocaleString('tr-TR') }} müşteri</span></span>
+                <span class="text-xs font-semibold text-gray-400 ">{{ formatCurrency(perCustomerComparison.previous) }} TL</span>
               </div>
               <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-700" :style="{ width: perCustomerComparison.previousWidth + '%' }" />
@@ -1451,7 +1429,7 @@ function toggleDashboardTab(tab: string) {
                 <circle cx="40" cy="40" r="34" fill="none" stroke-width="6" stroke-linecap="round" :class="perCustomerComparison.up ? 'stroke-emerald-500' : 'stroke-red-500'" :stroke-dasharray="213.6" :stroke-dashoffset="213.6 - (213.6 * Math.min(perCustomerComparison.pct, 100) / 100)" />
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">%{{ perCustomerComparison.pct }}</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">%{{ perCustomerComparison.pct }}</span>
               </div>
             </div>
           </UTooltip>
@@ -1469,7 +1447,7 @@ function toggleDashboardTab(tab: string) {
         v-for="opt in [{ label: 'Tümü', value: 'all' }, { label: 'Acentem', value: 'self' }, { label: 'Tali Giden', value: 'outgoing' }]"
         :key="opt.value"
         :label="opt.label"
-        size="xl"
+        size="sm"
         :color="chartView === opt.value ? 'primary' : 'neutral'"
         :variant="chartView === opt.value ? 'solid' : 'outline'"
         class="min-w-[110px] justify-center"
@@ -1583,7 +1561,7 @@ function toggleDashboardTab(tab: string) {
                   class="size-3.5"
                 />
               </span>
-              <span class="text-sm font-bold">%{{ grp.percent }}</span>
+              <span class="text-sm font-semibold">%{{ grp.percent }}</span>
             </div>
             <div class="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
               <div
@@ -1638,7 +1616,7 @@ function toggleDashboardTab(tab: string) {
           <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
             <UButton
               label="Bekleyen"
-              size="xl"
+              size="sm"
               :color="!showFollowUpCalls && renewalStatuses.includes('PENDING') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('PENDING') ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
@@ -1646,7 +1624,7 @@ function toggleDashboardTab(tab: string) {
             />
             <UButton
               label="Devam Eden"
-              size="xl"
+              size="sm"
               :color="!showFollowUpCalls && renewalStatuses.includes('IN_PROGRESS') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('IN_PROGRESS') ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
@@ -1654,7 +1632,7 @@ function toggleDashboardTab(tab: string) {
             />
             <UButton
               label="Takip Aramaları"
-              size="xl"
+              size="sm"
               :color="showFollowUpCalls ? 'info' : 'neutral'"
               :variant="showFollowUpCalls ? 'solid' : 'outline'"
               class="flex-1 sm:flex-none sm:min-w-[110px] justify-center"
@@ -1663,7 +1641,7 @@ function toggleDashboardTab(tab: string) {
             <UButton
               v-if="isAdmin"
               label="Süresi Geçen"
-              size="xl"
+              size="sm"
               :color="!showFollowUpCalls && renewalStatuses.includes('EXPIRED') ? 'primary' : 'neutral'"
               :variant="!showFollowUpCalls && renewalStatuses.includes('EXPIRED') ? 'solid' : 'outline'"
               class="hidden sm:inline-flex sm:min-w-[110px] justify-center"
@@ -1702,7 +1680,7 @@ function toggleDashboardTab(tab: string) {
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold overflow-hidden whitespace-nowrap" style="text-overflow: clip">{{ r.customerName || '-' }}</p>
+                <p class="text-sm font-medium overflow-hidden whitespace-nowrap" style="text-overflow: clip">{{ formatPersonName(r.customerName || '', 'compact') || '-' }}</p>
                 <p class="text-sm mt-1" :class="r.daysRemaining != null && r.daysRemaining < 0 ? 'text-error font-medium' : 'text-muted'">
                   <template v-if="r.status === 'COMPLETED'">Tamamlandı</template>
                   <template v-else-if="r.daysRemaining != null && r.daysRemaining < 0">Süresi Geçmiş</template>
@@ -1715,7 +1693,7 @@ function toggleDashboardTab(tab: string) {
                 v-if="r.insuranceName"
                 class="shrink-0 rounded-full w-16 py-0.5 text-center text-xs font-semibold text-white"
                 :style="{ backgroundColor: toHex(r.insuranceColor) }"
-              >{{ r.insuranceName?.split(' ')[0] || '' }}</span>
+              >{{ insuranceShortLabel(r.insuranceName) }}</span>
             </div>
           </div>
         </template>
@@ -1798,24 +1776,24 @@ function toggleDashboardTab(tab: string) {
                     <template #content>
                       <div class="px-4 py-3 flex items-center gap-3">
                         <UIcon name="i-lucide-phone" class="size-4 text-primary" />
-                        <span class="text-sm font-semibold tracking-wide">{{ formatPhone(r.customerPhone) }}</span>
+                        <span class="text-sm font-medium tracking-wide">{{ formatPhone(r.customerPhone) }}</span>
                       </div>
                     </template>
                   </UPopover>
                   <div v-else class="size-3.5 shrink-0" />
                   <!-- İsim + TC -->
                   <div class="min-w-0">
-                    <NuxtLink v-if="r.customerId" :to="`/musteriler/${r.customerId}`" class="text-primary font-semibold hover:underline truncate block" :title="r.customerName">
-                      {{ r.customerName }}
+                    <NuxtLink v-if="r.customerId" :to="`/musteriler/${r.customerId}`" class="text-primary font-medium hover:underline overflow-hidden whitespace-nowrap block" :title="r.customerName">
+                      {{ formatPersonName(r.customerName || '', 'compact') }}
                     </NuxtLink>
-                    <span v-else class="truncate block" :title="r.customerName">{{ r.customerName || '-' }}</span>
-                    <span v-if="r.customerIdentity" class="text-muted truncate block hidden sm:block">{{ r.customerIdentity }}</span>
+                    <span v-else class="overflow-hidden whitespace-nowrap block" :title="r.customerName">{{ formatPersonName(r.customerName || '', 'compact') || '-' }}</span>
+                    <span v-if="r.customerIdentity" class="text-muted overflow-hidden whitespace-nowrap block hidden sm:block">{{ r.customerIdentity }}</span>
                   </div>
                 </div>
               </td>
               <!-- Poliçe No -->
               <td class="hidden sm:table-cell py-2 px-3">
-                <div v-if="r.companyName">{{ r.companyName }}</div>
+                <div v-if="r.companyName">{{ formatCompanyName(r.companyName || '', 'compact') }}</div>
                 <div
                   class="text-xs text-muted"
                   :class="r.policyId ? 'cursor-pointer hover:underline' : ''"
@@ -1829,12 +1807,9 @@ function toggleDashboardTab(tab: string) {
                 <span
                   v-if="r.insuranceName"
                   class="badge-cell"
-                  :style="{
-                    backgroundColor: toHex(r.insuranceColor) + '1a',
-                    color: toHex(r.insuranceColor)
-                  }"
+                  :style="insuranceBadgeStyle(r.insuranceColor)"
                 >
-                  {{ r.insuranceName }}
+                  {{ insuranceShortLabel(r.insuranceName) }}
                 </span>
                 <span v-else class="text-muted">-</span>
               </td>
@@ -1882,7 +1857,7 @@ function toggleDashboardTab(tab: string) {
               </td>
               <!-- Atanan -->
               <td class="hidden lg:table-cell py-2 px-3">
-                <span v-if="r.assignedToName" class="block truncate" :title="r.assignedToName">{{ shortName(r.assignedToName) }}</span>
+                <span v-if="r.assignedToName" class="block overflow-hidden whitespace-nowrap" :title="r.assignedToName">{{ shortName(r.assignedToName) }}</span>
                 <span v-else class="text-muted">Atanmamış</span>
               </td>
               <!-- İşlem -->
@@ -2023,7 +1998,7 @@ function toggleDashboardTab(tab: string) {
                         </span>
                         <UButton
                           icon="i-heroicons-trash"
-                          size="2xs"
+                          size="xs"
                           color="error"
                           variant="ghost"
                           @click="deleteNote(note.id, r.id)"
@@ -2383,7 +2358,7 @@ function toggleDashboardTab(tab: string) {
               <!-- Başlık -->
               <div class="flex items-center gap-2 px-4 py-3" :class="aiCoachData.topAction.priority === 'ACIL' ? 'bg-red-100 dark:bg-red-900/40' : (aiCoachData.topAction.priority === 'YÜKSEK' || aiCoachData.topAction.priority === 'YUKSEK') ? 'bg-amber-100 dark:bg-amber-900/40' : 'bg-blue-100 dark:bg-blue-900/40'">
                 <span class="text-lg">🔥</span>
-                <span class="font-bold text-sm">Şimdi Bunu Yap</span>
+                <span class="font-semibold text-sm">Şimdi Bunu Yap</span>
               </div>
 
               <div class="px-4 py-3 space-y-3">
@@ -2466,7 +2441,7 @@ function toggleDashboardTab(tab: string) {
                   >
                     <div class="flex items-center gap-2">
                       <UBadge :color="aiPriorityColor(t.priority)" variant="solid" size="sm" class="w-16 justify-center shrink-0">{{ t.priority }}</UBadge>
-                      <span class="text-sm truncate">{{ t.customerName }}</span>
+                      <span class="text-sm overflow-hidden whitespace-nowrap">{{ formatPersonName(t.customerName || '', 'compact') }}</span>
                       <span v-if="t.daysLeft != null" class="ml-auto text-xs text-muted shrink-0">
                         <template v-if="t.daysLeft < 0">{{ Math.abs(t.daysLeft) }} gün geçmiş</template>
                         <template v-else-if="t.daysLeft === 0">Bugün</template>
@@ -2640,38 +2615,7 @@ function toggleDashboardTab(tab: string) {
 .task-table th {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-sm {
-  display: inline-block;
-  width: 50px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

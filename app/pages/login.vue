@@ -285,6 +285,7 @@ function resetToCredentials() {
   totpState.code = ''
   setupSecret.value = ''
   setupOtpauthUrl.value = ''
+  qrCodeDataUrl.value = ''
   setupVerifyCode.value = ''
   recoveryCodes.value = []
   recoveryConfirmed.value = false
@@ -314,7 +315,7 @@ function resetToCredentials() {
     <!-- ═══ STEP 1: Credentials ═══ -->
     <template v-else-if="step === 'credentials'">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-neutral-800">Hoş Geldiniz</h2>
+        <h2 class="text-2xl font-semibold text-neutral-800">Hoş Geldiniz</h2>
       </div>
 
       <UForm ref="formRef" :schema="loginSchema" :state="loginState" class="login-form space-y-5" @error="onFormError" @submit="handleLogin">
@@ -390,7 +391,6 @@ function resetToCredentials() {
         <UButton
           type="submit"
           block
-          size="xl"
           :loading="loginLoading"
           :disabled="!isLoginFormValid"
           
@@ -403,7 +403,7 @@ function resetToCredentials() {
     <!-- ═══ STEP 2: TOTP Challenge ═══ -->
     <template v-else-if="step === 'totp'">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-neutral-800">Güvenlik Doğrulaması</h2>
+        <h2 class="text-2xl font-semibold text-neutral-800">Güvenlik Doğrulaması</h2>
       </div>
 
       <UForm :schema="totpSchema" :state="totpState" class="login-form space-y-5" @error="onFormError" @submit="handleTotpVerify">
@@ -432,7 +432,6 @@ function resetToCredentials() {
         <UButton
           type="submit"
           block
-          size="xl"
           :loading="totpLoading"
           :disabled="!totpState.code || totpState.code.length < 6"
           
@@ -449,7 +448,7 @@ function resetToCredentials() {
         <div class="size-12 rounded-xl bg-primary-50 flex items-center justify-center mb-4">
           <UIcon name="i-lucide-smartphone" class="size-6 text-primary-600" />
         </div>
-        <h2 class="text-2xl font-bold text-neutral-800">2FA Kurulumu</h2>
+        <h2 class="text-2xl font-semibold text-neutral-800">2FA Kurulumu</h2>
         <p class="text-muted text-sm mt-1">Hesabınızın güvenliğini artırmak için doğrulama uygulaması kurun.</p>
       </div>
 
@@ -473,7 +472,6 @@ function resetToCredentials() {
         <UButton
           label="Kodu Taradım, Devam Et"
           block
-          size="xl"
           
           @click="step = 'setup-verify'"
         />
@@ -481,7 +479,6 @@ function resetToCredentials() {
         <UButton
           label="Vazgeç"
           block
-          size="xl"
           color="neutral"
           variant="outline"
           
@@ -496,7 +493,7 @@ function resetToCredentials() {
         <div class="size-12 rounded-xl bg-primary-50 flex items-center justify-center mb-4">
           <UIcon name="i-lucide-check-circle" class="size-6 text-primary-600" />
         </div>
-        <h2 class="text-2xl font-bold text-neutral-800">Kodu Doğrulayın</h2>
+        <h2 class="text-2xl font-semibold text-neutral-800">Kodu Doğrulayın</h2>
         <p class="text-muted text-sm mt-1">Doğrulama uygulamanızda görünen 6 haneli kodu girin.</p>
       </div>
 
@@ -516,7 +513,6 @@ function resetToCredentials() {
         <UButton
           label="Doğrula ve Etkinleştir"
           block
-          size="xl"
           :loading="setupEnableLoading"
           :disabled="!setupVerifyCode || setupVerifyCode.length !== 6"
           
@@ -526,7 +522,6 @@ function resetToCredentials() {
         <UButton
           label="QR Koda Dön"
           block
-          size="xl"
           color="neutral"
           variant="outline"
           
@@ -541,7 +536,7 @@ function resetToCredentials() {
         <div class="size-12 rounded-xl bg-warning-50 flex items-center justify-center mb-4">
           <UIcon name="i-lucide-triangle-alert" class="size-6 text-warning-600" />
         </div>
-        <h2 class="text-2xl font-bold text-neutral-800">Kurtarma Kodları</h2>
+        <h2 class="text-2xl font-semibold text-neutral-800">Kurtarma Kodları</h2>
         <p class="text-muted text-sm mt-1">Bu kodları güvenli bir yere kaydedin. Doğrulama uygulamanıza erişilemezse bu kodlar ile giriş yapabilirsiniz.</p>
       </div>
 
@@ -563,7 +558,6 @@ function resetToCredentials() {
         <UButton
           label="Kodları Kopyala"
           block
-          size="xl"
           color="neutral"
           variant="outline"
           icon="i-lucide-copy"
@@ -579,7 +573,6 @@ function resetToCredentials() {
         <UButton
           label="Tamam, Giriş Yap"
           block
-          size="xl"
           :loading="confirmLoading"
           :disabled="!recoveryConfirmed"
           

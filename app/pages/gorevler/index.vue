@@ -937,24 +937,7 @@ function getTaskInsuranceColor(t: any): string {
   return t.insuranceColor || 'primary'
 }
 
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6', error: '#ef4444', success: '#22c55e',
-  warning: '#f59e0b', info: '#8b5cf6', neutral: '#6b7280'
-}
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
 
-function shortName(fullName?: string): string {
-  if (!fullName) return ''
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const first = parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const lastInitial = parts[parts.length - 1].charAt(0).toLocaleUpperCase('tr')
-  return first + ' ' + lastInitial + '.'
-}
 function getTaskExpiresAt(t: any): string {
   return t.policyExpiresAt || t.offerData?.expiresAt || t.deadline || ''
 }
@@ -1394,7 +1377,7 @@ onMounted(async () => {
   <div class="p-4 sm:p-6 space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Görev Yönetimi</h1>
+      <h1 class="text-2xl font-semibold">Görev Yönetimi</h1>
       <p class="text-sm text-muted mt-1">Yenileme, teklif ve takip araması görevleri.</p>
     </div>
 
@@ -1402,25 +1385,25 @@ onMounted(async () => {
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-primary/50 transition-all" @click="filterStatus = 'all'">
         <div class="text-center">
-          <p class="text-2xl font-bold">{{ stats?.total ?? 0 }}</p>
+          <p class="kpi-value">{{ stats?.total ?? 0 }}</p>
           <p class="text-xs text-muted mt-1">Toplam</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-primary/50 transition-all" @click="filterStatus = filterStatus === 'PENDING' ? 'all' : 'PENDING'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-yellow-600">{{ stats?.byStatus?.pending ?? 0 }}</p>
+          <p class="kpi-value text-yellow-600">{{ stats?.byStatus?.pending ?? 0 }}</p>
           <p class="text-xs text-muted mt-1">Bekleyen</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-primary/50 transition-all" @click="filterStatus = filterStatus === 'COMPLETED' ? 'all' : 'COMPLETED'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-green-600">{{ stats?.byStatus?.completed ?? 0 }}</p>
+          <p class="kpi-value text-green-600">{{ stats?.byStatus?.completed ?? 0 }}</p>
           <p class="text-xs text-muted mt-1">Tamamlanan</p>
         </div>
       </UCard>
       <UCard :ui="{ body: 'p-3' }" class="cursor-pointer hover:ring-2 ring-primary/50 transition-all" @click="filterStatus = filterStatus === 'EXPIRED' ? 'all' : 'EXPIRED'">
         <div class="text-center">
-          <p class="text-2xl font-bold text-red-600">{{ stats?.overdue ?? 0 }}</p>
+          <p class="kpi-value text-red-600">{{ stats?.overdue ?? 0 }}</p>
           <p class="text-xs text-muted mt-1">Geciken</p>
           <button
             v-if="isAdmin && (stats?.overdue ?? 0) > 0"
@@ -1475,31 +1458,25 @@ onMounted(async () => {
     <UCard>
       <template #header>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[38px]">
+          <div class="filter-toolbar">
+            <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[var(--height-filter)]">
               <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="filterPrevMonth" />
               <span class="text-sm flex-1 text-center whitespace-nowrap w-[120px]">{{ filterMonthLabel }}</span>
               <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="filterNextMonth" />
             </div>
-            <div v-if="isAdmin" class="relative fl-select  w-[200px]">
-              <USelect v-model="filterAssignedTo" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...users.map(u => ({ label: u.name, value: u.id }))]" value-key="value" placeholder=" " class="w-full" />
-              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
-            </div>
-            <div class="relative w-[220px] fl-input">
-              <UInput v-model="searchQuery" placeholder=" " class="w-full peer/fl-tsearch" />
-              <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-tsearch:top-0 peer-focus-within/fl-tsearch:-translate-y-1/2 peer-focus-within/fl-tsearch:text-xs peer-focus-within/fl-tsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-tsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-tsearch:text-[var(--ui-text-highlighted)]">Poliçe, müşteri ara</label>
-            </div>
-            <UButton v-if="hasActiveFilters" icon="i-lucide-x" size="xl" color="error" variant="ghost"  @click="resetAllFilters" title="Filtreleri Temizle" />
+            <USelect v-if="isAdmin" v-model="filterAssignedTo" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...users.map(u => ({ label: u.name, value: u.id }))]" value-key="value" placeholder="Temsilci" class="filter-w-md" />
+            <UInput v-model="searchQuery" placeholder="Poliçe, müşteri ara" icon="i-lucide-search" class="filter-w-search" />
+            <UButton v-if="hasActiveFilters" icon="i-lucide-x" size="sm" color="error" variant="ghost" @click="resetAllFilters" title="Filtreleri Temizle" />
           </div>
-          <UButton v-if="can('tasks.export')" label="Excel" icon="i-lucide-download" size="xl" color="neutral" variant="outline" class="hidden sm:flex" @click="exportExcel" />
+          <UButton v-if="can('tasks.export')" label="Excel" icon="i-lucide-download" size="sm" color="neutral" variant="outline" class="hidden sm:flex" @click="exportExcel" />
         </div>
       </template>
       <!-- Bulk action bar -->
       <div v-if="isAdmin && selectedTaskIds.size > 0" class="flex flex-wrap items-center gap-2 mb-3 p-2 rounded-lg bg-primary/5 border border-primary/20">
         <span class="text-sm font-medium">{{ selectedTaskIds.size }} görev seçildi</span>
-        <UButton label="Toplu Ata" icon="i-lucide-user-plus" size="xl"  color="info" variant="outline" @click="showBulkAssignModal = true" />
-        <UButton label="Toplu İptal" icon="i-lucide-x-circle" size="xl"  color="error" variant="outline" @click="bulkCancel" />
-        <UButton label="Seçimi Kaldır" size="xl"  color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
+        <UButton label="Toplu Ata" icon="i-lucide-user-plus"  color="info" variant="outline" @click="showBulkAssignModal = true" />
+        <UButton label="Toplu İptal" icon="i-lucide-x-circle"  color="error" variant="outline" @click="bulkCancel" />
+        <UButton label="Seçimi Kaldır"  color="neutral" variant="ghost" @click="selectedTaskIds = new Set()" />
       </div>
 
       <div v-if="tableColFilterCount > 0" class="flex items-center justify-between mb-2 px-1">
@@ -1543,8 +1520,8 @@ onMounted(async () => {
                 <div class="flex items-center gap-2">
                   <input v-if="isAdmin" type="checkbox" :checked="selectedTaskIds.has(task.id)" @change="toggleSelect(task.id)" class="rounded shrink-0 hidden md:inline" @click.stop />
                   <div class="min-w-0">
-                    <p class="text-primary truncate" :title="getTaskCustomerName(task)">{{ getTaskCustomerName(task) }}</p>
-                    <p class="text-muted truncate">{{ getTaskCustomerIdentity(task) }}</p>
+                    <p class="text-primary overflow-hidden whitespace-nowrap" :title="getTaskCustomerName(task)">{{ getTaskCustomerName(task) }}</p>
+                    <p class="text-muted overflow-hidden whitespace-nowrap">{{ getTaskCustomerIdentity(task) }}</p>
                   </div>
                 </div>
               </td>
@@ -1562,9 +1539,9 @@ onMounted(async () => {
                 <span
                   v-if="getTaskInsuranceName(task)"
                   class="badge-cell"
-                  :style="{ backgroundColor: toHex(getTaskInsuranceColor(task)) + '1a', color: toHex(getTaskInsuranceColor(task)) }"
+                  :style="insuranceBadgeStyle(getTaskInsuranceColor(task))"
                 >
-                  {{ getTaskInsuranceName(task) }}
+                  {{ insuranceShortLabel(getTaskInsuranceName(task)) }}
                 </span>
                 <span v-else class="text-muted">-</span>
               </td>
@@ -1591,7 +1568,7 @@ onMounted(async () => {
 
               <!-- Temsilci -->
               <td class="py-2 px-3">
-                <span v-if="task.assignedToName" class="block truncate" :title="task.assignedToName">{{ shortName(task.assignedToName) }}</span>
+                <span v-if="task.assignedToName" class="block overflow-hidden whitespace-nowrap" :title="task.assignedToName">{{ shortName(task.assignedToName) }}</span>
                 <span v-else class="text-muted">Atanmamış</span>
               </td>
 
@@ -1992,7 +1969,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showCreateModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline"  @click="showCreateModal = false" />
           <UButton
             label="Oluştur"
             icon="i-lucide-plus"
@@ -2042,7 +2019,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showAssignModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline"  @click="showAssignModal = false" />
           <UButton
             label="Ata"
             icon="i-lucide-user-check"
@@ -2228,7 +2205,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showCompleteModal = false" />
+          <UButton label="İptal" color="neutral" variant="outline"  @click="showCompleteModal = false" />
           <UButton
             :label="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'Ertele' : 'Tamamla'"
             :icon="selectedTask?.type === 'FOLLOW_UP_CALL' && ['NOT_REACHED', 'NOT_AVAILABLE'].includes(completeForm.result) ? 'i-lucide-clock' : (isNegativeResult ? 'i-lucide-x-circle' : 'i-lucide-check-circle')"
@@ -2556,15 +2533,15 @@ onMounted(async () => {
             <!-- Özet Kartlar -->
             <div class="grid grid-cols-3 gap-3">
               <div class="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3 text-center">
-                <p class="text-2xl font-bold">{{ smartClosePreview.totalExpired }}</p>
+                <p class="kpi-value">{{ smartClosePreview.totalExpired }}</p>
                 <p class="text-xs text-muted">Toplam Geciken</p>
               </div>
               <div class="rounded-lg bg-green-50 dark:bg-green-900/20 p-3 text-center">
-                <p class="text-2xl font-bold text-green-600">{{ smartClosePreview.toComplete }}</p>
+                <p class="kpi-value text-green-600">{{ smartClosePreview.toComplete }}</p>
                 <p class="text-xs text-muted">Tamamlanacak</p>
               </div>
               <div class="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-center">
-                <p class="text-2xl font-bold text-red-600">{{ smartClosePreview.toCancel }}</p>
+                <p class="kpi-value text-red-600">{{ smartClosePreview.toCancel }}</p>
                 <p class="text-xs text-muted">İptal Edilecek</p>
               </div>
             </div>
@@ -2593,7 +2570,7 @@ onMounted(async () => {
                         </span>
                       </td>
                       <td class="py-1 px-3">{{ item.customerName || '-' }}</td>
-                      <td class="py-1 px-3 tabular-nums">{{ item.policyNo || '-' }}</td>
+                      <td class="py-1 px-3 ">{{ item.policyNo || '-' }}</td>
                       <td class="py-1 px-3 text-green-600">{{ item.reason }}</td>
                     </tr>
                   </tbody>
@@ -2625,7 +2602,7 @@ onMounted(async () => {
                         </span>
                       </td>
                       <td class="py-1 px-3">{{ item.customerName || '-' }}</td>
-                      <td class="py-1 px-3 tabular-nums">{{ item.policyNo || '-' }}</td>
+                      <td class="py-1 px-3 ">{{ item.policyNo || '-' }}</td>
                       <td class="py-1 px-3 text-red-600">{{ item.reason }}</td>
                     </tr>
                   </tbody>
@@ -2659,26 +2636,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-table td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-/* Standart badge stili — tüm tablo badge'leri aynı boyutta */
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

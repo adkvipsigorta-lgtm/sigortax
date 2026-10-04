@@ -388,16 +388,16 @@ const tabs = [
               <span class="text-xs text-muted">{{ b.typeName }}</span>
               <UButton
                 v-if="balanceEditId !== b.id"
-                icon="i-lucide-pencil" size="2xs" color="neutral" variant="ghost"
+                icon="i-lucide-pencil" size="xs" color="neutral" variant="ghost"
                 @click="balanceEditId = b.id; balanceEditValue = b.totalDays"
               />
               <div v-else class="flex gap-1">
-                <UButton icon="i-lucide-check" size="2xs" color="success" variant="ghost" @click="saveBalance(b)" />
-                <UButton icon="i-lucide-x" size="2xs" color="neutral" variant="ghost" @click="balanceEditId = null" />
+                <UButton icon="i-lucide-check" size="xs" color="success" variant="ghost" @click="saveBalance(b)" />
+                <UButton icon="i-lucide-x" size="xs" color="neutral" variant="ghost" @click="balanceEditId = null" />
               </div>
             </div>
             <div class="flex items-baseline gap-2">
-              <span class="text-2xl font-bold" :class="b.remainingDays <= 0 ? 'text-error' : 'text-primary'">
+              <span class="kpi-value" :class="b.remainingDays <= 0 ? 'text-error' : 'text-primary'">
                 {{ b.remainingDays }}
               </span>
               <span class="text-xs text-muted">
@@ -438,10 +438,10 @@ const tabs = [
             </thead>
             <tbody class="divide-y divide-default">
               <tr v-for="lr in leaveRequests" :key="lr.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                <td class="py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis">{{ lr.typeName }}</td>
-                <td class="py-2 px-3 tabular-nums whitespace-nowrap overflow-hidden text-ellipsis">{{ formatDate(lr.startDate) }} — {{ formatDate(lr.endDate) }}</td>
-                <td class="hidden sm:table-cell py-2 px-3 text-center tabular-nums whitespace-nowrap">{{ lr.days }}</td>
-                <td class="hidden md:table-cell py-2 px-3 text-muted max-w-[200px] overflow-hidden text-ellipsis">{{ lr.note || '-' }}</td>
+                <td class="py-2 px-3 whitespace-nowrap overflow-hidden">{{ lr.typeName }}</td>
+                <td class="py-2 px-3 whitespace-nowrap overflow-hidden">{{ formatDate(lr.startDate) }} — {{ formatDate(lr.endDate) }}</td>
+                <td class="hidden sm:table-cell py-2 px-3 text-center whitespace-nowrap">{{ lr.days }}</td>
+                <td class="hidden md:table-cell py-2 px-3 text-muted max-w-[200px] overflow-hidden">{{ lr.note || '-' }}</td>
                 <td class="py-2 px-3 text-center whitespace-nowrap">
                   <UBadge :color="(leaveStatusColors[lr.status] as any)" variant="subtle" size="xs">
                     {{ leaveStatusLabels[lr.status] }}
@@ -449,11 +449,11 @@ const tabs = [
                 </td>
                 <td class="py-2 px-3 text-right whitespace-nowrap">
                   <div v-if="lr.status === 'PENDING'" class="flex items-center justify-end gap-1">
-                    <UButton icon="i-lucide-check" size="2xs" color="success" variant="ghost" @click="approveLeave(lr.id)" />
-                    <UButton icon="i-lucide-x" size="2xs" color="error" variant="ghost" @click="rejectLeave(lr.id)" />
+                    <UButton icon="i-lucide-check" size="xs" color="success" variant="ghost" @click="approveLeave(lr.id)" />
+                    <UButton icon="i-lucide-x" size="xs" color="error" variant="ghost" @click="rejectLeave(lr.id)" />
                   </div>
                   <div v-else-if="lr.status === 'APPROVED'" class="flex items-center justify-end">
-                    <UButton label="İptal" size="2xs" color="warning" variant="ghost" @click="cancelLeave(lr.id)" />
+                    <UButton label="İptal" size="xs" color="warning" variant="ghost" @click="cancelLeave(lr.id)" />
                   </div>
                   <span v-else class="text-xs text-muted">—</span>
                 </td>
@@ -524,19 +524,19 @@ const tabs = [
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <UCard :ui="{ body: 'p-4' }">
             <p class="text-xs text-muted">Poliçe Sayısı</p>
-            <p class="text-2xl font-bold mt-1">{{ performance.totalPolicies }}</p>
+            <p class="kpi-value mt-1">{{ performance.totalPolicies }}</p>
           </UCard>
           <UCard :ui="{ body: 'p-4' }">
             <p class="text-xs text-muted">Toplam Prim</p>
-            <p class="text-2xl font-bold mt-1">{{ formatCurrency(performance.totalPremium) }}</p>
+            <p class="kpi-value mt-1">{{ formatCurrency(performance.totalPremium) }}</p>
           </UCard>
           <UCard :ui="{ body: 'p-4' }">
             <p class="text-xs text-muted">Tamamlanan Görev</p>
-            <p class="text-2xl font-bold mt-1">{{ performance.completedTasks }} <span class="text-sm text-muted font-normal">/ {{ performance.totalTasks }}</span></p>
+            <p class="kpi-value mt-1">{{ performance.completedTasks }} <span class="text-sm text-muted font-normal">/ {{ performance.totalTasks }}</span></p>
           </UCard>
           <UCard :ui="{ body: 'p-4' }">
             <p class="text-xs text-muted">Tamamlama Oranı</p>
-            <p class="text-2xl font-bold mt-1" :class="performance.completionRate >= 70 ? 'text-success' : performance.completionRate >= 40 ? 'text-warning' : 'text-error'">
+            <p class="kpi-value mt-1" :class="performance.completionRate >= 70 ? 'text-success' : performance.completionRate >= 40 ? 'text-warning' : 'text-error'">
               %{{ performance.completionRate }}
             </p>
           </UCard>
@@ -560,8 +560,8 @@ const tabs = [
             <tbody class="divide-y divide-default">
               <tr v-for="m in performance.monthlyData" :key="m.month" class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                 <td class="py-2 px-3 font-medium">{{ monthNames[m.month] }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ m.policies }}</td>
-                <td class="py-2 px-3 text-right tabular-nums">{{ formatCurrency(m.premium) }}</td>
+                <td class="py-2 px-3 text-right ">{{ m.policies }}</td>
+                <td class="py-2 px-3 text-right ">{{ formatCurrency(m.premium) }}</td>
               </tr>
             </tbody>
           </table>

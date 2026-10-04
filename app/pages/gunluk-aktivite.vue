@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Günlük Aktivite</h1>
+      <h1 class="text-2xl font-semibold">Günlük Aktivite</h1>
       <p class="text-sm text-muted mt-1">Günlük poliçe takibi ve eksik alan kontrolü.</p>
     </div>
 
@@ -11,7 +11,7 @@
       <!-- Poliçe -->
       <UCard :ui="{ body: 'p-3' }" class="hidden sm:block">
         <p class="text-xs font-semibold tracking-wide uppercase text-muted mb-3">Toplam Poliçe</p>
-        <p class="text-2xl font-bold tabular-nums">{{ policies.length }}</p>
+        <p class="kpi-value">{{ policies.length }}</p>
       </UCard>
 
       <!-- Prim Özeti -->
@@ -20,15 +20,15 @@
         <div class="flex flex-col gap-1.5 sm:grid sm:grid-cols-3 sm:gap-2">
           <div class="flex items-center justify-between sm:block">
             <p class="text-[10px] text-muted sm:mb-1">Brüt Prim</p>
-            <p class="text-sm font-bold text-green-600 dark:text-green-400 tabular-nums leading-tight">{{ formatCurrency(totalGross) }}</p>
+            <p class="text-sm font-semibold text-green-600 dark:text-green-400 leading-tight">{{ formatCurrency(totalGross) }}</p>
           </div>
           <div class="flex items-center justify-between sm:block">
             <p class="text-[10px] text-muted sm:mb-1">Net Prim</p>
-            <p class="text-sm font-semibold tabular-nums leading-tight">{{ formatCurrency(totalNet) }}</p>
+            <p class="text-sm font-semibold leading-tight">{{ formatCurrency(totalNet) }}</p>
           </div>
           <div class="flex items-center justify-between sm:block">
             <p class="text-[10px] text-muted sm:mb-1">K</p>
-            <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 tabular-nums leading-tight">{{ totalCommission ? formatCurrency(totalCommission) : '—' }}</p>
+            <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 leading-tight">{{ totalCommission ? formatCurrency(totalCommission) : '—' }}</p>
           </div>
         </div>
       </UCard>
@@ -36,15 +36,15 @@
       <!-- Eksik Alan -->
       <UCard :ui="{ body: 'p-3' }" class="hidden sm:block">
         <p class="text-xs font-semibold tracking-wide uppercase text-muted mb-3">Eksik Alan</p>
-        <p class="text-2xl font-bold tabular-nums" :class="missing > 0 ? 'text-orange-500' : 'text-green-600 dark:text-green-400'">{{ missing }}</p>
+        <p class="kpi-value" :class="missing > 0 ? 'text-orange-500' : 'text-green-600 dark:text-green-400'">{{ missing }}</p>
       </UCard>
     </div>
 
     <!-- Table -->
     <UCard :ui="{ body: 'p-4' }">
       <template #header>
-        <div class="flex flex-wrap items-center gap-2">
-              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[38px]">
+        <div class="filter-toolbar">
+              <div class="flex items-center gap-1 border border-[var(--ui-border)] rounded-md px-2 h-[var(--height-filter)]">
                 <UButton icon="i-lucide-chevron-left" size="xs" color="neutral" variant="ghost" @click="prevDay" />
                 <input
                   v-model="selectedDate"
@@ -54,20 +54,16 @@
                 />
                 <UButton icon="i-lucide-chevron-right" size="xs" color="neutral" variant="ghost" @click="nextDay" />
               </div>
-              <UButton size="xl" color="neutral" variant="outline"  @click="goToday">Bugün</UButton>
+              <UButton size="sm" color="neutral" variant="outline" @click="goToday">Bugün</UButton>
               <UButton
-                size="xl"
+                size="sm"
                 :color="viewMode === 'month' ? 'primary' : 'neutral'"
                 :variant="viewMode === 'month' ? 'solid' : 'outline'"
-                
                 @click="toggleMonthView"
               >
                 Bu Ay
               </UButton>
-              <div v-if="isAdmin" class="relative fl-select  w-[200px]">
-                <USelect v-model="filterSoldBy" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...userOptions]" placeholder=" " class="w-full" @change="fetch" />
-                <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2">Temsilci</label>
-              </div>
+              <USelect v-if="isAdmin" v-model="filterSoldBy" :items="[{ label: 'Tüm Temsilciler', value: 'all' }, ...userOptions]" placeholder="Temsilci" class="filter-w-md" @change="fetch" />
         </div>
       </template>
 
@@ -106,11 +102,11 @@
             >
               <!-- Ad/Soyad -->
               <td class="py-2 px-3 overflow-hidden" style="max-width:0">
-                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline truncate block" :title="p.customerName || p.insuredName">
+                <NuxtLink v-if="p.customerId" :to="`/musteriler/${p.customerId}`" class="text-primary hover:underline overflow-hidden whitespace-nowrap block" :title="p.customerName || p.insuredName">
                   {{ p.customerName || p.insuredName || '-' }}
                 </NuxtLink>
-                <span v-else class="truncate block" :title="p.insuredName">{{ p.insuredName || '-' }}</span>
-                <span class="text-muted truncate block">{{ p.customerIdentity }}</span>
+                <span v-else class="overflow-hidden whitespace-nowrap block" :title="p.insuredName">{{ p.insuredName || '-' }}</span>
+                <span class="text-muted overflow-hidden whitespace-nowrap block">{{ p.customerIdentity }}</span>
               </td>
 
               <!-- Şirket -->
@@ -124,9 +120,9 @@
                 <span
                   v-if="p.insuranceName"
                   class="badge-cell"
-                  :style="{ backgroundColor: toHex(p.insuranceColor) + '1a', color: toHex(p.insuranceColor) }"
+                  :style="insuranceBadgeStyle(p.insuranceColor)"
                 >
-                  {{ p.insuranceName?.split(' ')[0] }}
+                  {{ insuranceShortLabel(p.insuranceName) }}
                 </span>
                 <span v-else class="text-muted">-</span>
               </td>
@@ -210,7 +206,7 @@
 
               <!-- Prim -->
               <td class="py-2 px-3 text-right whitespace-nowrap">
-                <div class="font-bold">{{ formatCurrency(p.grossPremium) }}</div>
+                <div class="font-semibold">{{ formatCurrency(p.grossPremium) }}</div>
                 <div class="text-muted">{{ formatCurrency(p.netPremium) }}</div>
               </td>
 
@@ -278,7 +274,7 @@
                   icon="i-lucide-upload"
                   color="neutral"
                   variant="ghost"
-                  size="2xs"
+                  size="xs"
                   title="PDF yükle"
                   :loading="uploadingPolicyId === p.id"
                   @click="handleDocClick(p)"
@@ -585,24 +581,7 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)
 }
 
-const legacyColorMap: Record<string, string> = {
-  primary: '#3b82f6', error: '#ef4444', success: '#22c55e',
-  warning: '#f59e0b', info: '#8b5cf6', neutral: '#6b7280'
-}
-function toHex(color?: string): string {
-  if (!color) return '#3b82f6'
-  if (color.startsWith('#')) return color
-  return legacyColorMap[color] || '#3b82f6'
-}
 
-function shortName(fullName?: string): string {
-  if (!fullName) return ''
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const first = parts[0].charAt(0).toLocaleUpperCase('tr') + parts[0].slice(1).toLocaleLowerCase('tr')
-  const lastInitial = parts[parts.length - 1].charAt(0).toLocaleUpperCase('tr')
-  return first + ' ' + lastInitial + '.'
-}
 function getCustomerId(p: any) {
   return p.customerId ?? ''
 }
@@ -625,23 +604,4 @@ onMounted(async () => {
 
 table td { overflow: hidden; text-overflow: clip; white-space: nowrap; }
 
-.badge-cell {
-  display: inline-block;
-  width: 90px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  vertical-align: middle;
-}
-.badge-error   { background: rgb(239 68 68 / 0.1);  color: #ef4444; }
-.badge-warning { background: rgb(245 158 11 / 0.1); color: #f59e0b; }
-.badge-info    { background: rgb(59 130 246 / 0.1); color: #3b82f6; }
-.badge-success { background: rgb(34 197 94 / 0.1);  color: #22c55e; }
-.badge-neutral { background: rgb(107 114 128 / 0.1); color: #6b7280; }
 </style>

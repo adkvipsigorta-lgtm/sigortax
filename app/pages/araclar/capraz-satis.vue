@@ -9,8 +9,6 @@ const { insurances, fetchInsurances } = useInsuranceTypes()
 
 const isAdmin = computed(() => user.value?.role === 'admin')
 
-const legacyColorMap: Record<string, string> = { primary: '#3b82f6', error: '#ef4444', success: '#22c55e', warning: '#f59e0b', info: '#8b5cf6', neutral: '#6b7280' }
-function toHex(color?: string): string { if (!color) return '#3b82f6'; if (color.startsWith('#')) return color; return legacyColorMap[color] || '#3b82f6' }
 
 const hasType = ref<number | null>(null)
 const notType = ref<number | null>(null)
@@ -82,28 +80,19 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
   <div class="space-y-4">
     <!-- Sayfa Başlığı -->
     <div class="pb-4 border-b border-default">
-      <h1 class="text-xl">Çapraz Satış Analizi</h1>
+      <h1 class="text-2xl font-semibold">Çapraz Satış Analizi</h1>
       <p class="text-sm text-muted mt-1">Bir sigorta türüne sahip olan ancak başka bir sigorta türüne sahip olmayan müşterileri bulun.</p>
     </div>
 
     <!-- Filtreler -->
     <UCard>
-      <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-4">
-        <div class="flex-1 min-w-[200px] relative fl-select ">
-          <USelectMenu v-model="hasType" :items="insuranceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-          <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', hasType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sahip Olduğu Tür</label>
-        </div>
-
-        <div class="hidden sm:flex items-center h-[38px]">
+      <div class="filter-toolbar">
+        <USelectMenu v-model="hasType" :ui="filterDropdownUi" :items="insuranceOptions" value-key="value" label-key="label" placeholder="Sahip Olduğu Tür" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="flex-1 min-w-[var(--filter-width-md)]" />
+        <div class="hidden sm:flex items-center h-[var(--height-filter)]">
           <UIcon name="i-lucide-arrow-right" class="size-5 text-muted" />
         </div>
-
-        <div class="flex-1 min-w-[200px] relative fl-select ">
-          <USelectMenu v-model="notType" :items="insuranceOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-          <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', notType ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Sahip Olmadığı Tür</label>
-        </div>
-
-        <UButton label="Ara" icon="i-lucide-search" size="xl"  :loading="crossSell.loading.value" :disabled="!hasType || !notType || hasType === notType" @click="doSearch" />
+        <USelectMenu v-model="notType" :ui="filterDropdownUi" :items="insuranceOptions" value-key="value" label-key="label" placeholder="Sahip Olmadığı Tür" searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="flex-1 min-w-[var(--filter-width-md)]" />
+        <UButton label="Ara" icon="i-lucide-search" size="sm" :loading="crossSell.loading.value" :disabled="!hasType || !notType || hasType === notType" @click="doSearch" />
       </div>
 
       <p v-if="hasType && notType && hasType === notType" class="text-sm text-red-500 mt-3">Aynı sigorta türünü seçemezsiniz.</p>
@@ -117,10 +106,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
             Sonuçlar
             <span class="text-xs font-normal text-muted ml-2">({{ crossSell.total.value }} müşteri)</span>
           </h3>
-          <div class="relative w-full sm:w-[280px] fl-input">
-            <UInput v-model="searchInput" placeholder=" " class="w-full peer/fl-cxsearch" />
-            <label class="pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2 peer-focus-within/fl-cxsearch:top-0 peer-focus-within/fl-cxsearch:-translate-y-1/2 peer-focus-within/fl-cxsearch:text-xs peer-focus-within/fl-cxsearch:text-[var(--ui-primary)] peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:top-0 peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:-translate-y-1/2 peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:text-xs peer-has-[input:not(:placeholder-shown)]/fl-cxsearch:text-[var(--ui-text-highlighted)]">Müşteri, poliçe no, plaka ara</label>
-          </div>
+          <UInput v-model="searchInput" placeholder="Müşteri, poliçe no, plaka ara..." icon="i-lucide-search" class="w-full sm:filter-w-search" />
         </div>
       </template>
 
@@ -136,7 +122,7 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
 
           <template #customerName-cell="{ row }">
             <div class="flex flex-col">
-              <NuxtLink :to="`/musteriler/${row.original.customerId}`" class="text-primary hover:underline uppercase">{{ row.original.customerName }}</NuxtLink>
+              <NuxtLink :to="`/musteriler/${row.original.customerId}`" class="text-primary hover:underline uppercase">{{ formatPersonName(row.original.customerName || '', 'compact') }}</NuxtLink>
               <span v-if="row.original.identityNo" class="text-xs text-muted">{{ row.original.identityNo }}</span>
             </div>
           </template>
@@ -144,10 +130,10 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
           <template #plateNo-cell="{ row }"><span>{{ row.original.plateNo || '-' }}</span></template>
           <template #registrationNo-cell="{ row }"><span>{{ row.original.registrationNo || '-' }}</span></template>
           <template #insuranceName-cell="{ row }">
-            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" :style="{ backgroundColor: toHex(row.original.insuranceColor) + '1a', color: toHex(row.original.insuranceColor) }">{{ row.original.insuranceName }}</span>
+            <span class="badge-cell" :style="insuranceBadgeStyle(row.original.insuranceColor)">{{ insuranceShortLabel(row.original.insuranceName) }}</span>
           </template>
-          <template #companyName-cell="{ row }"><span>{{ row.original.companyName || '-' }}</span></template>
-          <template #expiresAt-cell="{ row }"><span class="tabular-nums">{{ formatDate(row.original.expiresAt) }}</span></template>
+          <template #companyName-cell="{ row }"><span>{{ formatCompanyName(row.original.companyName || '', 'compact') || '-' }}</span></template>
+          <template #expiresAt-cell="{ row }"><span >{{ formatDate(row.original.expiresAt) }}</span></template>
           <template #actions-cell="{ row }">
             <div class="flex items-center gap-1">
               <UTooltip text="Görev Oluştur"><UButton icon="i-lucide-clipboard-plus" variant="ghost" color="primary" size="xs" :loading="!isAdmin && savingTask" @click="handleCreateTask(row.original)" /></UTooltip>
@@ -188,21 +174,21 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
             <p><span class="text-muted">Hedef Tür:</span> <UBadge variant="solid" color="success" size="sm">{{ notTypeName }}</UBadge></p>
           </div>
 
-          <div class="relative fl-select ">
+          <div class="relative fl-select-form [&_.truncate]:!font-semibold">
             <USelectMenu v-model="assignForm.assignedTo" :items="userOptions" value-key="value" label-key="label" placeholder=" " searchable :search-input="{ placeholder: 'Ara...' }" :search-attributes="['label']" class="w-full" />
-            <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', assignForm.assignedTo ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Atanacak Kişi</label>
+            <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', assignForm.assignedTo ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Atanacak Kişi</label>
           </div>
 
-          <div class="relative fl-select ">
+          <div class="relative fl-select-form [&_.truncate]:!font-semibold">
             <USelect v-model="assignForm.priority" :items="priorityOptions" value-key="value" placeholder=" " class="w-full" />
-            <label :class="['pointer-events-none select-none absolute left-3 z-10 bg-[var(--ui-bg)] px-1 transition-all duration-150 ease-in-out text-sm', assignForm.priority ? 'top-0 -translate-y-1/2 text-xs text-[var(--ui-text-highlighted)]' : 'top-1/2 -translate-y-1/2 text-[var(--ui-text-muted)]']">Öncelik</label>
+            <label :class="['pointer-events-none select-none absolute left-3 z-10 transition-all duration-150 ease-in-out', assignForm.priority ? 'bg-[var(--ui-bg)] px-1 text-xs text-[var(--ui-text-highlighted)] top-0 -translate-y-1/2' : 'text-sm text-[var(--ui-text-muted)] top-1/2 -translate-y-1/2']">Öncelik</label>
           </div>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="İptal" color="neutral" variant="outline" size="xl"  @click="showAssignModal = false" />
-          <UButton label="Oluştur" icon="i-lucide-plus" size="xl"  :loading="savingTask" @click="createTask" />
+          <UButton label="İptal" color="neutral" variant="outline"  @click="showAssignModal = false" />
+          <UButton label="Oluştur" icon="i-lucide-plus"  :loading="savingTask" @click="createTask" />
         </div>
       </template>
     </UModal>
@@ -218,5 +204,5 @@ onMounted(() => { fetchInsurances(); fetchUsers() })
 :deep(.capraz-satis-table th:nth-child(6)) { width: 140px; min-width: 140px; max-width: 140px; }
 :deep(.capraz-satis-table th:nth-child(7)) { width: 110px; min-width: 110px; max-width: 110px; }
 :deep(.capraz-satis-table th:nth-child(8)) { width: 120px; min-width: 120px; max-width: 120px; }
-:deep(.capraz-satis-table > tbody > tr > td) { overflow: hidden; text-overflow: ellipsis; }
+:deep(.capraz-satis-table > tbody > tr > td) { overflow: hidden; text-overflow: clip; }
 </style>

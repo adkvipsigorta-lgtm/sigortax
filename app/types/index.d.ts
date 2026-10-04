@@ -14,6 +14,7 @@ export interface User {
   twoFactorEnabled?: boolean
   twoFactorSecret?: string
   isActive?: boolean
+  onboardingCompleted?: boolean
 }
 
 export type CustomerType = 'INDIVIDUAL' | 'CORPORATE'

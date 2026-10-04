@@ -113,7 +113,7 @@ onMounted(() => {
   <div class="max-w-2xl mx-auto">
     <!-- Sayfa Başlığı -->
     <div class="mb-6 pb-4 border-b border-default">
-      <h1 class="text-xl">Güncellemeler</h1>
+      <h1 class="text-2xl font-semibold">Güncellemeler</h1>
       <p class="text-sm text-muted mt-1">Uzaktan uygulama güncellemelerini yönetin.</p>
     </div>
 
@@ -125,7 +125,6 @@ onMounted(() => {
           <UButton
             label="Tekrar Kontrol Et"
             icon="i-lucide-refresh-cw"
-            size="xl"
             variant="outline"
             color="neutral"
             
@@ -181,7 +180,6 @@ onMounted(() => {
             :label="`v${info.release?.version} sürümüne güncelle`"
             icon="i-lucide-download"
             color="primary"
-            size="xl"
             
             :loading="applying"
             block
@@ -221,7 +219,6 @@ onMounted(() => {
           <UButton
             label="Geri Al"
             icon="i-lucide-history"
-            size="xl"
             variant="outline"
             color="warning"
             class="shrink-0 sm:w-auto w-full"

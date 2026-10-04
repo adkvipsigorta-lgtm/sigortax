@@ -17,3 +17,9 @@ Thumbs.db
 *.log
 .vscode
 .idea
+
+# Playwright test auth state (commit etme)
+app/e2e/.auth/
+app/playwright-report/
+app/test-results/
+api/uploads/identity/
